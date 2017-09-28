@@ -26,6 +26,41 @@ type t = (* K正規化後の式 (caml2html: knormal_t) *)
   | ExtFunApp of Id.t * Id.t list
 and fundef = { name : Id.t * Type.t; args : (Id.t * Type.t) list; body : t }
 
+let rec log norm =
+  match norm with
+  | Unit -> print_string "()"
+  | Int num -> print_int num
+  | Float num -> print_float num
+  | Neg id | FNeg id -> print_string "-("; Id.log id; print_string ")"
+  | Add (id1, id2) | FAdd (id1, id2) -> print_string "("; Id.log id1; print_string " + "; Id.log id2; print_string ")"
+  | Sub (id1, id2) | FSub (id1, id2) -> print_string "("; Id.log id1; print_string " - "; Id.log id2; print_string ")"
+  | FMul (id1, id2) -> print_string "("; Id.log id1; print_string " * "; Id.log id2; print_string ")"
+  | FDiv (id1, id2) -> print_string "("; Id.log id1; print_string " / "; Id.log id2; print_string ")"
+  | IfEq (id1, id2, r1, r2) -> print_string "if "; Id.log id1; print_string " == "; Id.log id2; print_string " then "; log r1;
+                               print_string " else "; log r2
+  | IfLE (id1, id2, r1, r2) -> print_string "if "; Id.log id1; print_string " <= "; Id.log id2; print_string " then "; log r1;
+                               print_string " else "; log r2
+  | Let ((id, typ), x1, x2) -> print_string "let "; Id.log id; print_string " : "; Type.log typ; print_string " = "; log x1; print_string " in "; log x2
+  | Var id -> Id.log id
+  | LetRec ({ name = (x, t); args = args; body = e1 }, e2) -> print_string "let rec ("; Id.log x; print_string ": "; Type.log t; print_string ") ("; print_arglist args; print_string ") = "; log e1;
+                                                              print_string " in "; log e2
+  | App (id, ids) | ExtFunApp (id, ids) -> Id.log id; print_string "("; print_idlist ids; print_string ")"
+  | Tuple ids -> print_string "("; print_idlist ids; print_string ")"
+  | LetTuple (args, id, e) -> print_string "let ("; print_arglist args; print_string ") = "; Id.log id; print_string " in "; log e
+  | Get (id1, id2) -> Id.log id1; print_string ".("; Id.log id2; print_string ")"
+  | Put (id1, id2, id3) -> Id.log id1; print_string ".("; Id.log id2; print_string ") <- "; Id.log id3
+  | ExtArray id -> Id.log id
+and print_arglist args =
+  match args with
+  | [] -> ()
+  | (id, typ) :: [] -> print_string "("; Id.log id; print_string ": "; Type.log typ; print_string ")"
+  | (id, typ) :: tr -> print_string "("; Id.log id; print_string ": "; Type.log typ; print_string "), "; print_arglist tr
+and print_idlist ids =
+  match ids with
+  | [] -> ()
+  | id :: [] -> Id.log id
+  | id :: idr -> Id.log id; print_string ", "; print_idlist idr
+
 let rec fv = function (* 式に出現する（自由な）変数 (caml2html: knormal_fv) *)
   | Unit | Int(_) | Float(_) | ExtArray(_) -> S.empty
   | Neg(x) | FNeg(x) -> S.singleton x
