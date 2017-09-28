@@ -1,26 +1,23 @@
+# MinCaml Compiler
+
 An educational compiler for a minimal subset of OCaml, written in
 ~2000 lines of OCaml.  For details, see:
 
-http://esumii.github.io/min-caml/ (Japanese Web page)
-http://esumii.github.io/min-caml/jpaper.pdf (Japanese academic paper)
-http://esumii.github.io/min-caml/index-e.html (English Web page)
-http://esumii.github.io/min-caml/paper.pdf (English academic paper)
+- http://esumii.github.io/min-caml/ (Japanese Web page)
+- http://esumii.github.io/min-caml/jpaper.pdf (Japanese academic paper)
+- http://esumii.github.io/min-caml/index-e.html (English Web page)
+- http://esumii.github.io/min-caml/paper.pdf (English academic paper)
 
 1. Install OCaml (http://caml.inria.fr/) if you haven't
-
 2. Download (and expand) MinCaml, e.g.
-   git clone https://github.com/esumii/min-caml.git
-
+   ```git clone https://github.com/esumii/min-caml.git```
 3. cd min-caml/
-
 4. Execute ./to_x86 for x86
    (or ./to_sparc for SPARC, ./to_ppc for PowerPC)
-
 5. make
-
 6. If you like, try the ray tracer
 
-     cd min-rt/ ; make
+     ```cd min-rt/ ; make```
 
    though it takes time because of OCaml bytecode (for testing by
    comparison), not MinCaml
