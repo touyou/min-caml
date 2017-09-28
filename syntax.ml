@@ -30,7 +30,7 @@ and fundef = { name : Id.t * Type.t; args : (Id.t * Type.t) list; body : t }
 let rec log e =
   match e with
   | Unit -> print_string "()"
-  | Bool b -> print_bool b
+  | Bool b -> if b then print_string "true" else print_string "false"
   | Int i -> print_int i
   | Float f -> print_float f
   | Not e1 -> print_string "not("; log e1; print_string ")"

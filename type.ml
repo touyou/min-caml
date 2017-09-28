@@ -17,8 +17,11 @@ let rec log typ =
   | Fun (t1, t2) -> log (Tuple t1); print_string " -> "; log t2
   | Tuple t -> print_string "("; list_log t; print_string ")"
   | Array t -> print_string "["; log t; print_string "]"
-  | Var (Some t) -> log t
-  | Var None -> print_string "a"
+  | Var t ->
+      let var = !t in
+      (match var with
+      | Some t -> log t
+      | None -> print_string "a")
 and list_log typ_arr =
   match typ_arr with
   | [] -> ()
