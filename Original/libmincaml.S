@@ -113,7 +113,7 @@ min_caml_print_byte:
 	lwz	r4, 16(r1)
 	mtlr 	r0
 	lmw 	r30, -8(r1)
-	blr	
+	blr
 #	prerr_int
 	.text
 	.align 	2
@@ -152,7 +152,7 @@ L:
 	.long	0
 	.section __TEXT, __picsymbolstub1, symbol_stubs, pure_instructions, 32
 	.align 	5
-fprintf:	
+fprintf:
 	.indirect_symbol _fprintf$LDBLStub
 	mflr 	r0
 	bcl 	20, 31, L3spb
@@ -213,7 +213,7 @@ L4spb:
 fputc_lazy:
 	.indirect_symbol _fputc
 	.long	dyld_stub_binding_helper
-	.subsections_via_symbols	
+	.subsections_via_symbols
 #	prerr_float
 	.text
 	.align 	2
@@ -254,7 +254,7 @@ L5pb:
 	lwz	r4, 16(r1)
 	mtlr 	r0
 	lmw 	r29, -12(r1)
-	blr	
+	blr
 #	read_int
 	.text
 	.align 	2
@@ -284,7 +284,7 @@ L6pb:
 	blr
 	.section __TEXT, __picsymbolstub1, symbol_stubs, pure_instructions, 32
 	.align 	5
-scanf:	
+scanf:
 	.indirect_symbol _scanf$LDBLStub
 	mflr 	r0
 	bcl 	20, 31, L6spb
@@ -296,7 +296,7 @@ L6spb:
 	mtctr 	r12
 	bctr
 	.lazy_symbol_pointer
-scanf_lazy:	
+scanf_lazy:
 	.indirect_symbol _scanf$LDBLStub
 	.long	dyld_stub_binding_helper
 	.subsections_via_symbols
@@ -304,7 +304,7 @@ scanf_lazy:
 	.text
 	.align	2
 	.globl	min_caml_read_float
-min_caml_read_float:	
+min_caml_read_float:
 	mflr 	r0
 	stmw 	r30, -8(r1)
 	stw 	r0, 8(r1)
@@ -331,7 +331,7 @@ L7pb:
 	.text
 	.align	2
 	.globl	min_caml_create_array
-min_caml_create_array:	
+min_caml_create_array:
 	mr	r6, r2
 	mr	r2, r4
 create_array_loop:
@@ -429,7 +429,7 @@ min_caml_floor:
 	lwz	r4, 16(r1)
 	mtlr 	r0
 	lmw 	r30,  -8(r1)
-	blr	
+	blr
 	.section __TEXT, __picsymbolstub1, symbol_stubs, pure_instructions, 32
 	.align 	5
 floor:
@@ -551,7 +551,7 @@ min_caml_sin:
 	stwu 	r1, -96(r1)
 	mr 	r30, r1
 	bcl 	20, 31, Lcpb
-Lcpb:	
+Lcpb:
 	mflr 	r31
 	fmr	f1, f0
 	bl 	sin
@@ -565,11 +565,11 @@ Lcpb:
 	blr
 	.section __TEXT, __picsymbolstub1, symbol_stubs, pure_instructions, 32
 	.align 	5
-sin:	
+sin:
 	.indirect_symbol _sin
 	mflr 	r0
 	bcl 	20, 31, Lcspb
-Lcspb:	
+Lcspb:
 	mflr 	r11
 	addis 	r11, r11, ha16(sin_lazy - Lcspb)
 	mtlr 	r0
@@ -577,7 +577,7 @@ Lcspb:
 	mtctr 	r12
 	bctr
 	.lazy_symbol_pointer
-sin_lazy:	
+sin_lazy:
 	.indirect_symbol _sin
 	.long	dyld_stub_binding_helper
 	.subsections_via_symbols
@@ -632,5 +632,5 @@ float_0:
 float_1:
 	.long	0x3ff00000
 	.long	0x0
-	
-	
+
+
