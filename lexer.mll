@@ -88,8 +88,9 @@ rule token = parse
     { IDENT(Lexing.lexeme lexbuf) }
 | _
     { failwith
-        (Printf.sprintf "unknown token %s near characters %d-%d"
+        (Printf.sprintf "unknown token %s line %d, characters %d-%d"
            (Lexing.lexeme lexbuf)
+           (lexbuf.lex_curr_p.pos_lnum)
            (Lexing.lexeme_start lexbuf)
            (Lexing.lexeme_end lexbuf)) }
 and comment = parse

@@ -1,6 +1,7 @@
 %{
 (* parserが利用する変数、関数、型などの定義 *)
 open Syntax
+open Lexing
 let addtyp x = (x, Type.gentyp ())
 %}
 
@@ -138,7 +139,8 @@ exp: /* (* 一般の式 (caml2html: parser_exp) *) */
     { Array($2, $3) }
 | error
     { failwith
-        (Printf.sprintf "parse error near characters %d-%d"
+        (Printf.sprintf "parse error line %d, characters %d-%d"
+           (let pos = Parsing.symbol_start_pos () in pos.pos_lnum)
            (Parsing.symbol_start ())
            (Parsing.symbol_end ())) }
 
