@@ -42,12 +42,12 @@ let rec log e =
   | Eq (e1, e2) -> log e1; print_string " == "; log e2
   | LE (e1, e2) -> log e1; print_string " <= "; log e2
   | If (e1, e2, e3) -> print_string "if "; log e1; print_string " then "; log e2; print_string " else "; log e3; print_newline ()
-  | Let ((id, typ), e1, e2) -> print_string "let "; Id.log id; print_string ": "; Type.log typ; print_string " = "; log e1; print_string " in "; log e2
+  | Let ((id, typ), e1, e2) -> print_string "let "; Id.log id; print_string ": "; Type.log typ; print_string " = "; log e1; print_string "in "; log e2
   | Var id -> Id.log id
-  | LetRec ({ name = (id, typ); args = args; body = e1}, e2) -> print_string "let rec ("; Id.log id; print_string ": "; Type.log typ; print_string ") ("; print_args args; print_string ") = "; print_newline (); log e1; print_string " in "; log e2
+  | LetRec ({ name = (id, typ); args = args; body = e1}, e2) -> print_string "let rec ("; Id.log id; print_string ": "; Type.log typ; print_string ") ("; print_args args; print_string ") = "; print_newline (); log e1; print_string "in "; log e2
   | App (e1, elist) -> log e1; print_string "("; print_elist elist; print_string ")"
   | Tuple elist -> print_string "("; print_elist elist; print_string ")"
-  | LetTuple (args, e1, e2) -> print_string "let ("; print_args args; print_string ") = "; log e1; print_string " in "; log e2
+  | LetTuple (args, e1, e2) -> print_string "let ("; print_args args; print_string ") = "; print_newline (); log e1; print_string "in "; log e2
   | Array (e1, e2) -> print_string "Array.create "; log e1; print_string " "; log e2
   | Get (e1, e2) -> log e1; print_string ".("; log e2; print_string ")"
   | Put (e1, e2, e3) -> log e1; print_string ".("; log e2; print_string ") <- "; log e3
