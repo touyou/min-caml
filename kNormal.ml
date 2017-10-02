@@ -36,13 +36,11 @@ let rec log norm =
   | Sub (id1, id2) | FSub (id1, id2) -> print_string "("; Id.log id1; print_string " - "; Id.log id2; print_string ")"
   | FMul (id1, id2) -> print_string "("; Id.log id1; print_string " * "; Id.log id2; print_string ")"
   | FDiv (id1, id2) -> print_string "("; Id.log id1; print_string " / "; Id.log id2; print_string ")"
-  | IfEq (id1, id2, r1, r2) -> print_string "if "; Id.log id1; print_string " == "; Id.log id2; print_string " then "; log r1;
-                               print_string " else "; log r2
-  | IfLE (id1, id2, r1, r2) -> print_string "if "; Id.log id1; print_string " <= "; Id.log id2; print_string " then "; log r1;
-                               print_string " else "; log r2
+  | IfEq (id1, id2, r1, r2) -> print_string "if "; Id.log id1; print_string " == "; Id.log id2; print_string " then "; log r1; print_string " else "; log r2; print_newline ()
+  | IfLE (id1, id2, r1, r2) -> print_string "if "; Id.log id1; print_string " <= "; Id.log id2; print_string " then "; log r1; print_string " else "; log r2; print_newline ()
   | Let ((id, typ), x1, x2) -> print_string "let "; Id.log id; print_string " : "; Type.log typ; print_string " = "; log x1; print_string " in "; log x2
   | Var id -> Id.log id
-  | LetRec ({ name = (x, t); args = args; body = e1 }, e2) -> print_string "let rec ("; Id.log x; print_string ": "; Type.log t; print_string ") ("; print_arglist args; print_string ") = "; log e1;
+  | LetRec ({ name = (x, t); args = args; body = e1 }, e2) -> print_string "let rec ("; Id.log x; print_string ": "; Type.log t; print_string ") ("; print_arglist args; print_string ") = "; print_newline (); log e1;
                                                               print_string " in "; log e2
   | App (id, ids) | ExtFunApp (id, ids) -> Id.log id; print_string "("; print_idlist ids; print_string ")"
   | Tuple ids -> print_string "("; print_idlist ids; print_string ")"
