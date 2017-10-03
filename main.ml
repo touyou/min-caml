@@ -11,10 +11,10 @@ let lexbuf outchan l = (* バッファをコンパイルしてチャンネルへ
   Id.counter := 0;
   Typing.extenv := M.empty;
   let parsed = Parser.exp Lexer.token l in
-  print_string "parsed: ---"; print_newline (); Syntax.log parsed; print_newline ();
+(*  print_string "parsed: ---"; print_newline (); Syntax.log parsed; print_newline (); *)
   let typed = Typing.f parsed in
   let normalized = KNormal.f typed in
-  print_string "normalized: ---"; print_newline (); KNormal.log normalized; print_newline ();
+(*  print_string "normalized: ---"; print_newline (); KNormal.log normalized; print_newline ();*)
   let alphaconv = Alpha.f normalized in
   let opted = iter !limit alphaconv in
   let closured = Closure.f opted in
