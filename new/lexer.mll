@@ -25,6 +25,10 @@ rule token = parse
     { LPAREN }
 | ')'
     { RPAREN }
+| "true"
+    { BOOL(true) }
+| "false"
+    { BOOL(false) }
 | "not"
     { NOT }
 | digit+
@@ -74,7 +78,7 @@ rule token = parse
 | ','
     { COMMA }
 | '_'
-    { IDENT(Id.gentmp Type.Unit) }
+    { IDENT(Id.gen_tmp Type.Unit) }
 | "Array.create"
     { ARRAY_CREATE }
 | '.'

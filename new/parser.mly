@@ -6,6 +6,7 @@
 %}
 
 /* 字句を表すデータ型  */
+%token <bool> BOOL
 %token <int> INT
 %token <float> FLOAT
 %token NOT
@@ -66,6 +67,8 @@ simple_exp:
     { $2 }
 | LPAREN RPAREN
     { Unit }
+| BOOL
+    { Bool($1) }
 | INT
     { Int($1) }
 | FLOAT
@@ -152,3 +155,31 @@ exp:
 
 fun_def:
 | IDENT formal_args EQUAL exp
+    { { name = add_type $1; args = $2; body = $4 } }
+
+formal_args:
+| IDENT formal_args
+    { add_type $1 :: $2 }
+| IDENT
+    { [add_type $1] }
+
+actual_args:
+| actual_args simple_exp
+    %prec prec_app
+    { $1 @ [$2] }
+| simple_exp
+    %prec prec_app
+    { [$1] }
+
+elems:
+| elems COMMA exp
+    { $1 @ [$3] }
+| exp COMMA exp
+    { [$1; $3] }
+
+pat:
+| pat COMMA IDENT
+    { $1 @ [add_type $3] }
+| IDENT COMMA IDENT
+    { [add_type $1; add_type $3] }
+

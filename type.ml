@@ -13,7 +13,8 @@ let rec log typ =
   match typ with
   | Unit -> print_string "Unit"
   | Bool -> print_string "Bool"
-  | Int -> print_string "Float"
+  | Int -> print_string "Int"
+  | Float -> print_string "Float"
   | Fun (t1, t2) -> log (Tuple t1); print_string " -> "; log t2
   | Tuple t -> print_string "("; list_log t; print_string ")"
   | Array t -> print_string "["; log t; print_string "]"
