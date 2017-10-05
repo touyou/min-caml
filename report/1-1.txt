@@ -1,0 +1,192 @@
+171023 藤井陽介
+
+main.mlで
+
+let lexbuf outchan l =
+  Id.counter := 0;
+  Typing.ext_env := MiniMap.empty;
+  let parsed = Parser.exp Lexer.token l in
+  print_string "parser---"; print_newline (); Syntax.log parsed; print_newline ();
+  let typed = Typing.main parsed in
+  let normalized = KNormal.main typed in
+  print_string "kNormal---"; print_newline (); KNormal.log normalized; print_newline ();
+  let closured = Closure.main normalized in
+  let virtualized = Virtual.main closured in
+  let allocated = RegAlloc.main virtualized in
+  Emit.main outchan allocated
+
+このように出力できるようにしました。以下はtest/fib.mlをコンパイルした時の出力です。
+
+parser---
+let rec (fib: T) ((n: T)) =
+if n <= 1 then
+n
+else
+(fib((n - 1)) + fib((n - 2))) in
+print_int(fib(30))
+free variable print_int assumed as external
+kNormal---
+let rec (fib: (Int) -> Int) ((n: Int)) =
+let Ti3: Int =
+1 in
+if n <= Ti3 then
+n
+else
+let Ti6: Int =
+let Ti5: Int =
+let Ti4: Int =
+1 in
+(n - Ti4) in
+fib(Ti5) in
+let Ti9: Int =
+let Ti8: Int =
+let Ti7: Int =
+2 in
+(n - Ti7) in
+fib(Ti8) in
+(Ti6 + Ti9) in
+let Ti2: Int =
+let Ti1: Int =
+30 in
+fib(Ti1) in
+print_int(Ti2)
+directly applying fib
+directly applying fib
+directly applying fib
+eliminating closure(s) fib
+register allocation: may take some time (up to a few minutes, depending on the size of functions)
+generating assembly...
+
+【コード】
+□test/fib.ml
+let rec fib n =
+  if n <= 1 then n else
+  fib (n - 1) + fib (n - 2) in
+print_int (fib 30)
+
+□id.ml
+let log id = print_string id
+
+□type.ml
+let rec log typ =
+  match typ with
+  | Unit -> print_string "Unit"
+  | Bool -> print_string "Bool"
+  | Int -> print_string "Int"
+  | Float -> print_string "Float"
+  | Fun(t1, t2) -> log (Tuple t1); print_string " -> "; log t2
+  | Tuple(ts) -> print_string "("; print_list ts; print_string ")"
+  | Array(t) -> print_string "["; log t; print_string "]"
+  | Var(t) ->
+      let var = !t in
+      (match var with
+      | Some t -> log t
+      | None -> print_string "T")
+and print_list ts =
+  match ts with
+  | [] -> ()
+  | t :: [] -> log t
+  | t :: tr -> log t; print_string ", "; print_list tr
+
+□syntax.ml
+let rec log elem =
+  match elem with
+  | Unit -> print_string "()"
+  | Bool e -> if e then print_string "true" else print_string "false"
+  | Int e -> print_int e
+  | Float e -> print_float e
+  | Not e -> print_string "not("; log e; print_string ")"
+  | Neg e | FNeg e -> print_string "-("; log e; print_string ")"
+  | Add(e1, e2) | FAdd(e1, e2) -> print_string "("; log e1; print_string " + ";
+                                    log e2; print_string ")"
+  | Sub(e1, e2) | FSub(e1, e2) -> print_string "("; log e1; print_string " - ";
+                                    log e2; print_string ")"
+  | Mul(e1, e2) | FMul(e1, e2) -> print_string "("; log e1; print_string " * ";
+                                    log e2; print_string ")"
+  | Div(e1, e2) | FDiv(e1, e2) -> print_string "("; log e1; print_string " / ";
+                                    log e2; print_string ")"
+  | Eq(e1, e2) -> log e1; print_string " == "; log e2
+  | LE(e1, e2) -> log e1; print_string " <= "; log e2
+  | If(e1, e2, e3) -> print_string "if "; log e1; print_string " then "; print_newline ();
+                       log e2; print_newline ();
+                       print_string "else"; print_newline ();
+                       log e3
+  | Let((id, typ), e1, e2) -> print_string "let "; Id.log id; print_string ": "; Type.log typ;
+                               print_string " ="; print_newline ();
+                               log e1; print_string " in"; print_newline ();
+                               log e2
+  | Var id -> Id.log id
+  | LetRec ({ name = (id, typ); args = args; body = e1}, e2) ->
+          print_string "let rec ("; Id.log id; print_string ": "; Type.log typ; print_string ") ";
+          print_string "("; print_args args; print_string ") ="; print_newline ();
+          log e1; print_string " in"; print_newline ();
+          log e2
+  | App(e1, elems) -> log e1; print_string "("; print_elems elems; print_string ")"
+  | Tuple elems -> print_string "("; print_elems elems; print_string ")"
+  | LetTuple(args, e1, e2) -> print_string "let ("; print_args args; print_string ") ="; print_newline ();
+                               log e1; print_string " in"; print_newline ();
+                               log e2
+  | Array(e1, e2) -> print_string "Array.create "; log e1; print_string " "; log e2
+  | Get(e1, e2) -> log e1; print_string ".("; log e2; print_string ")"
+  | Put(e1, e2, e3) -> log e1; print_string ".("; log e2; print_string ") <- "; log e3
+and print_args args =
+  match args with
+  | [] -> ()
+  | (id, typ) :: [] -> print_string "("; Id.log id; print_string ": "; Type.log typ; print_string ")"
+  | (id, typ) :: argr -> print_string "("; Id.log id; print_string ": "; Type.log typ; print_string "), "; print_args argr
+and print_elems elems =
+  match elems with
+  | [] -> ()
+  | e :: [] -> log e
+  | e :: er -> log e; print_string ", "; print_elems er
+
+□kNormal.ml
+let rec log elem =
+  match elem with
+  | Unit -> print_string "()"
+  | Int(e) -> print_int e
+  | Float(e) -> print_float e
+  | Neg(e) | FNeg(e) -> print_string "-("; Id.log e; print_string ")"
+  | Add(e1, e2) | FAdd(e1, e2) -> print_string "("; Id.log e1; print_string " + ";
+                                  Id.log e2; print_string ")"
+  | Sub(e1, e2) | FSub(e1, e2) -> print_string "("; Id.log e1; print_string " - ";
+                                  Id.log e2; print_string ")"
+  | Mul(e1, e2) | FMul(e1, e2) -> print_string "("; Id.log e1; print_string " * ";
+                                  Id.log e2; print_string ")"
+  | Div(e1, e2) | FDiv(e1, e2) -> print_string "("; Id.log e1; print_string " / ";
+                                  Id.log e2; print_string ")"
+  | IfEq(e1, e2, e3, e4) -> print_string "if "; Id.log e1; print_string " == "; Id.log e2; print_string " then"; print_newline ();
+                            log e3; print_newline ();
+                            print_string "else"; print_newline ();
+                            log e4
+  | IfLE(e1, e2, e3, e4) -> print_string "if "; Id.log e1; print_string " <= "; Id.log e2; print_string " then"; print_newline ();
+                            log e3; print_newline ();
+                            print_string "else"; print_newline ();
+                            log e4
+  | Let((id, typ), e1, e2) -> print_string "let "; Id.log id; print_string ": "; Type.log typ; print_string " ="; print_newline ();
+                              log e1; print_string " in"; print_newline();
+                              log e2
+  | Var(e) -> Id.log e
+  | LetRec({ name = (x, t); args = yts; body = e1 }, e2) ->
+      print_string "let rec ("; Id.log x;
+      print_string ": "; Type.log t; print_string ") ("; print_args yts; print_string ") ="; print_newline ();
+      log e1; print_string " in "; print_newline ();
+      log e2
+  | App(e1, e2) | ExtFunApp(e1, e2) -> Id.log e1; print_string "("; print_elems e2; print_string ")"
+  | Tuple(es) -> print_string "("; print_elems es; print_string ")"
+  | LetTuple(args, id, e) -> print_string "let ("; print_args args; print_string ") ="; print_newline ();
+                             Id.log id; print_string " in"; print_newline ();
+                             log e
+  | Get(e1, e2) -> Id.log e1; print_string ".("; Id.log e2; print_string ")"
+  | Put(e1, e2, e3) -> Id.log e1; print_string ".("; Id.log e2; print_string ") <- "; Id.log e3
+  | ExtArray(e) -> print_string "["; Id.log e; print_string "]"
+and print_args args =
+  match args with
+  | [] -> ()
+  | (id, typ) :: [] -> print_string "("; Id.log id; print_string ": "; Type.log typ; print_string ")"
+  | (id, typ) :: argr -> print_string "("; Id.log id; print_string ": "; Type.log typ; print_string "), "; print_args argr
+and print_elems elems =
+  match elems with
+  | [] -> ()
+  | id :: [] -> Id.log id
+  | id :: idr -> Id.log id; print_string ", "; print_elems idr
