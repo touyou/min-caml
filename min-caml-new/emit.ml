@@ -82,7 +82,7 @@ and assemble_inst oc = function
     Printf.fprintf oc "%s" s
   | NonTail(x), Mr(y) when x = y -> ()
   (* or %r2, %r1, %r2 *)
-  | NonTail(x), Mr(y) -> Printf.fprintf oc "\tor\t%s, %s, %s\n" y x y
+  | NonTail(x), Mr(y) -> Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" x y x x y
   (* neg %r1, %r2 *)
   | NonTail(x), Neg(y) -> Printf.fprintf oc "\tneg\t%s, %s\n" x y
   (* add %r1, %r2, %r3 *)
@@ -234,7 +234,7 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tsubi\t%s, %s, %d\n" reg_stack_p reg_stack_p ss;
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
     if List.mem a all_regs && a <> regs.(0) then
-      Printf.fprintf oc "\tor\t%s, %s, %s\n" regs.(0) a regs.(0)
+      Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" a regs.(0) a a regs.(0)
     else if List.mem a all_fregs && a <> fregs.(0) then
       Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0);
     Printf.fprintf oc "\tmtlr\t%s\n" reg_tmp
@@ -248,7 +248,7 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tsubi\t%s, %s, %d\n" reg_stack_p reg_stack_p ss;
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
     if List.mem a all_regs && a <> regs.(0) then
-      Printf.fprintf oc "\tor\t%s, %s, %s\n" regs.(0) a regs.(0)
+      Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" a regs.(0) a a regs.(0)
     else if List.mem a all_fregs && a <> fregs.(0) then
       Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0);
     Printf.fprintf oc "\tmtlr\t%s\n" reg_tmp
@@ -281,7 +281,7 @@ and assemble_args oc x_reg_cl ys zs =
       (0, x_reg_cl)
       ys in
     List.iter
-      (fun (y, r) -> Printf.fprintf oc "\tor\t%s, %s, %s\n" y r y)
+      (fun (y, r) -> Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" r y r r y)
       (shuffle reg_swap yrs);
     let (d, zfrs) =
       List.fold_left

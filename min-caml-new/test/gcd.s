@@ -4,7 +4,7 @@
 gcd.7:
 	cmpwi	%cr7, %r2, 0
 	bne	%cr7, beq_else.17
-	or	%r5, %r2, %r5
+	or	%r2, %r5, %r2	# mr %r2, %r5
 	blr
 beq_else.17:
 	cmpw	%cr7, %r2, %r5
@@ -13,9 +13,9 @@ beq_else.17:
 	b	gcd.7
 ble_else.18:
 	sub	%r2, %r2, %r5
-	or	%r5, %r28, %r5
-	or	%r2, %r5, %r2
-	or	%r28, %r2, %r28
+	or	%r28, %r5, %r28	# mr %r28, %r5
+	or	%r5, %r2, %r5	# mr %r5, %r2
+	or	%r2, %r28, %r2	# mr %r2, %r28
 	b	gcd.7
 _min_caml_start: # main entry point
 	mflr	%r0
