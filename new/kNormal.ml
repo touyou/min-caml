@@ -7,6 +7,7 @@ type t =
   | Add of Id.t * Id.t
   | Sub of Id.t * Id.t
   | Mul of Id.t * Id.t
+  | Div of Id.t * Id.t
   | FNeg of Id.t
   | FAdd of Id.t * Id.t
   | FSub of Id.t * Id.t
@@ -84,7 +85,8 @@ let rec free_var = function
   | Add(x, y) | Sub(x, y) | Mul(x, y) | Div(x, y)
   | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | Get(x, y) ->
       MiniSet.of_list [x; y]
-  | IfEq(x, y, e1, e2) | IfLE(x, y, e1, e2) -> MiniSet.add (MiniSet.add y (MiniSet.union (free_var e1) (free_var)))
+  | IfEq(x, y, e1, e2) | IfLE(x, y, e1, e2) ->
+    MiniSet.add x (MiniSet.add y (MiniSet.union (free_var e1) (free_var e2)))
   | Let((x, t), e1, e2) -> MiniSet.union (free_var e1) (MiniSet.remove x (free_var e2))
   | Var(x) -> MiniSet.singleton x
   | LetRec({ name = (x, t); args = yts; body = e1 }, e2) ->
@@ -130,6 +132,9 @@ let rec normalize env = function
       insert_let (normalize env e1)
         (fun x -> insert_let (normalize env e2)
             (fun y -> Div(x, y), Type.Int))
+  | Syntax.FNeg(e) ->
+    insert_let (normalize env e)
+      (fun x -> FNeg(x), Type.Float)
   | Syntax.FAdd(e1, e2) ->
       insert_let (normalize env e1)
         (fun x -> insert_let (normalize env e2)
@@ -148,7 +153,7 @@ let rec normalize env = function
             (fun y -> FDiv(x, y), Type.Float))
   | Syntax.Eq _ | Syntax.LE _ as cmp ->
       normalize env (Syntax.If(cmp, Syntax.Bool(true), Syntax.Bool(false)))
-  | Sytax.If(Syntax.Not(e1), e2, e3) -> normalize env (Syntax.If(e1, e3, e2))
+  | Syntax.If(Syntax.Not(e1), e2, e3) -> normalize env (Syntax.If(e1, e3, e2))
   | Syntax.If(Syntax.Eq(e1, e2), e3, e4) ->
       insert_let (normalize env e1)
         (fun x -> insert_let (normalize env e2)
@@ -167,8 +172,8 @@ let rec normalize env = function
   | Syntax.Let((x, t), e1, e2) ->
       let e1', t1 = normalize env e1 in
       let e2', t2 = normalize (MiniMap.add x t env) e2 in
-      Let((x, t), e1', e2), t2
-  | Synax.Var(x) when MiniMap.mem x env -> Var(x), MiniMap.find x env
+      Let((x, t), e1', e2'), t2
+  | Syntax.Var(x) when MiniMap.mem x env -> Var(x), MiniMap.find x env
   | Syntax.Var(x) ->
       (match MiniMap.find x !Typing.ext_env with
       | Type.Array(_) as t -> ExtArray x, t
@@ -179,15 +184,27 @@ let rec normalize env = function
       let e1', t1 = normalize (MiniMap.add_list yts env') e1 in
       LetRec({ name = (x, t); args = yts; body = e1' }, e2'), t2
   | Syntax.App(Syntax.Var(f), e2s) when not (MiniMap.mem f env) ->
-      (match MiniMap.find f !Typing.extenv with
+      (match MiniMap.find f !Typing.ext_env with
       | Type.Fun(_, t) ->
           let rec bind xs = function
             | [] -> ExtFunApp(f, xs), t
             | e2 :: e2s ->
                 insert_let (normalize env e2)
                   (fun x -> bind (xs @ [x]) e2s) in
-          bind [] e2s)
+          bind [] e2s
       | _ -> assert false)
+  | Syntax.App(e1, e2s) ->
+    (match normalize env e1 with
+     | _, Type.Fun(_, t) as g_e1 ->
+       insert_let g_e1
+         (fun f ->
+            let rec bind xs = function
+              | [] -> App(f, xs), t
+              | e2 :: e2s ->
+                insert_let (normalize env e2)
+                  (fun x -> bind (xs @ [x]) e2s) in
+            bind [] e2s)
+     | _ -> assert false)
   | Syntax.Tuple(es) ->
       let rec bind xs ts = function
         | [] -> Tuple(xs), Type.Tuple(ts)

@@ -69,7 +69,7 @@ let rec log elem =
                                log e2
   | Array(e1, e2) -> print_string "Array.create "; log e1; print_string " "; log e2
   | Get(e1, e2) -> log e1; print_string ".("; log e2; print_string ")"
-  | Put(e1, e2) -> log e1; print_string ".("; log e2; print_string ") <- "; log e3
+  | Put(e1, e2, e3) -> log e1; print_string ".("; log e2; print_string ") <- "; log e3
 and print_args args =
   match args with
   | [] -> ()

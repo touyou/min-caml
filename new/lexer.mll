@@ -32,9 +32,9 @@ rule token = parse
 | "not"
     { NOT }
 | digit+
-    { INT(int_of_string (Lexing.lexme lexbuf)) }
+    { INT(int_of_string (Lexing.lexeme lexbuf)) }
 | digit+ ('.' digit*)? (['e' 'E'] ['+' '-']? digit+)?
-    { FLOAT(float_of_string (Lexing.lexme lexbuf)) }
+    { FLOAT(float_of_string (Lexing.lexeme lexbuf)) }
 | '-'
     { MINUS }
 | '+'
@@ -90,14 +90,14 @@ rule token = parse
 | eof
     { EOF }
 | lower (digit|lower|upper|'_')*
-    { IDENT(Lexing.lexme lexbuf) }
+    { IDENT(Lexing.lexeme lexbuf) }
 | _
     { failwith
         (Printf.sprintf "unknown token: %s line %d, characters %d-%d"
-            (Lexing.lexme lexbuf)
+            (Lexing.lexeme lexbuf)
             (lexbuf.lex_curr_p.pos_lnum)
-            (Lexing.lexme_start lexbuf)
-            (Lexing.lexme_end lexbuf)
+            (Lexing.lexeme_start lexbuf)
+            (Lexing.lexeme_end lexbuf)
         ) }
 (* コメントがネストしても大丈夫なように  *)
 and comment = parse

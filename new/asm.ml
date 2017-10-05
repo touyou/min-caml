@@ -40,7 +40,12 @@ type prog = Prog of (Id.label * float) list * fun_def list * t
 let fletd(x, e1, e2) = Let((x, Type.Float), e1, e2)
 let seq(e1, e2) = Let((Id.gen_tmp Type.Unit, Type.Unit), e1, e2)
 
-let regs = Array.init 32 (fun i -> Printf.sprintf "%%r%d" i)
+(* let regs = Array.init 32 (fun i -> Printf.sprintf "%%r%d" i) *)
+let regs =
+  [| "%r2"; "%r5"; "%r6"; "%r7"; "%r8"; "%r9"; "%r10";
+     "%r11"; "%r12"; "%r13"; "%r14"; "%r15"; "%r16"; "%r17"; "%r18";
+     "%r19"; "%r20"; "%r21"; "%r22"; "%r23"; "%r24"; "%r25"; "%r26";
+     "%r27"; "%r28"; "%r29"; "%r30" |]
 let fregs = Array.init 32 (fun i -> Printf.sprintf "%%f%d" i)
 let all_regs = Array.to_list regs
 let all_fregs = Array.to_list fregs
@@ -53,9 +58,9 @@ let reg_tmp = "%r31"
 let is_reg x = (x.[0] = '%')
 
 (* 重複を消す *)
-let rec remove_add_uniq xs = function
+let rec remove_and_uniq xs = function
   | [] -> []
-  | x :: ys when MiniSet.mem x xs -> remove_add_uniq xs ys
+  | x :: ys when MiniSet.mem x xs -> remove_and_uniq xs ys
   | x :: ys -> x :: remove_and_uniq (MiniSet.add x xs) ys
 
 let fv_id_or_imm = function Var(x) -> [x] | _ -> []
@@ -66,6 +71,7 @@ let rec fv_exp = function
   | Stw(x, y, z') | Stfd(x, y, z') -> x :: y :: fv_id_or_imm z'
   | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) -> [x; y]
   | IfEq(x, y', e1, e2) | IfLE(x, y', e1, e2) | IfGE(x, y', e1, e2) -> x :: fv_id_or_imm y' @ remove_and_uniq MiniSet.empty (free_var e1 @ free_var e2)
+  | IfFEq(x, y, e1, e2) | IfFLE(x, y, e1, e2) -> x :: y :: remove_and_uniq MiniSet.empty (free_var e1 @ free_var e2)
   | CallCls(x, ys, zs) -> x :: ys @ zs
   | CallDir(_, ys, zs) -> ys @ zs
 and free_var = function

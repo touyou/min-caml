@@ -52,14 +52,14 @@ let rec log elem =
                             print_string "else"; print_newline (); log e4
   | Let((id, typ), e1, e2) -> ()
   | Var(x) -> Id.log x
-  | MakeCls((id, typ), { entry = Label(l); actual_free_var = ys }, e) -> ()
+  | MakeCls((id, typ), { entry = Id.Label(l); actual_free_var = ys }, e) -> ()
   | AppCls(x, xs) -> ()
   | AppDir(l, xs) -> ()
   | Tuple(xs) -> ()
   | LetTuple(xts, x, t) -> ()
   | Get(e1, e2) -> Id.log e1; print_string ".("; Id.log e2; print_string ")"
   | Put(e1, e2, e3) -> Id.log e1; print_string ".("; Id.log e2; print_string ") <- "; Id.log e3
-  | ExtArray(Label(l)) -> print_string "[" ^ l ^ "]"
+  | ExtArray(Id.Label(l)) -> print_string ("[" ^ l ^ "]")
 
 let rec free_var = function
   | Unit | Int(_) | Float(_) | ExtArray(_) -> MiniSet.empty

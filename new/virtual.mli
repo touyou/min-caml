@@ -1,0 +1,1 @@
+val main : Closure.prog -> Asm.prog

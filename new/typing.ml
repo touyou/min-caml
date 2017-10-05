@@ -3,7 +3,7 @@ open Syntax
 exception Unify of Type.t * Type.t
 exception Error of t * Type.t * Type.t
 
-let ext_env = ref MinMap.empty
+let ext_env = ref MiniMap.empty
 
 (* 型変数を中身で置き換える *)
 let rec deref_type = function
@@ -36,7 +36,7 @@ let rec deref_term = function
   | FSub(e1, e2) -> FSub(deref_term e1, deref_term e2)
   | FMul(e1, e2) -> FMul(deref_term e1, deref_term e2)
   | FDiv(e1, e2) -> FDiv(deref_term e1, deref_term e2)
-  | If(e1, e2, e3) -> If(deref_term e1, deref_term e2)
+  | If(e1, e2, e3) -> If(deref_term e1, deref_term e2, deref_term e3)
   | Let(xt, e1, e2) -> Let(deref_id_type xt, deref_term e1, deref_term e2)
   | LetRec({ name = xt; args = yts; body = e1 }, e2) ->
       LetRec({ name = deref_id_type xt;
@@ -136,7 +136,7 @@ let rec infer env e =
     | App(e, es) ->
         let t = Type.gen_type () in
         unify (infer env e) (Type.Fun(List.map (infer env) es, t));
-        infer env e2
+        t
     | Tuple(es) -> Type.Tuple(List.map (infer env) es)
     | LetTuple(xts, e1, e2) ->
         unify (Type.Tuple(List.map snd xts)) (infer env e1);

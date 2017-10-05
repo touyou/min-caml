@@ -1,0 +1,1 @@
+val main : out_channel -> Asm.prog -> unit
