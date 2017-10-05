@@ -1,1 +1,1 @@
-val f : Asm.prog -> Asm.prog
+val main : Asm.prog -> Asm.prog

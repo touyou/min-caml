@@ -1,2 +1,2 @@
-val f : KNormal.t -> KNormal.t
-val g : Id.t M.t -> KNormal.t -> KNormal.t (* for Inline.g *)
+val main : KNormal.t -> KNormal.t
+val alpha_conv : Id.t MiniMap.t -> KNormal.t -> KNormal.t

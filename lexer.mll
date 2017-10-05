@@ -1,16 +1,17 @@
 {
-(* lexerが利用する変数、関数、型などの定義 *)
-open Parser
-open Type
+  (* lexerで使う変数・関数・型はここに書く  *)
+  open Parser
+  open Type
 }
 
-(* 正規表現の略記 *)
-let space = [' ' '\t']
-let newline  = '\r' | '\n' | "\r\n"
-let digit = ['0'-'9']
-let lower = ['a'-'z']
-let upper = ['A'-'Z']
+(* 正規表現 *)
+let space   = [' ' '\t']
+let newline = '\r' | '\n' | "\r\n"
+let digit   = ['0'-'9']
+let lower   = ['a'-'z']
+let upper   = ['A'-'Z']
 
+(* Lexer.token  *)
 rule token = parse
 | space+
     { token lexbuf }
@@ -18,7 +19,7 @@ rule token = parse
     { Lexing.new_line lexbuf;
       token lexbuf }
 | "(*"
-    { comment lexbuf; (* ネストしたコメントのためのトリック *)
+    { comment lexbuf;
       token lexbuf }
 | '('
     { LPAREN }
@@ -30,14 +31,18 @@ rule token = parse
     { BOOL(false) }
 | "not"
     { NOT }
-| digit+ (* 整数を字句解析するルール (caml2html: lexer_int) *)
+| digit+
     { INT(int_of_string (Lexing.lexeme lexbuf)) }
 | digit+ ('.' digit*)? (['e' 'E'] ['+' '-']? digit+)?
     { FLOAT(float_of_string (Lexing.lexeme lexbuf)) }
-| '-' (* -.より後回しにしなくても良い? 最長一致? *)
+| '-'
     { MINUS }
-| '+' (* +.より後回しにしなくても良い? 最長一致? *)
+| '+'
     { PLUS }
+| '*'
+    { AST }
+| '/'
+    { SLASH }
 | "-."
     { MINUS_DOT }
 | "+."
@@ -73,8 +78,8 @@ rule token = parse
 | ','
     { COMMA }
 | '_'
-    { IDENT(Id.gentmp Type.Unit) }
-| "Array.create" | "Array.make" (* [XX] ad hoc *)
+    { IDENT(Id.gen_tmp Type.Unit) }
+| "Array.create"
     { ARRAY_CREATE }
 | '.'
     { DOT }
@@ -84,15 +89,17 @@ rule token = parse
     { SEMICOLON }
 | eof
     { EOF }
-| lower (digit|lower|upper|'_')* (* 他の「予約語」より後でないといけない *)
+| lower (digit|lower|upper|'_')*
     { IDENT(Lexing.lexeme lexbuf) }
 | _
     { failwith
-        (Printf.sprintf "unknown token %s line %d, characters %d-%d"
-           (Lexing.lexeme lexbuf)
-           (lexbuf.lex_curr_p.pos_lnum)
-           (Lexing.lexeme_start lexbuf)
-           (Lexing.lexeme_end lexbuf)) }
+        (Printf.sprintf "unknown token: %s line %d, characters %d-%d"
+            (Lexing.lexeme lexbuf)
+            (lexbuf.lex_curr_p.pos_lnum)
+            (Lexing.lexeme_start lexbuf)
+            (Lexing.lexeme_end lexbuf)
+        ) }
+(* コメントがネストしても大丈夫なように  *)
 and comment = parse
 | "*)"
     { () }

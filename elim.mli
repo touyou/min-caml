@@ -1,1 +1,1 @@
-val f : KNormal.t -> KNormal.t
+val main : KNormal.t -> KNormal.t

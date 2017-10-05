@@ -1,17 +1,19 @@
 %{
-(* parserが利用する変数、関数、型などの定義 *)
-open Syntax
-open Lexing
-let addtyp x = (x, Type.gentyp ())
+    (* parserが利用する変数・関数・型の定義  *)
+    open Syntax
+    open Lexing
+    let add_type x = (x, Type.gen_type ())
 %}
 
-/* (* 字句を表すデータ型の定義 (caml2html: parser_token) *) */
+/* 字句を表すデータ型  */
 %token <bool> BOOL
 %token <int> INT
 %token <float> FLOAT
 %token NOT
 %token MINUS
 %token PLUS
+%token AST
+%token SLASH
 %token MINUS_DOT
 %token PLUS_DOT
 %token AST_DOT
@@ -38,7 +40,7 @@ let addtyp x = (x, Type.gentyp ())
 %token RPAREN
 %token EOF
 
-/* (* 優先順位とassociativityの定義（低い方から高い方へ） (caml2html: parser_prior) *) */
+/* 優先順位  */
 %nonassoc IN
 %right prec_let
 %right SEMICOLON
@@ -48,18 +50,19 @@ let addtyp x = (x, Type.gentyp ())
 %left COMMA
 %left EQUAL LESS_GREATER LESS GREATER LESS_EQUAL GREATER_EQUAL
 %left PLUS MINUS PLUS_DOT MINUS_DOT
-%left AST_DOT SLASH_DOT
+%left AST SLASH AST_DOT SLASH_DOT
 %right prec_unary_minus
 %left prec_app
 %left DOT
 
-/* (* 開始記号の定義 *) */
+/* 開始記号 */
 %type <Syntax.t> exp
 %start exp
 
 %%
 
-simple_exp: /* (* 括弧をつけなくても関数の引数になれる式 (caml2html: parser_simple) *) */
+/* 括弧をつけなくても関数の引数になれるもの */
+simple_exp:
 | LPAREN exp RPAREN
     { $2 }
 | LPAREN RPAREN
@@ -75,7 +78,8 @@ simple_exp: /* (* 括弧をつけなくても関数の引数になれる式 (cam
 | simple_exp DOT LPAREN exp RPAREN
     { Get($1, $4) }
 
-exp: /* (* 一般の式 (caml2html: parser_exp) *) */
+/* 一般の式 */
+exp:
 | simple_exp
     { $1 }
 | NOT exp
@@ -84,12 +88,16 @@ exp: /* (* 一般の式 (caml2html: parser_exp) *) */
 | MINUS exp
     %prec prec_unary_minus
     { match $2 with
-    | Float(f) -> Float(-.f) (* -1.23などは型エラーではないので別扱い *)
+    | Float(f) -> Float(-.f)
     | e -> Neg(e) }
-| exp PLUS exp /* (* 足し算を構文解析するルール (caml2html: parser_add) *) */
+| exp PLUS exp
     { Add($1, $3) }
 | exp MINUS exp
     { Sub($1, $3) }
+| exp AST exp
+    { Mul($1, $3) }
+| exp SLASH exp
+    { Div($1, $3) }
 | exp EQUAL exp
     { Eq($1, $3) }
 | exp LESS_GREATER exp
@@ -118,8 +126,8 @@ exp: /* (* 一般の式 (caml2html: parser_exp) *) */
     { FDiv($1, $3) }
 | LET IDENT EQUAL exp IN exp
     %prec prec_let
-    { Let(addtyp $2, $4, $6) }
-| LET REC fundef IN exp
+    { Let(add_type $2, $4, $6) }
+| LET REC fun_def IN exp
     %prec prec_let
     { LetRec($3, $5) }
 | simple_exp actual_args
@@ -133,26 +141,27 @@ exp: /* (* 一般の式 (caml2html: parser_exp) *) */
 | simple_exp DOT LPAREN exp RPAREN LESS_MINUS exp
     { Put($1, $4, $7) }
 | exp SEMICOLON exp
-    { Let((Id.gentmp Type.Unit, Type.Unit), $1, $3) }
+    { Let((Id.gen_tmp Type.Unit, Type.Unit), $1, $3) }
 | ARRAY_CREATE simple_exp simple_exp
     %prec prec_app
     { Array($2, $3) }
 | error
     { failwith
         (Printf.sprintf "parse error line %d, characters %d-%d"
-           (let pos = Parsing.symbol_start_pos () in pos.pos_lnum)
-           (Parsing.symbol_start ())
-           (Parsing.symbol_end ())) }
+            (let pos = Parsing.symbol_start_pos () in pos.pos_lnum)
+            (Parsing.symbol_start ())
+            (Parsing.symbol_end ()))
+    }
 
-fundef:
+fun_def:
 | IDENT formal_args EQUAL exp
-    { { name = addtyp $1; args = $2; body = $4 } }
+    { { name = add_type $1; args = $2; body = $4 } }
 
 formal_args:
 | IDENT formal_args
-    { addtyp $1 :: $2 }
+    { add_type $1 :: $2 }
 | IDENT
-    { [addtyp $1] }
+    { [add_type $1] }
 
 actual_args:
 | actual_args simple_exp
@@ -170,6 +179,7 @@ elems:
 
 pat:
 | pat COMMA IDENT
-    { $1 @ [addtyp $3] }
+    { $1 @ [add_type $3] }
 | IDENT COMMA IDENT
-    { [addtyp $1; addtyp $3] }
+    { [add_type $1; add_type $3] }
+

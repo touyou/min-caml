@@ -9,61 +9,41 @@
 *.cma
 *.cmxa
 *.cmxs
+*.cmt
+*.cmti
 
 # Binary
 *.o
 
 # Symlink to Architecture-Specific Files
-/asm.ml
-/asm.mli
-/bytemark/Makefile
-/emit.ml
-/libmincaml.S
-/regAlloc.ml
-/shootout/Makefile
-/simm.ml
-/virtual.ml
+min_caml_origin/asm.ml
+min_caml_origin/asm.mli
+min_caml_origin/bytemark/Makefile
+min_caml_origin/emit.ml
+min_caml_origin/libmincaml.S
+min_caml_origin/regAlloc.ml
+min_caml_origin/shootout/Makefile
+min_caml_origin/simm.ml
+min_caml_origin/virtual.ml
 
 # Project Specific Generated Files
-/lexer.ml
-/parser.ml
-/parser.mli
-/min-caml
-/min-caml.top
+min_caml_origin/lexer.ml
+min_caml_origin/parser.ml
+min_caml_origin/parser.mli
+min_caml_origin/min-caml
+min_caml_origin/min-caml.top
 
-/min-rt/ppmdiff
-/min-rt/raytrace
-/min-rt/globals.s
-/min-rt/min-rt
-/min-rt/min-rt.min-caml
-/min-rt/min-rt.s
-/min-rt/min-rt_b
-/min-rt/*.cmp
-/min-rt/*.sld_
-/min-rt/*.cmp
-/test/*
+min_caml_origin/min-rt/ppmdiff
+min_caml_origin/min-rt/raytrace
+min_caml_origin/min-rt/globals.s
+min_caml_origin/min-rt/min-rt
+min_caml_origin/min-rt/min-rt.min-caml
+min_caml_origin/min-rt/min-rt.s
+min_caml_origin/min-rt/min-rt_b
+min_caml_origin/min-rt/*.cmp
+min_caml_origin/min-rt/*.sld_
+min_caml_origin/min-rt/*.cmp
+min_caml_origin/test/*
 !/test/*.ml
-### https://raw.github.com/github/gitignore/7af8eea00b37b330af2b9de94170f1d6aeafb1f0/ocaml.gitignore
 
-*.annot
-*.cmo
-*.cma
-*.cmi
-*.a
-*.o
-*.cmx
-*.cmxs
-*.cmxa
-
-# ocamlbuild working directory
-_build/
-
-# ocamlbuild targets
-*.byte
-*.native
-
-# oasis generated files
-setup.data
-setup.log
-
-
+report/*
