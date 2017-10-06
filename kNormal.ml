@@ -176,7 +176,8 @@ let rec normalize env = function
   | Syntax.Var(x) when MiniMap.mem x env -> Var(x), MiniMap.find x env
   | Syntax.Var(x) ->
       (match MiniMap.find x !Typing.ext_env with
-      | Type.Array(_) as t -> ExtArray x, t
+        | Type.Array(_) as t -> ExtArray x, t
+        (* | Type.Var(_) ->  *)
       | _ -> failwith (Printf.sprintf "external variable %s does not have an array type" x))
   | Syntax.LetRec({ Syntax.name = (x, t); Syntax.args = yts; Syntax.body = e1 }, e2) ->
       let env' = MiniMap.add x t env in

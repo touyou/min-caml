@@ -159,6 +159,6 @@ let rec infer env e =
 let main e =
   ext_env := MiniMap.empty;
   (try unify Type.Unit (infer MiniMap.empty e)
-  with Unify _ -> failwith "top level does not have type unit");
+   with Unify(t1, t2) -> failwith "top level does not have type unit.");
   ext_env := MiniMap.map deref_type !ext_env;
   deref_term e
