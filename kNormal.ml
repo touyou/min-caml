@@ -28,58 +28,6 @@ type t =
   | ExtFunApp of Id.t * Id.t list
 and fun_def = { name : Id.t * Type.t; args : (Id.t * Type.t) list; body : t }
 
-(* デバック用 TODO: エラー出力にするかも  *)
-let rec log elem =
-  match elem with
-  | Unit -> print_string "()"
-  | Int(e) -> print_int e
-  | Float(e) -> print_float e
-  | Neg(e) | FNeg(e) -> print_string "-("; Id.log e; print_string ")"
-  | Add(e1, e2) | FAdd(e1, e2) -> print_string "("; Id.log e1; print_string " + ";
-                                  Id.log e2; print_string ")"
-  | Sub(e1, e2) | FSub(e1, e2) -> print_string "("; Id.log e1; print_string " - ";
-                                  Id.log e2; print_string ")"
-  | Mul(e1, e2) | FMul(e1, e2) -> print_string "("; Id.log e1; print_string " * ";
-                                  Id.log e2; print_string ")"
-  | Div(e1, e2) | FDiv(e1, e2) -> print_string "("; Id.log e1; print_string " / ";
-                                  Id.log e2; print_string ")"
-  | IfEq(e1, e2, e3, e4) -> print_string "if "; Id.log e1; print_string " == "; Id.log e2; print_string " then"; print_newline ();
-                            log e3; print_newline ();
-                            print_string "else"; print_newline ();
-                            log e4
-  | IfLE(e1, e2, e3, e4) -> print_string "if "; Id.log e1; print_string " <= "; Id.log e2; print_string " then"; print_newline ();
-                            log e3; print_newline ();
-                            print_string "else"; print_newline ();
-                            log e4
-  | Let((id, typ), e1, e2) -> print_string "let "; Id.log id; print_string ": "; Type.log typ; print_string " ="; print_newline ();
-                              log e1; print_string " in"; print_newline();
-                              log e2
-  | Var(e) -> Id.log e
-  | LetRec({ name = (x, t); args = yts; body = e1 }, e2) ->
-      print_string "let rec ("; Id.log x;
-      print_string ": "; Type.log t; print_string ") ("; print_args yts; print_string ") ="; print_newline ();
-      log e1; print_string " in "; print_newline ();
-      log e2
-  | App(e1, e2) | ExtFunApp(e1, e2) -> Id.log e1; print_string "("; print_elems e2; print_string ")"
-  | Tuple(es) -> print_string "("; print_elems es; print_string ")"
-  | LetTuple(args, id, e) -> print_string "let ("; print_args args; print_string ") ="; print_newline ();
-                             Id.log id; print_string " in"; print_newline ();
-                             log e
-  | Get(e1, e2) -> Id.log e1; print_string ".("; Id.log e2; print_string ")"
-  | Put(e1, e2, e3) -> Id.log e1; print_string ".("; Id.log e2; print_string ") <- "; Id.log e3
-  | ExtVar(id, t) -> Id.log id; print_string ": "; Type.log t
-  | ExtArray(e) -> print_string "["; Id.log e; print_string "]"
-and print_args args =
-  match args with
-  | [] -> ()
-  | (id, typ) :: [] -> print_string "("; Id.log id; print_string ": "; Type.log typ; print_string ")"
-  | (id, typ) :: argr -> print_string "("; Id.log id; print_string ": "; Type.log typ; print_string "), "; print_args argr
-and print_elems elems =
-  match elems with
-  | [] -> ()
-  | id :: [] -> Id.log id
-  | id :: idr -> Id.log id; print_string ", "; print_elems idr
-
 (* 自由変数の割当 *)
 let rec free_var = function
   | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) -> MiniSet.empty

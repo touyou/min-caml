@@ -3,9 +3,6 @@ type t = string
 (* ラベル *)
 type label = Label of string
 
-(* デバック用出力 TODO: 必要に応じてエラー出力に切り替える *)
-let log id = print_string id
-
 let rec pprint_list = function
   | [] -> ""
   | [x] -> x

@@ -32,37 +32,6 @@ type fun_def = { name : Id.label * Type.t;
                  body : t }
 type prog = Prog of fun_def list * t
 
-(* for debug TODO: convert to error output *)
-let rec log elem =
-  match elem with
-  | Unit -> print_string "()"
-  | Int(i) -> print_int i
-  | Float(d) -> print_float d
-  | Neg(e) | FNeg(e) -> print_string "-("; Id.log e; print_string ")"
-  | Add(e1, e2) | FAdd(e1, e2) -> print_string "("; Id.log e1; print_string " + "; Id.log e2; print_string ")"
-  | Sub(e1, e2) | FSub(e1, e2) -> print_string "("; Id.log e1; print_string " - "; Id.log e2; print_string ")"
-  | Mul(e1, e2) | FMul(e1, e2) -> print_string "("; Id.log e1; print_string " * "; Id.log e2; print_string ")"
-  | Div(e1, e2) | FDiv(e1, e2) -> print_string "("; Id.log e1; print_string " / "; Id.log e2; print_string ")"
-  | IfEq(e1, e2, e3, e4) -> print_string "if "; Id.log e1; print_string " == ";
-                            Id.log e2; print_string " then"; print_newline ();
-                            log e3; print_newline ();
-                            print_string "else"; print_newline (); log e4
-  | IfLE(e1, e2, e3, e4) -> print_string "if "; Id.log e1; print_string " <= ";
-                            Id.log e2; print_string " then"; print_newline ();
-                            log e3; print_newline ();
-                            print_string "else"; print_newline (); log e4
-  | Let((id, typ), e1, e2) -> ()
-  | Var(x) -> Id.log x
-  | MakeCls((id, typ), { entry = Id.Label(l); actual_free_var = ys }, e) -> ()
-  | AppCls(x, xs) -> ()
-  | AppDir(l, xs) -> ()
-  | Tuple(xs) -> ()
-  | LetTuple(xts, x, t) -> ()
-  | Get(e1, e2) -> Id.log e1; print_string ".("; Id.log e2; print_string ")"
-  | Put(e1, e2, e3) -> Id.log e1; print_string ".("; Id.log e2; print_string ") <- "; Id.log e3
-  | ExtVar(Id.Label(l), t) -> print_string (l ^ ": "); Type.log t
-  | ExtArray(Id.Label(l)) -> print_string ("[" ^ l ^ "]")
-
 let rec free_var = function
   | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) -> MiniSet.empty
   | Neg(x) | FNeg(x) -> MiniSet.singleton x

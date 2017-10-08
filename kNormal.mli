@@ -27,7 +27,6 @@ type t =
   | ExtFunApp of Id.t * Id.t list
 and fun_def = { name : Id.t * Type.t; args : (Id.t * Type.t) list; body : t }
 
-val log : t -> unit
 val free_var : t -> MiniSet.t
 val main : Syntax.t -> t
 

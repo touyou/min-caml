@@ -32,6 +32,5 @@ type fun_def = { name : Id.label * Type.t;
                  body : t }
 type prog = Prog of fun_def list * t
 
-val log : t -> unit
 val free_var : t -> MiniSet.t
 val main : KNormal.t -> prog
