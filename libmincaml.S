@@ -14,34 +14,34 @@ LC2:
 	.align	2
 	.globl 	min_caml_print_newline
 min_caml_print_newline:
-	mflr 	r0
-	stmw 	r30, -8(r1)
-	stw 	r0, 8(r1)
-	stw	r3, 12(r1)
-	stw	r4, 16(r1)
-	stwu  	r1, -80(r1)
-	mr 	r30, r1
-	li	r3, 10
+	mflr 	%r0
+	stmw 	%r30, -8(%r1)
+	stw 	%r0, 8(%r1)
+	stw	%r3, 12(%r1)
+	stw	%r4, 16(%r1)
+	stwu  	%r1, -80(%r1)
+	or 	%r1, %r30, %r1
+	li	%r3, 10
 	bl 	putchar
-	lwz 	r1, 0(r1)
-	lwz 	r0, 8(r1)
-	lwz	r3, 12(r1)
-	lwz	r4, 16(r1)
-	mtlr 	r0
-	lmw 	r30, -8(r1)
+	lwz 	%r1, 0(%r1)
+	lwz 	%r0, 8(%r1)
+	lwz	%r3, 12(%r1)
+	lwz	%r4, 16(%r1)
+	mtlr 	%r0
+	lmw 	%r30, -8(%r1)
 	blr
 	.section __TEXT, __picsymbolstub1, symbol_stubs, pure_instructions, 32
 	.align 	5
 putchar:
 	.indirect_symbol _putchar
-	mflr 	r0
+	mflr 	%r0
 	bcl 	20, 31, L1spb
 L1spb:
-	mflr 	r11
-	addis 	r11, r11, ha16(putchar_lazy-L1spb)
-	mtlr 	r0
-	lwzu 	r12, lo16(putchar_lazy-L1spb)(r11)
-	mtctr 	r12
+	mflr 	%r11
+	addis 	%r11, %r11, ha16(putchar_lazy-L1spb)
+	mtlr 	%r0
+	lwzu 	%r12, lo16(putchar_lazy-L1spb)(%r11)
+	mtctr 	%r12
 	bctr
 	.lazy_symbol_pointer
 putchar_lazy:
@@ -53,39 +53,39 @@ putchar_lazy:
 	.align 	2
 	.globl	min_caml_print_int
 min_caml_print_int:
-	mflr 	r0
-	stmw 	r30, -8(r1)
-	stw 	r0, 8(r1)
-	stw	r3, 12(r1)
-	stw	r4, 16(r1)
-	stwu 	r1, -80(r1)
-	mr 	r30, r1
+	mflr 	%r0
+	stmw 	%r30, -8(%r1)
+	stw 	%r0, 8(%r1)
+	stw	%r3, 12(%r1)
+	stw	%r4, 16(%r1)
+	stwu 	%r1, -80(%r1)
+	mr 	%r30, %r1
 	bcl 	20, 31, L2pb
 L2pb:
-	mflr 	r31
-	mr	r4, r2
-	addis 	r2, r31, ha16(LC0 - L2pb)
-	la 	r3, lo16(LC0 - L2pb)(r2)
+	mflr 	%r31
+	mr	%r4, %r2
+	addis 	%r2, %r31, ha16(LC0 - L2pb)
+	la 	%r3, lo16(LC0 - L2pb)(r2)
 	bl	printf
-	lwz 	r1, 0(r1)
-	lwz 	r0, 8(r1)
-	lwz	r3, 12(r1)
-	lwz	r4, 16(r1)
-	mtlr 	r0
-	lmw 	r30, -8(r1)
+	lwz 	%r1, 0(%r1)
+	lwz 	%r0, 8(%r1)
+	lwz	%r3, 12(%r1)
+	lwz	%r4, 16(%r1)
+	mtlr 	%r0
+	lmw 	%r30, -8(%r1)
 	blr
 	.section __TEXT, __picsymbolstub1, symbol_stubs, pure_instructions, 32
 	.align 	5
 printf:
 	.indirect_symbol _printf$LDBLStub
-	mflr 	r0
+	mflr 	%r0
 	bcl 	20, 31, L2spb
 L2spb:
-	mflr 	r11
-	addis 	r11, r11, ha16(printf_lazy-L2spb)
-	mtlr 	r0
-	lwzu 	r12, lo16(printf_lazy-L2spb)(r11)
-	mtctr 	r12
+	mflr 	%r11
+	addis 	%r11, %r11, ha16(printf_lazy-L2spb)
+	mtlr 	%r0
+	lwzu 	%r12, lo16(printf_lazy-L2spb)(r11)
+	mtctr 	%r12
 	bctr
 	.lazy_symbol_pointer
 printf_lazy:
@@ -97,35 +97,35 @@ printf_lazy:
 	.align 	2
 	.globl	min_caml_print_byte
 min_caml_print_byte:
-	mflr 	r0
-	stmw 	r30, -8(r1)
-	stw 	r0, 8(r1)
-	stw	r3, 12(r1)
-	stw	r4, 16(r1)
-	stwu  	r1, -80(r1)
-	mr 	r30, r1
-	stw	r3, 104(r30)
-	mr	r3, r2
+	mflr 	%r0
+	stmw 	%r30, -8(%r1)
+	stw 	%r0, 8(%r1)
+	stw	%r3, 12(%r1)
+	stw	%r4, 16(r1)
+	stwu  	%r1, -80(%r1)
+	or 	%r1, %r30, %r1
+	stw	%r3, 104(%r30)
+	mr	%r3, %r2
 	bl 	putchar
-	lwz 	r1, 0(r1)
-	lwz 	r0, 8(r1)
-	lwz	r3, 12(r1)
-	lwz	r4, 16(r1)
-	mtlr 	r0
-	lmw 	r30, -8(r1)
+	lwz 	%r1, 0(%r1)
+	lwz 	%r0, 8(%r1)
+	lwz	%r3, 12(%r1)
+	lwz	%r4, 16(%r1)
+	mtlr 	%r0
+	lmw 	%r30, -8(%r1)
 	blr	
 #	prerr_int
 	.text
 	.align 	2
 	.globl 	min_caml_prerr_int
 min_caml_prerr_int:
-	mflr 	r0
-	stmw 	r30, -8(r1)
-	stw 	r0, 8(r1)
-	stw	r3, 12(r1)
-	stw	r4, 16(r1)
-	stwu 	r1, -80(r1)
-	mr 	r30, r1
+	mflr 	%r0
+	stmw 	%r30, -8(%r1)
+	stw 	%r0, 8(%r1)
+	stw	%r3, 12(%r1)
+	stw	%r4, 16(%r1)
+	stwu 	%r1, -80(%r1)
+	or 	%r1, %r30, %r1
 	bcl 	20, 31, L3pb
 L3pb:
 	mflr 	r31
