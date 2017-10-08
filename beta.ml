@@ -34,6 +34,7 @@ let rec beta_cond env = function
   | Get(x, y) -> Get(find x env, find y env)
   | Put(x, y, z) -> Put(find x env, find y env, find z env)
   | App(g, xs) -> App(find g env, List.map (fun x -> find x env) xs)
+  | ExtVar(x, t) -> ExtVar(x, t)
   | ExtArray(x) -> ExtArray(x)
   | ExtFunApp(x, ys) -> ExtFunApp(x, ListLabels.map (fun x -> find x env) ys)
 

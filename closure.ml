@@ -24,6 +24,7 @@ type t =
   | LetTuple of (Id.t * Type.t) list * Id.t * t
   | Get of Id.t * Id.t
   | Put of Id.t * Id.t * Id.t
+  | ExtVar of Id.label * Type.t
   | ExtArray of Id.label
 type fun_def = { name : Id.label * Type.t;
                  args : (Id.t * Type.t) list;
@@ -37,7 +38,7 @@ let rec log elem =
   | Unit -> print_string "()"
   | Int(i) -> print_int i
   | Float(d) -> print_float d
-  | Neg(e) -> print_string "-("; Id.log e; print_string ")"
+  | Neg(e) | FNeg(e) -> print_string "-("; Id.log e; print_string ")"
   | Add(e1, e2) | FAdd(e1, e2) -> print_string "("; Id.log e1; print_string " + "; Id.log e2; print_string ")"
   | Sub(e1, e2) | FSub(e1, e2) -> print_string "("; Id.log e1; print_string " - "; Id.log e2; print_string ")"
   | Mul(e1, e2) | FMul(e1, e2) -> print_string "("; Id.log e1; print_string " * "; Id.log e2; print_string ")"
@@ -59,10 +60,11 @@ let rec log elem =
   | LetTuple(xts, x, t) -> ()
   | Get(e1, e2) -> Id.log e1; print_string ".("; Id.log e2; print_string ")"
   | Put(e1, e2, e3) -> Id.log e1; print_string ".("; Id.log e2; print_string ") <- "; Id.log e3
+  | ExtVar(Id.Label(l), t) -> print_string (l ^ ": "); Type.log t
   | ExtArray(Id.Label(l)) -> print_string ("[" ^ l ^ "]")
 
 let rec free_var = function
-  | Unit | Int(_) | Float(_) | ExtArray(_) -> MiniSet.empty
+  | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) -> MiniSet.empty
   | Neg(x) | FNeg(x) -> MiniSet.singleton x
   | Add(x, y) | Sub(x, y) | Mul(x, y) | Div(x, y)
   | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | Get(x, y) -> MiniSet.of_list [x; y]
@@ -133,6 +135,7 @@ let rec closure_conv env known = function
   | KNormal.LetTuple(xts, y, e) -> LetTuple(xts, y, closure_conv (MiniMap.add_list xts env) known e)
   | KNormal.Get(x, y) -> Get(x, y)
   | KNormal.Put(x, y, z) -> Put(x, y, z)
+  | KNormal.ExtVar(x, t) -> ExtVar(Id.Label(x), t)
   | KNormal.ExtArray(x) -> ExtArray(Id.Label(x))
   | KNormal.ExtFunApp(x, ys) -> AppDir(Id.Label("min_caml_" ^ x), ys)
 

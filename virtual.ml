@@ -140,6 +140,7 @@ let rec virtualize_form env = function
        Let ((offset, Type.Int), Slw(y, Const(2)),
             Ans(Stw(z, x, Var(offset))))
      | _ -> assert false)
+  | Closure.ExtVar(Id.Label(x), t) -> Ans(SetL(Id.Label("min_caml_" ^ x)))
   | Closure.ExtArray(Id.Label(x)) -> Ans(SetL(Id.Label("min_caml_" ^ x)))
 
 (* 仮想マシンコードに変換：関数 *)

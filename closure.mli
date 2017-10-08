@@ -24,6 +24,7 @@ type t =
   | LetTuple of (Id.t * Type.t) list * Id.t * t
   | Get of Id.t * Id.t
   | Put of Id.t * Id.t * Id.t
+  | ExtVar of Id.label * Type.t
   | ExtArray of Id.label
 type fun_def = { name : Id.label * Type.t;
                  args : (Id.t * Type.t) list;

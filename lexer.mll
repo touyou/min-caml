@@ -95,7 +95,7 @@ rule token = parse
     { failwith
         (Printf.sprintf "unknown token: %s line %d, characters %d-%d"
             (Lexing.lexeme lexbuf)
-            (lexbuf.lex_curr_p.pos_lnum)
+            (let pos = Lexing.lexeme_start_p lexbuf in pos.pos_lnum)
             (Lexing.lexeme_start lexbuf)
             (Lexing.lexeme_end lexbuf)
         ) }

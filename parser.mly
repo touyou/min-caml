@@ -142,6 +142,8 @@ exp:
     { Put($1, $4, $7) }
 | exp SEMICOLON exp
     { Let((Id.gen_tmp Type.Unit, Type.Unit), $1, $3) }
+| exp SEMICOLON
+    { $1 }
 | ARRAY_CREATE simple_exp simple_exp
     %prec prec_app
     { Array($2, $3) }

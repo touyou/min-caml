@@ -23,6 +23,7 @@ type t =
   | LetTuple of (Id.t * Type.t) list * Id.t * t
   | Get of Id.t * Id.t
   | Put of Id.t * Id.t * Id.t
+  | ExtVar of Id.t * Type.t
   | ExtArray of Id.t
   | ExtFunApp of Id.t * Id.t list
 and fun_def = { name : Id.t * Type.t; args : (Id.t * Type.t) list; body : t }
@@ -66,6 +67,7 @@ let rec log elem =
                              log e
   | Get(e1, e2) -> Id.log e1; print_string ".("; Id.log e2; print_string ")"
   | Put(e1, e2, e3) -> Id.log e1; print_string ".("; Id.log e2; print_string ") <- "; Id.log e3
+  | ExtVar(id, t) -> Id.log id; print_string ": "; Type.log t
   | ExtArray(e) -> print_string "["; Id.log e; print_string "]"
 and print_args args =
   match args with
@@ -80,7 +82,7 @@ and print_elems elems =
 
 (* 自由変数の割当 *)
 let rec free_var = function
-  | Unit | Int(_) | Float(_) | ExtArray(_) -> MiniSet.empty
+  | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) -> MiniSet.empty
   | Neg(x) | FNeg(x) -> MiniSet.singleton x
   | Add(x, y) | Sub(x, y) | Mul(x, y) | Div(x, y)
   | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | Get(x, y) ->
@@ -177,8 +179,7 @@ let rec normalize env = function
   | Syntax.Var(x) ->
       (match MiniMap.find x !Typing.ext_env with
         | Type.Array(_) as t -> ExtArray x, t
-        (* | Type.Var(_) ->  *)
-      | _ -> failwith (Printf.sprintf "external variable %s does not have an array type" x))
+        | t -> ExtVar(x, t), t)
   | Syntax.LetRec({ Syntax.name = (x, t); Syntax.args = yts; Syntax.body = e1 }, e2) ->
       let env' = MiniMap.add x t env in
       let e2', t2 = normalize env' e2 in

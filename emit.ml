@@ -228,7 +228,7 @@ and assemble_inst oc = function
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
     Printf.fprintf oc "\taddi\t%s, %s, %d\n" reg_stack_p reg_stack_p ss;
-    Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_tmp, reg_closure_addr;
+    Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_tmp reg_closure_addr;
     Printf.fprintf oc "\tmtctr\t%s\n" reg_tmp;
     Printf.fprintf oc "\tbctrl\n";
     Printf.fprintf oc "\tsubi\t%s, %s, %d\n" reg_stack_p reg_stack_p ss;

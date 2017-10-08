@@ -152,7 +152,7 @@ and alloc_inst dest cont regenv = function
       alloc_call dest cont regenv exp (fun ys zs -> CallCls(find x Type.Int regenv, ys, zs)) ys zs
   | CallDir(Id.Label(x), ys, zs) as exp ->
     if List.length ys > Array.length regs - 1 || List.length zs > Array.length fregs - 1 then
-      failwith (Format.sprintf "cannot allocate registe for arguments to %s" x)
+      failwith (Format.sprintf "cannot allocate registers for arguments to %s" x)
     else
       alloc_call dest cont regenv exp (fun ys zs -> CallDir(Id.Label(x), ys, zs)) ys zs
   | Save(x, y) -> assert false
