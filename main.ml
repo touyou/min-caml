@@ -11,14 +11,14 @@ let lexbuf outchan l =
   Id.counter := 0;
   Typing.ext_env := MiniMap.empty;
   let parsed = Parser.exp Lexer.token l in
-  print_string ("Parser---\n" ^ (Debug.string_of_syntax parsed)); print_newline (); print_newline ();
+  (*print_string ("Parser---\n" ^ (Debug.string_of_syntax parsed)); print_newline (); print_newline ();*)
   let typed = Typing.main parsed in
   let normalized = KNormal.main typed in
-  print_string ("kNormal---\n" ^ (Debug.string_of_knormal normalized)); print_newline (); print_newline ();
+  (*print_string ("kNormal---\n" ^ (Debug.string_of_knormal normalized)); print_newline (); print_newline ();*)
   let alpha_converted = Alpha.main normalized in
-  print_string ("Alpha---\n"  ^ (Debug.string_of_knormal alpha_converted)); print_newline (); print_newline ();
+  (*print_string ("Alpha---\n"  ^ (Debug.string_of_knormal alpha_converted)); print_newline (); print_newline ();*)
   let opted = iter !limit alpha_converted in
-  print_string ("Optimize---\n"  ^ (Debug.string_of_knormal opted)); print_newline (); print_newline ();
+  (*print_string ("Optimize---\n"  ^ (Debug.string_of_knormal opted)); print_newline (); print_newline ();*)
   let closured = Closure.main opted in
   let virtualized = Virtual.main closured in
   let simmed = Simm.main virtualized in
