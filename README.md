@@ -22,7 +22,7 @@
 - 0 add
 - 2 addi
 - 8 or
-  9 ori
+- 9 ori
 - 15 neg
 - 17 slw
 - 21 b
