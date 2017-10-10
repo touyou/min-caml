@@ -1,5 +1,15 @@
 let limit = ref 1000
 
+(* 最適化のリスト
+Beta β簡約
+Assoc ネストしたletの簡約
+Inline インライン展開
+ConstFold 定数畳み込み
+Cse 共通部分式削除
+Elim 不要定義削除
+Simm 即値の最適化
+*)
+
 let rec iter n e =
   Format.eprintf "iteration %d@." n;
   if n = 0 then e else
