@@ -1,35 +1,20 @@
 	.text
 	.globl _min_caml_start
 	.align 2
-gcd.7:
-	cmpwi	%cr7, %r2, 0
-	bne	%cr7, beq_else.17
-	or	%r2, %r5, %r2	# mr %r2, %r5
+test.8:
+	li	%r2, 17
 	blr
-beq_else.17:
-	cmpw	%cr7, %r2, %r5
-	bgt	%cr7, ble_else.18
-	sub	%r5, %r5, %r2
-	b	gcd.7
-ble_else.18:
-	sub	%r2, %r2, %r5
-	or	%r28, %r5, %r28	# mr %r28, %r5
-	or	%r5, %r2, %r5	# mr %r5, %r2
-	or	%r2, %r28, %r2	# mr %r2, %r28
-	b	gcd.7
 _min_caml_start: # main entry point
 	mflr	%r0
 	stmw	%r30, -8(%r1)
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 21600
-	lis	%r5, 5
-	ori	%r5, %r5, 9820
+	li	%r2, 10
 	mflr	%r31
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	gcd.7
+	bl	test.8
 	subi	%r3, %r3, 8
 	lwz	%r31, 4(%r3)
 	mtlr	%r31

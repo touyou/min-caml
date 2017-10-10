@@ -1,6 +1,7 @@
 open Id
 open Type
 open Syntax
+open KNormal
 open Closure
 open Asm
 
