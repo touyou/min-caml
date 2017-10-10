@@ -22,6 +22,7 @@
 - 0 add
 - 2 addi
 - 8 or
+  9 ori
 - 15 neg
 - 17 slw
 - 21 b
@@ -39,11 +40,6 @@
 - 58 fsub
 - 59 fmul
 - 60 fdiv
-
-### ISAにある
-
-- lfd
-- ori
 
 ### ISAの糖衣構文部分にある
 
@@ -68,6 +64,6 @@
 - [ ] bge
 - [ ] cmpu
 - [ ] lmw
-- [ ] sub -> 書き換える
+- [ ] sub
 - [ ] slwi
 
