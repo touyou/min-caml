@@ -17,46 +17,57 @@
 - オリジナルにあわせmrをorに直し、レジスタの順番はPowerPCから少し変更しています
 
 ## emitからはかれている命令の現状
+### シミュレータにある
 
-- li
-- lis
+- 0 add
+- 2 addi
+- 8 or
+- 15 neg
+- 17 slw
+- 21 b
+- 36 lwz
+- 37 lwzx
+- 40 stw
+- 42 stwx
+- 46 lfd
+- 47 lfdx
+- 50 stfd
+- 51 stfdx
+- 54 fmr
+- 55 fneg
+- 57 fadd
+- 58 fsub
+- 59 fmul
+- 60 fdiv
+
+### ISAにある
+
+- lfd
 - ori
-- lfd
-- or
-- neg
-- add
-- addi
-- sub -> 書き換える
-- subi -> 書き換える
-- slw
-- slwi
-- lwzx
-- lwz
-- stwx
-- stw
-- fmr
-- fneg
-- fadd
-- fsub
-- fmul
-- fdiv
-- lfdx
-- lfd
-- stfdx
-- stfd
-- cmpw
-- cmpwi
-- cmpu
-- blr
-- beq
-- bne
-- ble
-- bgt
-- bge
-- mtctr
-- bctr
-- b
-- mflr
-- bctrl
-- mtlr
-- lmw
+
+### ISAの糖衣構文部分にある
+
+- [ ] cmpw(cmp)
+- [ ] li(addi)
+- [ ] subi(addi) -> 書き換える
+- [ ] lis(addis)
+- [ ] bne(bc)
+- [ ] cmpwi(cmpi)
+- [ ] mtlr(mtspr)
+- [ ] mtctr(mtspr)
+- [ ] mflr(mfspr)
+
+### ISAにすらない
+
+- [ ] bctr
+- [ ] bctrl
+- [ ] blr
+- [ ] beq
+- [ ] ble
+- [ ] bgt
+- [ ] bge
+- [ ] cmpu
+- [ ] lmw
+- [ ] sub -> 書き換える
+- [ ] slwi
+
