@@ -14,9 +14,9 @@ let rec iter n e =
   Format.eprintf "iteration %d@." n;
   if n = 0 then e else
     let e2 = ConstFold.main (Inline.main (Assoc.main (Beta.main e))) in
-    print_string ("const_fold---\n" ^ (Debug.string_of_knormal e2)); print_newline (); print_newline ();
+    (*print_string ("const_fold---\n" ^ (Debug.string_of_knormal e2)); print_newline (); print_newline ();*)
     let e1 = Cse.main e2 in
-    print_string ("cse---\n" ^ (Debug.string_of_knormal e1)); print_newline (); print_newline ();
+    (*print_string ("cse---\n" ^ (Debug.string_of_knormal e1)); print_newline (); print_newline ();*)
     let e' = Elim.main e1 in
     if e = e' then e else
       iter (n - 1) e'
@@ -30,12 +30,14 @@ let lexbuf outchan l =
   let normalized = KNormal.main typed in
   (*print_string ("kNormal---\n" ^ (Debug.string_of_knormal normalized)); print_newline (); print_newline ();*)
   let alpha_converted = Alpha.main normalized in
-  print_string ("Alpha---\n"  ^ (Debug.string_of_knormal alpha_converted)); print_newline (); print_newline ();
+  (*print_string ("Alpha---\n"  ^ (Debug.string_of_knormal alpha_converted)); print_newline (); print_newline ();*)
   let opted = iter !limit alpha_converted in
   print_string ("Optimize---\n"  ^ (Debug.string_of_knormal opted)); print_newline (); print_newline ();
   let closured = Closure.main opted in
   let virtualized = Virtual.main closured in
+  print_string ("Virtualized---\n" ^ (Debug.string_of_asm_prog virtualized)); print_newline (); print_newline ();
   let simmed = Simm.main virtualized in
+  print_string ("Simmed---\n" ^ (Debug.string_of_asm_prog simmed)); print_newline (); print_newline ();
   let allocated = RegAlloc.main simmed in
   Emit.main outchan allocated
 
