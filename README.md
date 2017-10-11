@@ -62,7 +62,6 @@
 - [ ] ble
 - [ ] bgt
 - [ ] bge
-- [ ] cmpu
 - [ ] lmw
 - [ ] sub
 - [ ] slwi
