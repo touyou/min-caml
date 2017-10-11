@@ -159,6 +159,16 @@ let string_of_closure elem =
       )
   in string_of_closure' 0 elem
 
+let string_of_cl_fun e =
+  let { Closure.name = (Id.Label(l), typ); Closure.args = args; Closure.formal_free_var = fvs; Closure.body = e } = e in
+  "(" ^ l ^ ": " ^ (string_of_type typ) ^ ")(" ^ (string_of_args args) ^ "; " ^ (string_of_args fvs) ^ ") =\n" ^ (string_of_closure e)
+
+let rec string_of_cl_prog = function
+  | Closure.Prog(fs, e) -> (string_of_cl_funs fs) ^ "in\n" ^ (string_of_closure e)
+and string_of_cl_funs = function
+  | [] -> ""
+  | e :: es -> (string_of_cl_fun e) ^ "\n" ^ (string_of_cl_funs es)
+
 let rec string_of_asm_t = function
   | Asm.Ans(exp) -> string_of_asm_exp exp
   | Asm.Let((id, typ), exp, e) -> "(" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ") = "
