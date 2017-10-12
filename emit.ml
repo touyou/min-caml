@@ -91,8 +91,11 @@ and assemble_inst oc = function
   | NonTail(x), Add(y, Const(z)) -> Printf.fprintf oc "\taddi\t%s, %s, %d\n" x y z
   (* sub %r1, %r2, %r3 *)
   | NonTail(x), Sub(y, Var(z)) -> Printf.fprintf oc "\tsub\t%s, %s, %s\n" x y z
-  (* subi %r1, %r2, num *)
-  | NonTail(x), Sub(y, Const(z)) -> Printf.fprintf oc "\tsubi\t%s, %s, %d\n" x y z
+  (*
+  addi %r1, %r2, -num
+  # subi %r1, %r2, num
+  *)
+  | NonTail(x), Sub(y, Const(z)) -> Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi %s, %s, %d\n" x y (-z) x y z
 (* ひとまず保留 *)
   | NonTail(x), Mul(y, Var(z)) -> ()
   | NonTail(x), Mul(y, Const(z)) -> ()
@@ -231,7 +234,7 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_tmp reg_closure_addr;
     Printf.fprintf oc "\tmtctr\t%s\n" reg_tmp;
     Printf.fprintf oc "\tbctrl\n";
-    Printf.fprintf oc "\tsubi\t%s, %s, %d\n" reg_stack_p reg_stack_p ss;
+    Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi\n" reg_stack_p reg_stack_p (-ss);
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
     if List.mem a all_regs && a <> regs.(0) then
       Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" a regs.(0) a a regs.(0)
@@ -245,7 +248,7 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
     Printf.fprintf oc "\taddi\t%s, %s, %d\n" reg_stack_p reg_stack_p ss;
     Printf.fprintf oc "\tbl\t%s\n" x;
-    Printf.fprintf oc "\tsubi\t%s, %s, %d\n" reg_stack_p reg_stack_p ss;
+    Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi\n" reg_stack_p reg_stack_p (-ss);
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
     if List.mem a all_regs && a <> regs.(0) then
       Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" a regs.(0) a a regs.(0)

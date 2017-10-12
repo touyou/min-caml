@@ -18,7 +18,7 @@
 
 ## emitからはかれている命令の現状
 ### シミュレータにある
-
+ 
 - 0 add
 - 2 addi
 - 8 or
@@ -43,15 +43,15 @@
 
 ### ISAの糖衣構文部分にある
 
-- [ ] cmpw(cmp)
-- [ ] li(addi)
-- [ ] subi(addi) -> 書き換える
-- [ ] lis(addis)
-- [ ] bne(bc)
-- [ ] cmpwi(cmpi)
-- [ ] mtlr(mtspr)
-- [ ] mtctr(mtspr)
-- [ ] mflr(mfspr)
+- [ ] cmpw cr3, rx, ry(cmp 3, 0, rx, ry)
+- [ ] li rx, val(addi rx, 0, val)
+- [x] subi(addi)
+- [ ] lis rx, val(addis rx, 0, val)
+- [ ] bne target(bc 4, 2, target)
+- [ ] cmpwi cr3, rx, val(cmpi 3, 0, rx, val)
+- [ ] mtlr rx(mtspr 1, rx)
+- [ ] mtctr rx(mtspr 9, rx)
+- [ ] mflr rx(mfspr rx, 8)
 
 ### ISAにすらない
 
@@ -62,7 +62,7 @@
 - [ ] ble
 - [ ] bgt
 - [ ] bge
-- [ ] lmw
-- [ ] sub
-- [ ] slwi
+- [ ] lmw rt, d(ra) ... load multiple word
+- [ ] sub rx, ry, rz = subf rx, rz, ry = rx := not(rz) + ry + 1
+- [ ] slwi 
 
