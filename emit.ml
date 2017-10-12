@@ -33,7 +33,7 @@ let stack_size () = align ((List.length !stack_map + 1) * 4)
 
 let load_label r label =
   Printf.sprintf
-    "\tlis\t%s, ha16(%s)\n\taddi\t%s, %s, lo16(%s)\n"
+    "\taddis\t%s, %%r0, ha16(%s)\t# lis\n\taddi\t%s, %s, lo16(%s)\n"
     r label r r label
 
 (* 関数呼び出しのために引数を並び替え *)
@@ -70,7 +70,7 @@ and assemble_inst oc = function
   | NonTail(x), Li(i) ->
     let n = i lsr 16 in
     let m = i lxor (n lsl 16) in
-    Printf.fprintf oc "\tlis\t%s, %d\n" x n;
+    Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" x n;
     Printf.fprintf oc "\tori\t%s, %s, %d\n" x x m
   (* label lfd %reg, 0(%reg) *)
   | NonTail(x), FLi(Id.Label(l)) ->
@@ -168,22 +168,22 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tblr\n"
 (* 条件分岐：末尾 *)
   | Tail, IfEq(x, Var(y), e1, e2)->
-    Printf.fprintf oc "\tcmpw\t%%cr7, %s, %s\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_tail_if oc e1 e2 "beq" "bne"
   | Tail, IfEq(x, Const(y), e1, e2)->
-    Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_tail_if oc e1 e2 "beq" "bne"
   | Tail, IfLE(x, Var(y), e1, e2)->
-    Printf.fprintf oc "\tcmpw\t%%cr7, %s, %s\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_tail_if oc e1 e2 "ble" "bgt"
   | Tail, IfLE(x, Const(y), e1, e2)->
-    Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_tail_if oc e1 e2 "ble" "bgt"
   | Tail, IfGE(x, Var(y), e1, e2)->
-    Printf.fprintf oc "\tcmpw\t%%cr7, %s, %s\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_tail_if oc e1 e2 "bge" "blt"
   | Tail, IfGE(x, Const(y), e1, e2)->
-    Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_tail_if oc e1 e2 "bge" "blt"
   | Tail, IfFEq(x, y, e1, e2)->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
@@ -193,22 +193,22 @@ and assemble_inst oc = function
     assemble_tail_if oc e1 e2 "ble" "bgt"
 (* 条件分岐：末尾じゃない *)
   | NonTail(z), IfEq(x, Var(y), e1, e2) ->
-    Printf.fprintf oc "\tcmpw\t%%cr7, %s, %s\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bne"
   | NonTail(z), IfEq(x, Const(y), e1, e2) ->
-    Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bne"
   | NonTail(z), IfLE(x, Var(y), e1, e2) ->
-    Printf.fprintf oc "\tcmpw\t%%cr7, %s, %s\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bgt"
   | NonTail(z), IfLE(x, Const(y), e1, e2) ->
-    Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bgt"
   | NonTail(z), IfGE(x, Var(y), e1, e2) ->
-    Printf.fprintf oc "\tcmpw\t%%cr7, %s, %s\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "blt"
   | NonTail(z), IfGE(x, Const(y), e1, e2) ->
-    Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
+    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "blt"
   | NonTail(z), IfFEq(x, y, e1, e2) ->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
@@ -220,19 +220,19 @@ and assemble_inst oc = function
   | Tail, CallCls(x, ys, zs) ->
     assemble_args oc [(x, reg_closure_addr)] ys zs;
     Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_swap reg_closure_addr;
-    Printf.fprintf oc "\tmtctr\t%s\n\tbctr\n" reg_swap
+    Printf.fprintf oc "\tmtspr\t9, %s\t# mtctr\n\tbctr\n" reg_swap
   | Tail, CallDir(Id.Label(x), ys, zs) ->
     assemble_args oc [] ys zs;
     Printf.fprintf oc "\tb\t%s\n" x
 (* 末尾でない場合一旦待避するみたいな感じになる *)
   | NonTail(a), CallCls(x, ys, zs) ->
-    Printf.fprintf oc "\tmflr\t%s\n" reg_tmp;
+    Printf.fprintf oc "\tmfspr\t%s, 8\t# mflr\n" reg_tmp;
     assemble_args oc [(x, reg_closure_addr)] ys zs;
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
     Printf.fprintf oc "\taddi\t%s, %s, %d\n" reg_stack_p reg_stack_p ss;
     Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_tmp reg_closure_addr;
-    Printf.fprintf oc "\tmtctr\t%s\n" reg_tmp;
+    Printf.fprintf oc "\tmtspr\t9, %s\t#mtctr\n" reg_tmp;
     Printf.fprintf oc "\tbctrl\n";
     Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi\n" reg_stack_p reg_stack_p (-ss);
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
@@ -240,9 +240,9 @@ and assemble_inst oc = function
       Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" a regs.(0) a a regs.(0)
     else if List.mem a all_fregs && a <> fregs.(0) then
       Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0);
-    Printf.fprintf oc "\tmtlr\t%s\n" reg_tmp
+    Printf.fprintf oc "\tmtspr\t8, %s\t# mtlr\n" reg_tmp
   | NonTail(a), CallDir(Id.Label(x), ys, zs) ->
-    Printf.fprintf oc "\tmflr\t%s\n" reg_tmp;
+    Printf.fprintf oc "\tmfspr\t%s, 8\t# mflr\n" reg_tmp;
     assemble_args oc [] ys zs;
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
@@ -254,7 +254,7 @@ and assemble_inst oc = function
       Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" a regs.(0) a a regs.(0)
     else if List.mem a all_fregs && a <> fregs.(0) then
       Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0);
-    Printf.fprintf oc "\tmtlr\t%s\n" reg_tmp
+    Printf.fprintf oc "\tmtspr\t8, %s\t# mtlr\n" reg_tmp
 and assemble_tail_if oc e1 e2 b bn =
   let b_else = Id.gen_id (b ^ "_else") in
   Printf.fprintf oc "\t%s\t%%cr7, %s\n" bn b_else;
@@ -317,7 +317,7 @@ let main oc (Prog(data, fundefs, e)) =
   Printf.fprintf oc "\t.align 2\n";
   List.iter (fun fundef -> assemble_fun oc fundef) fundefs;
   Printf.fprintf oc "_min_caml_start: # main entry point\n";
-  Printf.fprintf oc "\tmflr\t%%r0\n";
+  Printf.fprintf oc "\tmfspr\t%%r0, 8\t# mflr\n";
   Printf.fprintf oc "\tstmw\t%%r30, -8(%%r1)\n";
   Printf.fprintf oc "\tstw\t%%r0, 8(%%r1)\n";
   Printf.fprintf oc "\tstwu\t%%r1, -96(%%r1)\n";
@@ -328,6 +328,6 @@ let main oc (Prog(data, fundefs, e)) =
   Printf.fprintf oc "#\tmain program ends\n";
   Printf.fprintf oc "\tlwz\t%%r1, 0(%%r1)\n";
   Printf.fprintf oc "\tlwz\t%%r0, 8(%%r1)\n";
-  Printf.fprintf oc "\tmtlr\t%%r0\n";
+  Printf.fprintf oc "\tmtspr\t8, %%r0\t# mtlr\n";
   Printf.fprintf oc "\tlmw\t%%r30, -8(%%r1)\n";
   Printf.fprintf oc "\tblr\n"

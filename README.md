@@ -43,15 +43,15 @@
 
 ### ISAの糖衣構文部分にある
 
-- [ ] cmpw cr3, rx, ry(cmp 3, 0, rx, ry)
-- [ ] li rx, val(addi rx, 0, val)
+- [x] cmpw cr3, rx, ry(cmp 3, 0, rx, ry)
+- li rx, val(addi rx, 0, val)
 - [x] subi(addi)
-- [ ] lis rx, val(addis rx, 0, val)
+- [x] lis rx, val(addis rx, 0, val)
 - [ ] bne target(bc 4, 2, target)
-- [ ] cmpwi cr3, rx, val(cmpi 3, 0, rx, val)
-- [ ] mtlr rx(mtspr 1, rx)
-- [ ] mtctr rx(mtspr 9, rx)
-- [ ] mflr rx(mfspr rx, 8)
+- [x] cmpwi cr3, rx, val(cmpi 3, 0, rx, val)
+- [x] mtlr rx(mtspr 1, rx)
+- [x] mtctr rx(mtspr 9, rx)
+- [x] mflr rx(mfspr rx, 8)
 
 ### ISAにすらない
 
