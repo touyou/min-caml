@@ -55,8 +55,8 @@
 
 ### ISAにすらない
 
-- [ ] bctr
-- [ ] bctrl
+- [ ] bctr(bcctr 20, cr0)
+- [ ] bctrl(bcctrl 20, cr0?)
 - [ ] blr
 - [ ] beq
 - [ ] ble
@@ -64,5 +64,5 @@
 - [ ] bge
 - [ ] lmw rt, d(ra) ... load multiple word
 - [ ] sub rx, ry, rz = subf rx, rz, ry = rx := not(rz) + ry + 1
-- [ ] slwi 
+- [ ] slwi ra,rs,n =  rlwinm ra,rs,n,0,31-n
 

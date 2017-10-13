@@ -97,9 +97,9 @@ and assemble_inst oc = function
   *)
   | NonTail(x), Sub(y, Const(z)) -> Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi %s, %s, %d\n" x y (-z) x y z
 (* ひとまず保留 *)
-  | NonTail(x), Mul(y, Var(z)) -> ()
+  | NonTail(x), Mul(y, Var(z)) -> Printf.fprintf oc "\tmullw\t%s, %s, %s\n" x y z
   | NonTail(x), Mul(y, Const(z)) -> ()
-  | NonTail(x), Div(y, Var(z)) -> ()
+  | NonTail(x), Div(y, Var(z)) -> Printf.fprintf oc "\tdivw\t%s, %s, %s\n" x y z
   | NonTail(x), Div(y, Const(z)) -> ()
   (* slw %r1, %r2, %r3 *)
   | NonTail(x), Slw(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s\n" x y z
