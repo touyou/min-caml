@@ -49,11 +49,18 @@ let rec virtualize_form env = function
   | Closure.Sub(x, y) -> Ans(Sub(x, Var(y)))
   | Closure.Mul(x, y) -> Ans(Mul(x, Var(y)))
   | Closure.Div(x, y) -> Ans(Div(x, Var(y)))
+  | Closure.Xor(x, y) -> Ans(Xor(x, Var(y)))
+  | Closure.Or(x, y) -> Ans(Or(x, Var(y)))
+  | Closure.And(x, y) -> Ans(And(x, Var(y)))
+  | Closure.Sll(x, y) -> Ans(Sll(x, Var(y)))
+  | Closure.Srl(x, y) -> Ans(Srl(x, Var(y)))
   | Closure.FNeg(x) -> Ans(FNeg(x))
   | Closure.FAdd(x, y) -> Ans(FAdd(x, y))
   | Closure.FSub(x, y) -> Ans(FSub(x, y))
   | Closure.FMul(x, y) -> Ans(FMul(x, y))
   | Closure.FDiv(x, y) -> Ans(FDiv(x, y))
+  | Closure.In -> Ans(In)
+  | Closure.Out(x) -> Ans(Out(x))
   | Closure.IfEq(x, y, e1, e2) ->
     (match MiniMap.find x env with
      | Type.Bool | Type.Int -> Ans(IfEq(x, Var(y), virtualize_form env e1, virtualize_form env e2))
@@ -123,8 +130,8 @@ let rec virtualize_form env = function
     (match MiniMap.find x env with
      | Type.Array(Type.Unit) -> Ans(Nop)
      | Type.Array(Type.Float) ->
-        Let((offset, Type.Int), Slw(y, Const(3)),
-            Ans(Lfd(x, Var(offset))))
+       Let((offset, Type.Int), Slw(y, Const(3)),
+           Ans(Lfd(x, Var(offset))))
      | Type.Array(_) ->
        Let((offset, Type.Int), Slw(y, Const(2)),
            Ans(Lwz(x, Var(offset))))

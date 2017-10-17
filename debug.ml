@@ -7,9 +7,9 @@ open Asm
 
 let string_of_id id = id
 let rec string_of_ids = function
-    | [] -> ""
-    | e :: [] -> string_of_id e
-    | e :: er -> (string_of_id e) ^ ", " ^ (string_of_ids er)
+  | [] -> ""
+  | e :: [] -> string_of_id e
+  | e :: er -> (string_of_id e) ^ ", " ^ (string_of_ids er)
 
 let rec string_of_type = function
   | Type.Unit -> "Unit"
@@ -27,9 +27,9 @@ and string_of_types = function
   | t :: tr -> (string_of_type t) ^ ", " ^ (string_of_types tr)
 
 let rec string_of_args = function
-    | [] -> ""
-    | (id, typ) :: [] -> "(" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ")"
-    | (id, typ) :: args -> "(" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ "), " ^ (string_of_args args)
+  | [] -> ""
+  | (id, typ) :: [] -> "(" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ")"
+  | (id, typ) :: args -> "(" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ "), " ^ (string_of_args args)
 
 let rec string_of_nest n =
   if n = 0 then ""
@@ -44,10 +44,24 @@ let string_of_syntax elem =
         | Syntax.Float(e) -> string_of_float e
         | Syntax.Not(e) -> "not(" ^ (string_of_syntax' 0 e) ^ ")"
         | Syntax.Neg(e) | Syntax.FNeg(e) -> "-(" ^ (string_of_syntax' 0 e) ^ ")"
-        | Syntax.Add(e1, e2) | Syntax.FAdd(e1, e2) -> "(" ^ (string_of_syntax' 0 e1) ^ " + " ^ (string_of_syntax' 0 e2) ^ ")"
-        | Syntax.Sub(e1, e2) | Syntax.FSub(e1, e2) -> "(" ^ (string_of_syntax' 0 e1) ^ " - " ^ (string_of_syntax' 0 e2) ^ ")"
-        | Syntax.Mul(e1, e2) | Syntax.FMul(e1, e2) -> "(" ^ (string_of_syntax' 0 e1) ^ " * " ^ (string_of_syntax' 0 e2) ^ ")"
-        | Syntax.Div(e1, e2) | Syntax.FDiv(e1, e2) -> "(" ^ (string_of_syntax' 0 e1) ^ " / " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Add(e1, e2) | Syntax.FAdd(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " + " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Sub(e1, e2) | Syntax.FSub(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " - " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Mul(e1, e2) | Syntax.FMul(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " * " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Div(e1, e2) | Syntax.FDiv(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " / " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Xor(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " ^ " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Or(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " | " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.And(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " & " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Sll(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " << " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Srl(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " >> " ^ (string_of_syntax' 0 e2) ^ ")"
         | Syntax.Eq(e1, e2) -> (string_of_syntax' 0 e1) ^ " == " ^ (string_of_syntax' 0 e2)
         | Syntax.LE(e1, e2) -> (string_of_syntax' 0 e1) ^ " <= " ^ (string_of_syntax' 0 e2)
         | Syntax.If(e1, e2, e3) ->
@@ -58,17 +72,25 @@ let string_of_syntax elem =
           "let " ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ " =\n"
           ^ (string_of_syntax' (nest+1) e1) ^ "\n"
           ^ (string_of_nest nest) ^ "in\n" ^ (string_of_syntax' (nest+1) e2)
+        | Syntax.LetDef((id, typ), e1) ->
+          "let " ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ "=\n"
+          ^ (string_of_syntax' (nest+1) e1)
         | Syntax.Var id -> string_of_id id
-        | Syntax.LetRec ({ name = (id, typ); args = args; body = e1}, e2) ->
+        | Syntax.LetRec({ name = (id, typ); args = args; body = e1}, e2) ->
           "let rec (" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ") " ^ "(" ^ (string_of_args args) ^ ") =\n"
           ^ (string_of_syntax' (nest+1) e1)
           ^ "\n" ^ (string_of_nest nest) ^ "in\n" ^ (string_of_syntax' (nest+1) e2)
+        | Syntax.LetRecDef({ name = (id, typ); args = args; body = e1 }) ->
+          "let rec (" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ") " ^ "(" ^ (string_of_args args) ^ ") =\n"
+          ^ (string_of_syntax' (nest+1) e1)
         | Syntax.App(e, es) -> (string_of_syntax' 0 e) ^ "(" ^ (string_of_elems es) ^ ")"
         | Syntax.Tuple(es) -> "(" ^ string_of_elems es ^ ")"
         | Syntax.LetTuple(args, e1, e2) ->
           "let (" ^ (string_of_args args) ^ ") =\n"
           ^ (string_of_syntax' (nest+1) e1) ^ "\n" ^ (string_of_nest nest) ^ "in\n" ^ (string_of_syntax' (nest+1) e2)
         | Syntax.Array(e1, e2) -> "Array.create " ^ (string_of_syntax' 0 e1) ^ " " ^ (string_of_syntax' 0 e2)
+        | Syntax.In(e1) -> "input " ^ (string_of_syntax' 0 e1)
+        | Syntax.Out(e1) -> "output " ^ (string_of_syntax' 0 e1)
         | Syntax.Get(e1, e2) -> (string_of_syntax' 0 e1) ^ ".(" ^ (string_of_syntax' 0 e2) ^ ")"
         | Syntax.Put(e1, e2, e3) -> (string_of_syntax' 0 e1) ^ ".(" ^ (string_of_syntax' 0 e2) ^ ") <- " ^ (string_of_syntax' 0 e3)
       )
@@ -89,6 +111,11 @@ let string_of_knormal elem =
         | KNormal.Sub(e1, e2) | KNormal.FSub(e1, e2) -> "(" ^ (string_of_id e1) ^ " - " ^ (string_of_id e2) ^ ")"
         | KNormal.Mul(e1, e2) | KNormal.FMul(e1, e2) -> "(" ^ (string_of_id e1) ^ " * " ^ (string_of_id e2) ^ ")"
         | KNormal.Div(e1, e2) | KNormal.FDiv(e1, e2) -> "(" ^ (string_of_id e1) ^ " / " ^ (string_of_id e2) ^ ")"
+        | KNormal.Xor(e1, e2) -> "(" ^ (string_of_id e1) ^ " ^ " ^ (string_of_id e2) ^ ")"
+        | KNormal.Or(e1, e2) -> "(" ^ (string_of_id e1) ^ " | " ^ (string_of_id e2) ^ ")"
+        | KNormal.And(e1, e2) -> "(" ^ (string_of_id e1) ^ " & " ^ (string_of_id e2) ^ ")"
+        | KNormal.Sll(e1, e2) -> "(" ^ (string_of_id e1) ^ " << " ^ (string_of_id e2) ^ ")"
+        | KNormal.Srl(e1, e2) -> "(" ^ (string_of_id e1) ^ " >> " ^ (string_of_id e2) ^ ")"
         | KNormal.IfEq(id1, id2, e1, e2) ->
           "if " ^ (string_of_id id1) ^ " == " ^ (string_of_id id2) ^ " then\n"
           ^ (string_of_knormal' (nest+1) e1) ^ "\n" 
@@ -112,50 +139,59 @@ let string_of_knormal elem =
           "let " ^ (string_of_args args) ^ ") =\n" 
           ^ (string_of_id id) ^ "\n"
           ^ (string_of_nest nest) ^ "in\n" ^ (string_of_knormal' 0 e)
+        | KNormal.In(e1) -> "input " ^ (string_of_id e1)
+        | KNormal.Out(e1) -> "output " ^ (string_of_id e1)
         | KNormal.Get(e1, e2) -> (string_of_id e1) ^ ".(" ^ (string_of_id e2) ^ ")"
         | KNormal.Put(e1, e2, e3) -> (string_of_id e1) ^ ".(" ^ (string_of_id e2) ^ ") <- " ^ (string_of_id e3)
         | KNormal.ExtVar(id, typ) -> (string_of_id id) ^ ": " ^ (string_of_type typ)
         | KNormal.ExtArray(e) -> "[" ^ (string_of_id e) ^ "]"
       )
-    in string_of_knormal' 0 elem
+  in string_of_knormal' 0 elem
 
 let string_of_closure elem =
   let rec string_of_closure' nest elem =
     (string_of_nest nest) ^ (match elem with
-      | Closure.Unit -> "()"
-      | Closure.Int(e) -> string_of_int e
-      | Closure.Float(e) -> string_of_float e
-      | Closure.Neg(e) | Closure.FNeg(e) -> "-(" ^ (string_of_id e) ^ ")"
-      | Closure.Add(e1, e2) | Closure.FAdd(e1, e2) -> "(" ^ (string_of_id e1) ^ " + " ^ (string_of_id e2) ^ ")"
-      | Closure.Sub(e1, e2) | Closure.FSub(e1, e2) -> "(" ^ (string_of_id e1) ^ " - " ^ (string_of_id e2) ^ ")"
-      | Closure.Mul(e1, e2) | Closure.FMul(e1, e2) -> "(" ^ (string_of_id e1) ^ " * " ^ (string_of_id e2) ^ ")"
-      | Closure.Div(e1, e2) | Closure.FDiv(e1, e2) -> "(" ^ (string_of_id e1) ^ " / " ^ (string_of_id e2) ^ ")"
-      | Closure.IfEq(id1, id2, e1, e2) ->
-        "if " ^ (string_of_id id1) ^ " == " ^ (string_of_id id2) ^ " then\n"
-        ^ (string_of_closure' (nest+1) e1) ^ "\n"
-        ^ (string_of_nest nest) ^ "else\n" ^ (string_of_closure' (nest+1) e2)
-      | Closure.IfLE(id1, id2, e1, e2) ->
-        "if " ^ (string_of_id id1) ^ " == " ^ (string_of_id id2) ^ " then\n"
-        ^ (string_of_closure' (nest+1) e1) ^ "\n"
-        ^ (string_of_nest nest) ^ "else\n" ^ (string_of_closure' (nest+1) e2)
-      | Closure.Let((id, typ), e1, e2) ->
-        "let " ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ " =\n"
-        ^ (string_of_closure' (nest+1) e1) ^ " in\n" ^ (string_of_closure' (nest+1) e2)
-      | Closure.Var(x) -> string_of_id x
-      | Closure.MakeCls((id, typ), { entry = Id.Label(l); actual_free_var = ys }, e) ->
-        "MakeCls (" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ") =\n"
-        ^ (string_of_nest nest) ^ "(" ^ l ^ ", (" ^ (string_of_ids ys) ^ ")) in\n"
-        ^ (string_of_nest nest) ^ (string_of_closure' (nest+1) e)
-      | Closure.AppCls(x, xs) -> "AppCls(" ^ (string_of_id x) ^ ", " ^ (string_of_ids xs) ^ ")"
-      | Closure.AppDir(Id.Label(l), xs) -> "AppDir(" ^ l ^ ", " ^ (string_of_ids xs) ^ ")"
-      | Closure.Tuple(xs) -> "(" ^ (string_of_ids xs) ^ ")"
-      | Closure.LetTuple(xts, x, t) ->
-        "let (" ^ (string_of_args xts) ^ ") = " ^ (string_of_id x) ^ " in\n"
-        ^ (string_of_closure' (nest+1) t)
-      | Closure.Get(e1, e2) -> (string_of_id e1) ^ ".(" ^ (string_of_id e2) ^ ")"
-      | Closure.Put(e1, e2, e3) -> (string_of_id e1) ^ ".(" ^ (string_of_id e2) ^ ") <- " ^ (string_of_id e3)
-      | Closure.ExtVar(Id.Label(l), t) -> l ^ ": " ^ (string_of_type t)
-      | Closure.ExtArray(Id.Label(l)) -> "[" ^ l ^ "]"
+        | Closure.Unit -> "()"
+        | Closure.Int(e) -> string_of_int e
+        | Closure.Float(e) -> string_of_float e
+        | Closure.Neg(e) | Closure.FNeg(e) -> "-(" ^ (string_of_id e) ^ ")"
+        | Closure.Add(e1, e2) | Closure.FAdd(e1, e2) -> "(" ^ (string_of_id e1) ^ " + " ^ (string_of_id e2) ^ ")"
+        | Closure.Sub(e1, e2) | Closure.FSub(e1, e2) -> "(" ^ (string_of_id e1) ^ " - " ^ (string_of_id e2) ^ ")"
+        | Closure.Mul(e1, e2) | Closure.FMul(e1, e2) -> "(" ^ (string_of_id e1) ^ " * " ^ (string_of_id e2) ^ ")"
+        | Closure.Div(e1, e2) | Closure.FDiv(e1, e2) -> "(" ^ (string_of_id e1) ^ " / " ^ (string_of_id e2) ^ ")"
+        | Closure.Xor(e1, e2) -> "(" ^ (string_of_id e1) ^ " ^ " ^ (string_of_id e2) ^ ")"
+        | Closure.Or(e1, e2) -> "(" ^ (string_of_id e1) ^ " | " ^ (string_of_id e2) ^ ")"
+        | Closure.And(e1, e2) -> "(" ^ (string_of_id e1) ^ " & " ^ (string_of_id e2) ^ ")"
+        | Closure.Sll(e1, e2) -> "(" ^ (string_of_id e1) ^ " << " ^ (string_of_id e2) ^ ")"
+        | Closure.Srl(e1, e2) -> "(" ^ (string_of_id e1) ^ " >> " ^ (string_of_id e2) ^ ")"
+        | Closure.IfEq(id1, id2, e1, e2) ->
+          "if " ^ (string_of_id id1) ^ " == " ^ (string_of_id id2) ^ " then\n"
+          ^ (string_of_closure' (nest+1) e1) ^ "\n"
+          ^ (string_of_nest nest) ^ "else\n" ^ (string_of_closure' (nest+1) e2)
+        | Closure.IfLE(id1, id2, e1, e2) ->
+          "if " ^ (string_of_id id1) ^ " == " ^ (string_of_id id2) ^ " then\n"
+          ^ (string_of_closure' (nest+1) e1) ^ "\n"
+          ^ (string_of_nest nest) ^ "else\n" ^ (string_of_closure' (nest+1) e2)
+        | Closure.Let((id, typ), e1, e2) ->
+          "let " ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ " =\n"
+          ^ (string_of_closure' (nest+1) e1) ^ " in\n" ^ (string_of_closure' (nest+1) e2)
+        | Closure.Var(x) -> string_of_id x
+        | Closure.MakeCls((id, typ), { entry = Id.Label(l); actual_free_var = ys }, e) ->
+          "MakeCls (" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ") =\n"
+          ^ (string_of_nest nest) ^ "(" ^ l ^ ", (" ^ (string_of_ids ys) ^ ")) in\n"
+          ^ (string_of_nest nest) ^ (string_of_closure' (nest+1) e)
+        | Closure.AppCls(x, xs) -> "AppCls(" ^ (string_of_id x) ^ ", " ^ (string_of_ids xs) ^ ")"
+        | Closure.AppDir(Id.Label(l), xs) -> "AppDir(" ^ l ^ ", " ^ (string_of_ids xs) ^ ")"
+        | Closure.Tuple(xs) -> "(" ^ (string_of_ids xs) ^ ")"
+        | Closure.LetTuple(xts, x, t) ->
+          "let (" ^ (string_of_args xts) ^ ") = " ^ (string_of_id x) ^ " in\n"
+          ^ (string_of_closure' (nest+1) t)
+        | Closure.In -> "input"
+        | Closure.Out(e1) -> "output " ^ (string_of_id e1)
+        | Closure.Get(e1, e2) -> (string_of_id e1) ^ ".(" ^ (string_of_id e2) ^ ")"
+        | Closure.Put(e1, e2, e3) -> (string_of_id e1) ^ ".(" ^ (string_of_id e2) ^ ") <- " ^ (string_of_id e3)
+        | Closure.ExtVar(Id.Label(l), t) -> l ^ ": " ^ (string_of_type t)
+        | Closure.ExtArray(Id.Label(l)) -> "[" ^ l ^ "]"
       )
   in string_of_closure' 0 elem
 
@@ -188,8 +224,19 @@ and string_of_asm_exp = function
   | Asm.Mul(e, Asm.Const(i)) -> "Mul(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
   | Asm.Div(e1, Asm.Var(e2)) -> "Div(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
   | Asm.Div(e, Asm.Const(i)) -> "Div(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Slw(e1, Asm.Var(e2)) -> "Slw(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Slw(e, Asm.Const(i)) -> "Slw(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
+  | Asm.Xor(e1, Asm.Var(e2)) -> "Xor(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
+  | Asm.Xor(e, Asm.Const(i)) -> "Xor(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
+  | Asm.Or(e1, Asm.Var(e2)) -> "Or(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
+  | Asm.Or(e, Asm.Const(i)) -> "Or(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
+  | Asm.And(e1, Asm.Var(e2)) -> "And(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
+  | Asm.And(e, Asm.Const(i)) -> "And(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
+  | Asm.Srl(e1, Asm.Var(e2)) -> "Srl(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
+  | Asm.Srl(e, Asm.Const(i)) -> "Srl(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
+
+  | Asm.Slw(e1, Asm.Var(e2)) | Asm.Sll(e1, Asm.Var(e2)) ->
+    "Slw(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
+  | Asm.Slw(e, Asm.Const(i)) | Asm.Sll(e, Asm.Const(i))->
+    "Slw(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
   | Asm.Lwz(e1, Asm.Var(e2)) -> "Lwz(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
   | Asm.Lwz(e, Asm.Const(i)) -> "Lwz(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
   | Asm.Stw(e1, e2, Asm.Var(e3)) ->
@@ -202,6 +249,8 @@ and string_of_asm_exp = function
   | Asm.FSub(e1, e2) -> "FSub(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
   | Asm.FMul(e1, e2) -> "FMul(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
   | Asm.FDiv(e1, e2) -> "FDiv(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
+  | Asm.In -> "In"
+  | Asm.Out(e) -> "Out(" ^ (string_of_id e) ^ ")"
   | Asm.Lfd(e1, Asm.Var(e2)) -> "Lfd(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
   | Asm.Lfd(e, Asm.Const(i)) -> "Lfd(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
   | Asm.Stfd(e1, e2, Asm.Var(e3)) ->

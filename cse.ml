@@ -9,7 +9,7 @@ letについてのみ考えていく。
 let rec not_effect = function
   | Let(_, e1, e2) | IfEq(_, _, e1, e2) | IfLE(_, _, e1, e2) -> not_effect e1 && not_effect e2
   | LetRec(_, e) | LetTuple(_, _, e) -> not_effect e
-  | In(_) | Out(_) |App(_) | Put(_) | ExtFunApp(_) -> false
+  | In(_) | Out(_) | App(_) | Get(_) | Put(_) | ExtArray(_) | ExtFunApp(_) -> false
   | _ -> true
 
 let rec cse env e =

@@ -13,6 +13,11 @@ and exp =
   | Sub of Id.t * id_or_imm
   | Mul of Id.t * id_or_imm
   | Div of Id.t * id_or_imm
+  | Xor of Id.t * id_or_imm
+  | Or of Id.t * id_or_imm
+  | And of Id.t * id_or_imm
+  | Sll of Id.t * id_or_imm
+  | Srl of Id.t * id_or_imm
   | Slw of Id.t * id_or_imm
   | Lwz of Id.t * id_or_imm
   | Stw of Id.t * Id.t * id_or_imm
@@ -25,6 +30,8 @@ and exp =
   | Lfd of Id.t * id_or_imm
   | Stfd of Id.t * Id.t * id_or_imm
   | Comment of string
+  | In
+  | Out of Id.t
   | IfEq of Id.t * id_or_imm * t * t
   | IfLE of Id.t * id_or_imm * t * t
   | IfGE of Id.t * id_or_imm * t * t

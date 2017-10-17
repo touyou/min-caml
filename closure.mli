@@ -8,6 +8,11 @@ type t =
   | Sub of Id.t * Id.t
   | Mul of Id.t * Id.t
   | Div of Id.t * Id.t
+  | Xor of Id.t * Id.t
+  | Or of Id.t * Id.t
+  | And of Id.t * Id.t
+  | Sll of Id.t * Id.t
+  | Srl of Id.t * Id.t
   | FNeg of Id.t
   | FAdd of Id.t * Id.t
   | FSub of Id.t * Id.t
@@ -22,6 +27,8 @@ type t =
   | AppDir of Id.label * Id.t list
   | Tuple of Id.t list
   | LetTuple of (Id.t * Type.t) list * Id.t * t
+  | In
+  | Out of Id.t
   | Get of Id.t * Id.t
   | Put of Id.t * Id.t * Id.t
   | ExtVar of Id.label * Type.t

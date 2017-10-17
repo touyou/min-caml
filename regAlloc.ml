@@ -122,13 +122,18 @@ and alloc_inst_and_restore dest cont regenv exp =
   with NoReg(x, t) ->
     (alloc_insts dest cont regenv (Let((x, t), Restore(x), Ans(exp))))
 and alloc_inst dest cont regenv = function
-  | Nop | Li(_) | SetL(_) | Comment(_) | Restore(_) | FLi(_) as exp -> (Ans(exp), regenv)
+  | Nop | Li(_) | SetL(_) | Comment(_) | Restore(_) | FLi(_) | In as exp -> (Ans(exp), regenv)
   | Mr(x) -> (Ans(Mr(find x Type.Int regenv)), regenv)
   | Neg(x) -> (Ans(Neg(find x Type.Int regenv)), regenv)
   | Add(x, y') -> (Ans(Add(find x Type.Int regenv, find' y' regenv)), regenv)
   | Sub(x, y') -> (Ans(Sub(find x Type.Int regenv, find' y' regenv)), regenv)
   | Mul(x, y') -> (Ans(Mul(find x Type.Int regenv, find' y' regenv)), regenv)
   | Div(x, y') -> (Ans(Div(find x Type.Int regenv, find' y' regenv)), regenv)
+  | Xor(x, y') -> (Ans(Xor(find x Type.Int regenv, find' y' regenv)), regenv)
+  | Or(x, y') -> (Ans(Or(find x Type.Int regenv, find' y' regenv)), regenv)
+  | And(x, y') -> (Ans(And(find x Type.Int regenv, find' y' regenv)), regenv)
+  | Sll(x, y') -> (Ans(Sll(find x Type.Int regenv, find' y' regenv)), regenv)
+  | Srl(x, y') -> (Ans(Srl(find x Type.Int regenv, find' y' regenv)), regenv)
   | Slw(x, y') -> (Ans(Slw(find x Type.Int regenv, find' y' regenv)), regenv)
   | Lwz(x, y') -> (Ans(Lwz(find x Type.Int regenv, find' y' regenv)), regenv)
   | Stw(x, y, z') -> (Ans(Stw(find x Type.Int regenv, find y Type.Int regenv, find' z' regenv)), regenv)
@@ -138,6 +143,7 @@ and alloc_inst dest cont regenv = function
   | FSub(x, y) -> (Ans(FSub(find x Type.Float regenv, find y Type.Float regenv)), regenv)
   | FMul(x, y) -> (Ans(FMul(find x Type.Float regenv, find y Type.Float regenv)), regenv)
   | FDiv(x, y) -> (Ans(FDiv(find x Type.Float regenv, find y Type.Float regenv)), regenv)
+  | Out(x) -> (Ans(Out(find x Type.Int regenv)), regenv)
   | Lfd(x, y') -> (Ans(Lfd(find x Type.Int regenv, find' y' regenv)), regenv)
   | Stfd(x, y, z') -> (Ans(Stfd(find x Type.Float regenv, find y Type.Int regenv, find' z' regenv)), regenv)
   | IfEq(x, y', e1, e2) as exp -> alloc_if dest cont regenv exp (fun e1' e2' -> IfEq(find x Type.Int regenv, find' y' regenv, e1', e2')) e1 e2

@@ -97,12 +97,24 @@ and assemble_inst oc = function
   *)
   | NonTail(x), Sub(y, Const(z)) ->
     Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi %s, %s, %d\n" x y (-z) x y z
-(* ひとまず保留 *)
+  (* TO-DO: かけ算割り算は少ないから適当に *)
   | NonTail(x), Mul(y, Var(z)) -> Printf.fprintf oc "\tmullw\t%s, %s, %s\n" x y z
   | NonTail(x), Mul(y, Const(z)) -> Printf.fprintf oc "\tmulli\t%s, %s, %d" x y z
   | NonTail(x), Div(y, Var(z)) -> Printf.fprintf oc "\tdivw\t%s, %s, %s\n" x y z
   | NonTail(x), Div(y, Const(z)) ->
     Printf.fprintf oc "\taddi\t%s, %%r0, %d\n\tdivw\t%s, %s, %s\n" x z x y x
+  (* 論理演算周り *)
+  | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" x y z
+  | NonTail(x), Xor(y, Const(z)) -> Printf.fprintf oc "\txori\t%s, %s, %d\n" x y z
+  | NonTail(x), Or(y, Var(z)) -> Printf.fprintf oc "\tor\t%s, %s, %s\n" x y z
+  | NonTail(x), Or(y, Const(z)) -> Printf.fprintf oc "\tori\t%s, %s, %d\n" x y z
+  | NonTail(x), And(y, Var(z)) -> Printf.fprintf oc "\tand\t%s, %s, %s\n" x y z
+  | NonTail(x), And(y, Const(z)) -> Printf.fprintf oc "\tandi\t%s, %s, %d\n" x y z
+  (* シフト系 *)
+  | NonTail(x), Sll(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s\n" x y z
+  | NonTail(x), Sll(y, Const(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %d\n" x y z
+  | NonTail(x), Srl(y, Var(z)) -> Printf.fprintf oc "\tsraw\t%s, %s, %s\n" x y z
+  | NonTail(x), Srl(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d\n" x y z
   (* slw %r1, %r2, %r3 *)
   | NonTail(x), Slw(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s\n" x y z
   (* slwi %r1, %r2, num *)
@@ -130,15 +142,19 @@ and assemble_inst oc = function
   | NonTail(x), FDiv(y, z) -> Printf.fprintf oc "\tfdiv\t%s, %s, %s\n" x y z
   (* lfdx %r1, %r2, %r3 *)
   | NonTail(x), Lfd(y, Var(z)) -> Printf.fprintf oc "\tlfdx\t%s, %s, %s\n" x y z
-(* lfd %r1, num(%r2) *)
+  (* lfd %r1, num(%r2) *)
   | NonTail(x), Lfd(y, Const(z)) -> Printf.fprintf oc "\tlfd\t%s, %d(%s)\n" x z y
-(* stfdx %r1, %r2, %r3 *)
+  (* stfdx %r1, %r2, %r3 *)
   | NonTail(_), Stfd(x, y, Var(z)) -> Printf.fprintf oc "\tstfdx\t%s, %s, %s\n" x y z
-(* stfd %r1, num(%r2) *)
+  (* stfd %r1, num(%r2) *)
   | NonTail(_), Stfd(x, y, Const(z)) -> Printf.fprintf oc "\tstfd\t%s, %d(%s)\n" x z y
-(* comment *)
+  (* comment *)
   | NonTail(_), Comment(s) -> Printf.fprintf oc "#\t%s\n" s
-(* 待避の実装 *)
+  (* TO-DO: 入出力 *)
+  | NonTail(x), In -> ()
+  | Tail, In -> ()
+  | NonTail(x), Out(y) -> ()
+  (* 待避の実装 *)
   | NonTail(_), Save(x, y) when List.mem x all_regs && not (MiniSet.mem y !stack_set) ->
     save y;
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (offset y) reg_stack_p
@@ -146,17 +162,19 @@ and assemble_inst oc = function
     savef y;
     Printf.fprintf oc "\tstfd\t%s, %d(%s)\n" x (offset y) reg_stack_p
   | NonTail(_), Save(x, y) -> assert (MiniSet.mem y !stack_set); ()
-(* 復帰の実装 *)
+  (* 復帰の実装 *)
   | NonTail(x), Restore(y) when List.mem x all_regs ->
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" x (offset y) reg_stack_p
   | NonTail(x), Restore(y) ->
     assert (List.mem x all_fregs);
     Printf.fprintf oc "\tlfd\t%s, %d(%s)\n" x (offset y) reg_stack_p
-(* 末尾なら計算結果を第一レジスタにセットしてリターン *)
-  | Tail, (Nop | Stw(_) | Stfd(_) | Comment(_) | Save(_) as exp) ->
+  (* 末尾なら計算結果を第一レジスタにセットしてリターン *)
+  | Tail, (Nop | Out(_) | Stw(_) | Stfd(_) | Comment(_) | Save(_) as exp) ->
     assemble_inst oc (NonTail(Id.gen_tmp Type.Unit), exp);
     Printf.fprintf oc "\tblr\n"
-  | Tail, (Li(_) | SetL(_) | Mr(_) | Neg(_) | Add(_) | Sub(_) | Mul(_) | Div(_) | Slw(_) | Lwz(_) as exp) ->
+  | Tail, (Li(_) | SetL(_) | Mr(_) | Neg(_) | Add(_) | Sub(_) | Mul(_) | Div(_) 
+          | Xor(_) | Or(_) | And(_) | Sll(_) | Srl(_)
+          | Slw(_) | Lwz(_) as exp) ->
     assemble_inst oc (NonTail(regs.(0)), exp);
     Printf.fprintf oc "\tblr\n"
   | Tail, (FLi(_) | FMr(_) | FNeg(_) | FAdd(_) | FSub(_) | FMul(_) | FDiv(_) | Lfd(_) as exp) ->
@@ -168,7 +186,7 @@ and assemble_inst oc = function
      | [i; j] when i + 1 = j -> assemble_inst oc (NonTail(fregs.(0)), exp)
      | _ -> assert false);
     Printf.fprintf oc "\tblr\n"
-(* 条件分岐：末尾 *)
+  (* 条件分岐：末尾 *)
   | Tail, IfEq(x, Var(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_tail_if oc e1 e2 "beq" "bne"
@@ -193,7 +211,7 @@ and assemble_inst oc = function
   | Tail, IfFLE(x, y, e1, e2)->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
     assemble_tail_if oc e1 e2 "ble" "bgt"
-(* 条件分岐：末尾じゃない *)
+  (* 条件分岐：末尾じゃない *)
   | NonTail(z), IfEq(x, Var(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bne"
@@ -218,7 +236,7 @@ and assemble_inst oc = function
   | NonTail(z), IfFLE(x, y, e1, e2) ->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bgt"
-(* 関数呼び出し *)
+  (* 関数呼び出し *)
   | Tail, CallCls(x, ys, zs) ->
     assemble_args oc [(x, reg_closure_addr)] ys zs;
     Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_swap reg_closure_addr;
@@ -226,7 +244,7 @@ and assemble_inst oc = function
   | Tail, CallDir(Id.Label(x), ys, zs) ->
     assemble_args oc [] ys zs;
     Printf.fprintf oc "\tb\t%s\n" x
-(* 末尾でない場合一旦待避するみたいな感じになる *)
+  (* 末尾でない場合一旦待避するみたいな感じになる *)
   | NonTail(a), CallCls(x, ys, zs) ->
     Printf.fprintf oc "\tmfspr\t%s, 8\t# mflr\n" reg_tmp;
     assemble_args oc [(x, reg_closure_addr)] ys zs;
@@ -285,17 +303,17 @@ and assemble_args oc x_reg_cl ys zs =
       (fun (i, yrs) y -> (i + 1, (y, regs.(i)) :: yrs))
       (0, x_reg_cl)
       ys in
-    List.iter
-      (fun (y, r) -> Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" r y r r y)
-      (shuffle reg_swap yrs);
-    let (d, zfrs) =
-      List.fold_left
-        (fun (d, zfrs) z -> (d + 1, (z, fregs.(d)) :: zfrs))
-        (0, [])
-        zs in
-    List.iter
-      (fun (z, fr) -> Printf.fprintf oc "\tfmr\t%s, %s\n" fr z)
-      (shuffle reg_fswap zfrs)
+  List.iter
+    (fun (y, r) -> Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" r y r r y)
+    (shuffle reg_swap yrs);
+  let (d, zfrs) =
+    List.fold_left
+      (fun (d, zfrs) z -> (d + 1, (z, fregs.(d)) :: zfrs))
+      (0, [])
+      zs in
+  List.iter
+    (fun (z, fr) -> Printf.fprintf oc "\tfmr\t%s, %s\n" fr z)
+    (shuffle reg_fswap zfrs)
 
 let assemble_fun oc { name = Id.Label(x); args = _; fargs = _; body = e; ret = _ } =
   Printf.fprintf oc "%s:\n" x;

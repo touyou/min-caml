@@ -8,6 +8,11 @@ type t =
   | Sub of Id.t * Id.t
   | Mul of Id.t * Id.t
   | Div of Id.t * Id.t
+  | Xor of Id.t * Id.t
+  | Or of Id.t * Id.t
+  | And of Id.t * Id.t
+  | Sll of Id.t * Id.t
+  | Srl of Id.t * Id.t
   | FNeg of Id.t
   | FAdd of Id.t * Id.t
   | FSub of Id.t * Id.t
@@ -22,6 +27,8 @@ type t =
   | AppDir of Id.label * Id.t list
   | Tuple of Id.t list
   | LetTuple of (Id.t * Type.t) list * Id.t * t
+  | In
+  | Out of Id.t
   | Get of Id.t * Id.t
   | Put of Id.t * Id.t * Id.t
   | ExtVar of Id.label * Type.t
@@ -33,9 +40,10 @@ type fun_def = { name : Id.label * Type.t;
 type prog = Prog of fun_def list * t
 
 let rec free_var = function
-  | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) -> MiniSet.empty
-  | Neg(x) | FNeg(x) -> MiniSet.singleton x
+  | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) | In -> MiniSet.empty
+  | Neg(x) | FNeg(x) | Out(x) -> MiniSet.singleton x
   | Add(x, y) | Sub(x, y) | Mul(x, y) | Div(x, y)
+  | Xor(x, y) | Or(x, y) | And(x, y) | Sll(x, y) | Srl(x, y)
   | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | Get(x, y) -> MiniSet.of_list [x; y]
   | IfEq(x, y, e1, e2) | IfLE(x, y, e1, e2) -> MiniSet.add x (MiniSet.add y (MiniSet.union (free_var e1) (free_var e2)))
   | Let((x, t), e1, e2) -> MiniSet.union (free_var e1) (MiniSet.remove x (free_var e2))
@@ -57,6 +65,11 @@ let rec closure_conv env known = function
   | KNormal.Sub(x, y) -> Sub(x, y)
   | KNormal.Mul(x, y) -> Mul(x, y)
   | KNormal.Div(x, y) -> Div(x, y)
+  | KNormal.Xor(x, y) -> Xor(x, y)
+  | KNormal.Or(x, y) -> Or(x, y)
+  | KNormal.And(x, y) -> And(x, y)
+  | KNormal.Sll(x, y) -> Sll(x, y)
+  | KNormal.Srl(x, y) -> Srl(x, y)
   | KNormal.FNeg(x) -> FNeg(x)
   | KNormal.FAdd(x, y) -> FAdd(x, y)
   | KNormal.FSub(x, y) -> FSub(x, y)
@@ -102,6 +115,8 @@ let rec closure_conv env known = function
   | KNormal.App(f, xs) -> AppCls(f, xs)
   | KNormal.Tuple(xs) -> Tuple(xs)
   | KNormal.LetTuple(xts, y, e) -> LetTuple(xts, y, closure_conv (MiniMap.add_list xts env) known e)
+  | KNormal.In(x) -> In
+  | KNormal.Out(x) -> Out(x)
   | KNormal.Get(x, y) -> Get(x, y)
   | KNormal.Put(x, y, z) -> Put(x, y, z)
   | KNormal.ExtVar(x, t) -> ExtVar(Id.Label(x), t)
