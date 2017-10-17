@@ -14,6 +14,11 @@
 %token PLUS
 %token AST
 %token SLASH
+%token XOR
+%token OR
+%token AND
+%token SLL
+%token SRL
 %token MINUS_DOT
 %token PLUS_DOT
 %token AST_DOT
@@ -24,6 +29,8 @@
 %token GREATER_EQUAL
 %token LESS
 %token GREATER
+%token INPUT
+%token OUTPUT
 %token IF
 %token THEN
 %token ELSE
@@ -51,6 +58,8 @@
 %left EQUAL LESS_GREATER LESS GREATER LESS_EQUAL GREATER_EQUAL
 %left PLUS MINUS PLUS_DOT MINUS_DOT
 %left AST SLASH AST_DOT SLASH_DOT
+%left XOR OR AND
+%left SLL SRL
 %right prec_unary_minus
 %left prec_app
 %left DOT
@@ -98,6 +107,16 @@ exp:
     { Mul($1, $3) }
 | exp SLASH exp
     { Div($1, $3) }
+| exp XOR exp
+    { Xor($1, $3) }
+| exp OR exp
+    { Or($1, $3) }
+| exp AND exp
+    { And($1, $3) }
+| exp SLL exp
+    { Sll($1, $3) }
+| exp SRL exp
+    { Srl($1, $3) }
 | exp EQUAL exp
     { Eq($1, $3) }
 | exp LESS_GREATER exp
@@ -127,9 +146,15 @@ exp:
 | LET IDENT EQUAL exp IN exp
     %prec prec_let
     { Let(add_type $2, $4, $6) }
+| LPAREN LET IDENT EQUAL exp RPAREN
+    %prec prec_let
+    { LetDef(add_type $3, $5) }
 | LET REC fun_def IN exp
     %prec prec_let
     { LetRec($3, $5) }
+| LPAREN LET REC fun_def RPAREN
+    %prec prec_let
+    { LetRecDef($4) }
 | simple_exp actual_args
     %prec prec_app
     { App($1, $2) }
@@ -147,6 +172,12 @@ exp:
 | ARRAY_CREATE simple_exp simple_exp
     %prec prec_app
     { Array($2, $3) }
+| INPUT simple_exp
+    %prec prec_app
+    { In($2) }
+| OUTPUT simple_exp
+    %prec prec_app
+    { Out($2) }
 | error
     { failwith
         (Printf.sprintf "parse error line %d, characters %d-%d"

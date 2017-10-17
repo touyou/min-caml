@@ -9,7 +9,7 @@ letについてのみ考えていく。
 let rec not_effect = function
   | Let(_, e1, e2) | IfEq(_, _, e1, e2) | IfLE(_, _, e1, e2) -> not_effect e1 && not_effect e2
   | LetRec(_, e) | LetTuple(_, _, e) -> not_effect e
-  | App(_) | Put(_) | ExtFunApp(_) -> false
+  | In(_) | Out(_) |App(_) | Put(_) | ExtFunApp(_) -> false
   | _ -> true
 
 let rec cse env e =
@@ -19,19 +19,19 @@ let rec cse env e =
     Var(id)
   with Not_found ->
     (match e with
-    | IfEq(id1, id2, e1, e2) -> IfEq(id1, id2, cse env e1, cse env e2)
-    | IfLE(id1, id2, e1, e2) -> IfLE(id1, id2, cse env e1, cse env e2)
-    | Let((id, typ), e1, e2) ->
-      let e1' = cse env e1 in
-      (* 副作用がある場合は削除リストに加えない *)
-      if not_effect e1' then
-        let env' = CseMap.add e1' id env in
-        Let((id, typ), e1', cse env' e2)
-      else
-        Let((id, typ), e1', cse env e2)
-    | LetRec({ name = (id, typ); args = args; body = e1 }, e2) ->
-      LetRec({ name = (id, typ); args = args; body = cse env e1 }, cse env e2)
-    | LetTuple(xts, id, e) -> LetTuple(xts, id, cse env e)
-    | t -> t)
+     | IfEq(id1, id2, e1, e2) -> IfEq(id1, id2, cse env e1, cse env e2)
+     | IfLE(id1, id2, e1, e2) -> IfLE(id1, id2, cse env e1, cse env e2)
+     | Let((id, typ), e1, e2) ->
+       let e1' = cse env e1 in
+       (* 副作用がある場合は削除リストに加えない *)
+       if not_effect e1' then
+         let env' = CseMap.add e1' id env in
+         Let((id, typ), e1', cse env' e2)
+       else
+         Let((id, typ), e1', cse env e2)
+     | LetRec({ name = (id, typ); args = args; body = e1 }, e2) ->
+       LetRec({ name = (id, typ); args = args; body = cse env e1 }, cse env e2)
+     | LetTuple(xts, id, e) -> LetTuple(xts, id, cse env e)
+     | t -> t)
 
 let main = cse CseMap.empty

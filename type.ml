@@ -11,3 +11,7 @@ type t =
 
 (* 新しい型変数を作る *)
 let gen_type () = Var(ref None)
+
+let unsigned_of_int i =
+  if i < 0 then i + 4294967296
+  else i

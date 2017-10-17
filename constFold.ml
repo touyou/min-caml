@@ -13,6 +13,7 @@ let memt x env =
 
 (* 定数を取り出してくる *)
 let findi x env = (match MiniMap.find x env with Int(i) -> i | _ -> raise Not_found)
+let findui x env = (match MiniMap.find x env with Int(i) -> Type.unsigned_of_int i | _ -> raise Not_found)
 let findf x env = (match MiniMap.find x env with Float(d) -> d | _ -> raise Not_found)
 let findt x env = (match MiniMap.find x env with Tuple(ys) -> ys | _ -> raise Not_found)
 
@@ -25,6 +26,13 @@ let rec folding env = function
   | Sub(x, y) when memi x env && memi y env -> Int(findi x env - findi y env)
   | Mul(x, y) when memi x env && memi y env -> Int(findi x env * findi y env)
   | Div(x, y) when memi x env && memi y env -> Int(findi x env / findi y env)
+  | Xor(x, y) when memi x env && memi y env -> Int(findui x env lxor findui y env)
+  | Or(x, y) when memi x env && memi y env -> Int(findui x env lor findui y env)
+  | And(x, y) when memi x env && memi y env -> Int(findui x env land findui y env)
+  | Sll(x, y) when memi x env && memi y env ->
+    Int(let y = findi y env in if y >= 32 then 0 else (findui x env lsl y))
+  | Srl(x, y) when memi x env && memi y env ->
+    Int(let y = findi y env in if y >= 32 then 0 else (findui x env lsr y))
   | FNeg(x) when memf x env -> Float(-.(findf x env))
   | FAdd(x, y) when memf x env && memf y env -> Float(findf x env +. findf y env)
   | FSub(x, y) when memf x env && memf y env -> Float(findf x env -. findf y env)

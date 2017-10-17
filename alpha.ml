@@ -11,6 +11,11 @@ let rec alpha_conv env = function
   | Sub(x, y) -> Sub(find x env, find y env)
   | Mul(x, y) -> Mul(find x env, find y env)
   | Div(x, y) -> Div(find x env, find y env)
+  | Xor(x, y) -> Xor(find x env, find y env)
+  | Or(x, y) -> Or(find x env, find y env)
+  | And(x, y) -> And(find x env, find y env)
+  | Sll(x, y) -> Sll(find x env, find y env)
+  | Srl(x, y) -> Srl(find x env, find y env)
   | FNeg(x) -> FNeg(find x env)
   | FAdd(x, y) -> FAdd(find x env, find y env)
   | FSub(x, y) -> FSub(find x env, find y env)
@@ -38,6 +43,8 @@ let rec alpha_conv env = function
     LetTuple(List.map (fun (x, t) -> (find x env', t)) xts,
              find y env,
              alpha_conv env' e)
+  | In(x) -> In(find x env)
+  | Out(x) -> Out(find x env)
   | Get(x, y) -> Get(find x env, find y env)
   | Put(x, y, z) -> Put(find x env, find y env, find z env)
   | ExtVar(x, t) -> ExtVar(x, t)

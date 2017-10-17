@@ -5,6 +5,8 @@ exception Error of t * Type.t * Type.t
 
 let ext_env = ref MiniMap.empty
 
+let gen_env = ref MiniMap.empty
+
 (* 型変数を中身で置き換える *)
 let rec deref_type = function
   | Type.Fun(t1s, t2) -> Type.Fun(List.map deref_type t1s, deref_type t2)
@@ -29,6 +31,11 @@ let rec deref_term = function
   | Sub(e1, e2) -> Sub(deref_term e1, deref_term e2)
   | Mul(e1, e2) -> Mul(deref_term e1, deref_term e2)
   | Div(e1, e2) -> Div(deref_term e1, deref_term e2)
+  | Xor(e1, e2) -> Xor(deref_term e1, deref_term e2)
+  | Or(e1, e2) -> Or(deref_term e1, deref_term e2)
+  | And(e1, e2) -> And(deref_term e1, deref_term e2)
+  | Sll(e1, e2) -> Sll(deref_term e1, deref_term e2)
+  | Srl(e1, e2) -> Srl(deref_term e1, deref_term e2)
   | Eq(e1, e2) -> Eq(deref_term e1, deref_term e2)
   | LE(e1, e2) -> LE(deref_term e1, deref_term e2)
   | FNeg(e) -> FNeg(deref_term e)
@@ -38,15 +45,22 @@ let rec deref_term = function
   | FDiv(e1, e2) -> FDiv(deref_term e1, deref_term e2)
   | If(e1, e2, e3) -> If(deref_term e1, deref_term e2, deref_term e3)
   | Let(xt, e1, e2) -> Let(deref_id_type xt, deref_term e1, deref_term e2)
+  | LetDef(xt, e1) -> LetDef(deref_id_type xt, deref_term e1)
   | LetRec({ name = xt; args = yts; body = e1 }, e2) ->
       LetRec({ name = deref_id_type xt;
                args = List.map deref_id_type yts;
                body = deref_term e1 },
-            deref_term e2)
+             deref_term e2)
+  | LetRecDef({ name = xt; args = yts; body = e1 }) ->
+      LetRecDef({ name = deref_id_type xt;
+                  args = List.map deref_id_type yts;
+                  body = deref_term e1 })
   | App(e, es) -> App(deref_term e, List.map deref_term es)
   | Tuple(es) -> Tuple(List.map deref_term es)
   | LetTuple(xts, e1, e2) -> LetTuple(List.map deref_id_type xts, deref_term e1, deref_term e2)
   | Array(e1, e2) -> Array(deref_term e1, deref_term e2)
+  | In(e1) -> In(deref_term e1)
+  | Out(e1) -> Out(deref_term e1)
   | Get(e1, e2) -> Get(deref_term e1, deref_term e2)
   | Put(e1, e2, e3) -> Put(deref_term e1, deref_term e2, deref_term e3)
   | e -> e
@@ -99,7 +113,9 @@ let rec infer env e =
     | Neg(e) ->
         unify Type.Int (infer env e);
         Type.Int
-    | Add(e1, e2) | Sub(e1, e2) | Mul(e1, e2) | Div(e1, e2) ->
+    | Add(e1, e2) | Sub(e1, e2) | Mul(e1, e2) | Div(e1, e2)
+    | Xor(e1, e2) | Or(e1, e2) | And(e1, e2)
+    | Sll(e1, e2) | Srl(e1, e2) ->
         unify Type.Int (infer env e1);
         unify Type.Int (infer env e2);
         Type.Int
@@ -122,8 +138,13 @@ let rec infer env e =
     | Let((x, t), e1, e2) ->
         unify t (infer env e1);
         infer (MiniMap.add x t env) e2
+    | LetDef((x, t), e1) ->
+        unify t (infer env e1);
+        gen_env := MiniMap.add x t !gen_env;
+        Type.Unit
     | Var(x) when MiniMap.mem x env -> MiniMap.find x env
-    | Var(x) when MiniMap.mem x env -> MiniMap.find x !ext_env
+    | Var(x) when MiniMap.mem x !gen_env -> MiniMap.find x !gen_env
+    | Var(x) when MiniMap.mem x !ext_env -> MiniMap.find x !ext_env
     | Var(x) ->
         Format.eprintf "free variable %s assumed as external@." x;
         let t = Type.gen_type () in
@@ -133,6 +154,11 @@ let rec infer env e =
         let env = MiniMap.add x t env in
         unify t (Type.Fun(List.map snd yts, infer (MiniMap.add_list yts env) e1));
         infer env e2
+    | LetRecDef({ name = (x, t); args = yts; body = e1 }) ->
+        let env = MiniMap.add x t env in
+        gen_env := MiniMap.add x t !gen_env;
+        unify t (Type.Fun(List.map snd yts, infer (MiniMap.add_list yts env) e1));
+        Type.Unit
     | App(e, es) ->
         let t = Type.gen_type () in
         unify (infer env e) (Type.Fun(List.map (infer env) es, t));
@@ -144,6 +170,12 @@ let rec infer env e =
     | Array(e1, e2) ->
         unify (infer env e1) Type.Int;
         Type.Array(infer env e2)
+    | In(e1) ->
+        unify Type.Unit (infer env e1);
+        Type.Int
+    | Out(e1) ->
+        unify Type.Int (infer env e1);
+        Type.Unit
     | Get(e1, e2) ->
         let t = Type.gen_type () in
         unify (Type.Array(t)) (infer env e1);
@@ -161,4 +193,5 @@ let main e =
   (try unify Type.Unit (infer MiniMap.empty e)
    with Unify(t1, t2) -> failwith "top level does not have type unit.");
   ext_env := MiniMap.map deref_type !ext_env;
+  gen_env := MiniMap.map deref_type !gen_env;
   deref_term e

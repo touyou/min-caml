@@ -95,12 +95,14 @@ and assemble_inst oc = function
   addi %r1, %r2, -num
   # subi %r1, %r2, num
   *)
-  | NonTail(x), Sub(y, Const(z)) -> Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi %s, %s, %d\n" x y (-z) x y z
+  | NonTail(x), Sub(y, Const(z)) ->
+    Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi %s, %s, %d\n" x y (-z) x y z
 (* ひとまず保留 *)
   | NonTail(x), Mul(y, Var(z)) -> Printf.fprintf oc "\tmullw\t%s, %s, %s\n" x y z
-  | NonTail(x), Mul(y, Const(z)) -> ()
+  | NonTail(x), Mul(y, Const(z)) -> Printf.fprintf oc "\tmulli\t%s, %s, %d" x y z
   | NonTail(x), Div(y, Var(z)) -> Printf.fprintf oc "\tdivw\t%s, %s, %s\n" x y z
-  | NonTail(x), Div(y, Const(z)) -> ()
+  | NonTail(x), Div(y, Const(z)) ->
+    Printf.fprintf oc "\taddi\t%s, %%r0, %d\n\tdivw\t%s, %s, %s\n" x z x y x
   (* slw %r1, %r2, %r3 *)
   | NonTail(x), Slw(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s\n" x y z
   (* slwi %r1, %r2, num *)

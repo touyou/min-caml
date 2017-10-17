@@ -3,7 +3,7 @@ open KNormal
 let rec has_effect = function
   | Let(_, e1, e2) | IfEq(_, _, e1, e2) | IfLE(_, _, e1, e2) -> has_effect e1 || has_effect e2
   | LetRec(_, e) | LetTuple(_, _, e) -> has_effect e
-  | App(_) | Put(_) | ExtFunApp(_) -> true
+  | In(_) | Out(_) |App(_) | Put(_) | ExtFunApp(_) -> true
   | _ -> false
 
 let rec main = function

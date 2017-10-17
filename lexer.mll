@@ -43,6 +43,16 @@ rule token = parse
     { AST }
 | '/'
     { SLASH }
+| "lxor"
+    { XOR }
+| "lor"
+    { OR }
+| "land"
+    { AND }
+| "lsl"
+    { SLL }
+| "lsr"
+    { SRL }
 | "-."
     { MINUS_DOT }
 | "+."
@@ -81,6 +91,10 @@ rule token = parse
     { IDENT(Id.gen_tmp Type.Unit) }
 | "Array.create" | "Array.make" | "create_array"
     { ARRAY_CREATE }
+| "input"
+    { INPUT }
+| "output"
+    { OUTPUT }
 | '.'
     { DOT }
 | "<-"
