@@ -53,7 +53,7 @@
 - li rx, val(addi rx, 0, val)
 - [x] subi(addi)
 - [x] lis rx, val(addis rx, 0, val)
-- [ ] bne target(bc 4, 2, target)
+- [x] bne target(bc 4, 2, target)
 - [x] cmpwi cr3, rx, val(cmpi 3, 0, rx, val)
 - [x] mtlr rx(mtspr 1, rx)
 - [x] mtctr rx(mtspr 9, rx)
@@ -63,12 +63,12 @@
 
 - [ ] bctr(bcctr 20, cr0)
 - [ ] bctrl(bcctrl 20, cr0?)
-- [ ] blr
-- [ ] beq
-- [ ] ble
-- [ ] bgt
-- [ ] bge
-- [ ] lmw rt, d(ra) ... load multiple word
+- [x] blr
+- [x] beq
+- [x] ble
+- [x] bgt
+- [x] bge
+- lmw rt, d(ra) ... load multiple word
 - [ ] sub rx, ry, rz = subf rx, rz, ry = rx := not(rz) + ry + 1
 - [ ] slwi ra,rs,n =  rlwinm ra,rs,n,0,31-n
 
