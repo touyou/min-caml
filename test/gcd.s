@@ -9,10 +9,10 @@ gcd.7:
 beq_else.17:
 	cmp	%cr7, 0, %r2, %r5	# cmpw
 	bc	4, %cr7, ble_else.18
-	sub	%r5, %r5, %r2
+	subf %r5, %r2, %r5	# sub	%r5, %r5, %r2
 	b	gcd.7
 ble_else.18:
-	sub	%r2, %r2, %r5
+	subf %r2, %r5, %r2	# sub	%r2, %r2, %r5
 	or	%r5, %r28, %r5	# mr %r28, %r5
 	or	%r2, %r5, %r2	# mr %r5, %r2
 	or	%r28, %r2, %r28	# mr %r2, %r28

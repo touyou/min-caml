@@ -90,7 +90,7 @@ and assemble_inst oc = function
   (* addi %r1, %r2, num *)
   | NonTail(x), Add(y, Const(z)) -> Printf.fprintf oc "\taddi\t%s, %s, %d\n" x y z
   (* sub %r1, %r2, %r3 *)
-  | NonTail(x), Sub(y, Var(z)) -> Printf.fprintf oc "\tsub\t%s, %s, %s\n" x y z
+  | NonTail(x), Sub(y, Var(z)) -> Printf.fprintf oc "\tsubf %s, %s, %s\t# sub\t%s, %s, %s\n" x z y x y z
   (*
   addi %r1, %r2, -num
   # subi %r1, %r2, num

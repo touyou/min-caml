@@ -46,7 +46,7 @@ ble_else.30:
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
 	lwz	%r5, 0(%r3)
-	sub	%r2, %r2, %r5
+	subf %r2, %r5, %r2	# sub	%r2, %r2, %r5
 ble_cont.31:
 	add	%r2, %r2, %r5
 	mfspr	%r31, 8	# mflr

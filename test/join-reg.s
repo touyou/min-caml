@@ -43,12 +43,12 @@ _min_caml_start: # main entry point
 	bc	12, %cr7, beq_else.31
 	lwz	%r2, 4(%r3)
 	lwz	%r5, 0(%r3)
-	sub	%r2, %r5, %r2
+	subf %r2, %r2, %r5	# sub	%r2, %r5, %r2
 	b	beq_cont.32
 beq_else.31:
 	lwz	%r2, 0(%r3)
 	lwz	%r5, 4(%r3)
-	sub	%r2, %r5, %r2
+	subf %r2, %r2, %r5	# sub	%r2, %r5, %r2
 beq_cont.32:
 	lwz	%r5, 0(%r3)
 	add	%r2, %r2, %r5
