@@ -2,10 +2,10 @@
 	.globl _min_caml_start
 	.align 2
 f.9:
-	li	%r2, 123
+	addi	%r2, %r0, 123	# li
 	bclr	20, %cr0	# blr
 g.11:
-	li	%r2, 456
+	addi	%r2, %r0, 456	# li
 	bclr	20, %cr0	# blr
 _min_caml_start: # main entry point
 	mfspr	%r0, 8	# mflr

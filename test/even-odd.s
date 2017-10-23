@@ -54,8 +54,8 @@ _min_caml_start: # main entry point
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 123
-	li	%r5, 456
+	addi	%r2, %r0, 123	# li
+	addi	%r5, %r0, 456	# li
 	or	%r4, %r29, %r4	# mr %r29, %r4
 	addi	%r4, %r4, 16
 	addis	%r6, %r0, ha16(even.17)	# lis
@@ -63,7 +63,7 @@ _min_caml_start: # main entry point
 	stw	%r6, 0(%r29)
 	stw	%r2, 8(%r29)
 	stw	%r5, 4(%r29)
-	li	%r2, 789
+	addi	%r2, %r0, 789	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8

@@ -3,7 +3,7 @@
 	.align 2
 f.8:
 	lwz	%r5, 4(%r29)
-	li	%r6, 0
+	addi	%r6, %r0, 0	# li
 	cmp	%cr7, 0, %r2, 0	# cmpwi
 	bc	1100, %cr7, beq_else.21
 	or	%r6, %r2, %r6	# mr %r2, %r6
@@ -29,14 +29,14 @@ _min_caml_start: # main entry point
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 10
+	addi	%r2, %r0, 10	# li
 	or	%r4, %r29, %r4	# mr %r29, %r4
 	addi	%r4, %r4, 8
 	addis	%r5, %r0, ha16(f.8)	# lis
 	addi	%r5, %r5, lo16(f.8)
 	stw	%r5, 0(%r29)
 	stw	%r2, 4(%r29)
-	li	%r2, 123
+	addi	%r2, %r0, 123	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8

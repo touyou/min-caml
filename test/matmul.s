@@ -136,7 +136,7 @@ loop1.269:
 	lwz	%r7, 12(%r29)
 	lwz	%r8, 8(%r29)
 	lwz	%r9, 4(%r29)
-	li	%r10, 0
+	addi	%r10, %r0, 0	# li
 	cmp	%cr7, 0, %r2, 0	# cmpwi
 	bc	1000, %cr7, bge_else.427
 	or	%r4, %r11, %r4	# mr %r11, %r4
@@ -265,7 +265,7 @@ _min_caml_start: # main entry point
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 0
+	addi	%r2, %r0, 0	# li
 	addis	%r31, %r0, ha16(l.340)	# lis
 	addi	%r31, %r31, lo16(l.340)
 	lfd	%f0, 0(%r31)
@@ -288,8 +288,8 @@ _min_caml_start: # main entry point
 	stw	%r2, 16(%r29)
 	lfd	%f0, 0(%r3)
 	stfd	%f0, 8(%r29)
-	li	%r2, 2
-	li	%r5, 3
+	addi	%r2, %r0, 2	# li
+	addi	%r5, %r0, 3	# li
 	stw	%r2, 12(%r3)
 	stw	%r5, 16(%r3)
 	stw	%r29, 20(%r3)

@@ -38,7 +38,7 @@ _min_caml_start: # main entry point
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 3
+	addi	%r2, %r0, 3	# li
 	addis	%r31, %r0, ha16(l.44)	# lis
 	addi	%r31, %r31, lo16(l.44)
 	lfd	%f0, 0(%r31)
@@ -70,7 +70,7 @@ _min_caml_start: # main entry point
 	addis	%r31, %r0, ha16(l.47)	# lis
 	addi	%r31, %r31, lo16(l.47)
 	lfd	%f1, 0(%r31)
-	li	%r6, 2
+	addi	%r6, %r0, 2	# li
 	lwz	%r2, 4(%r3)
 	stfd	%f0, 8(%r3)
 	mfspr	%r31, 8	# mflr

@@ -2,7 +2,7 @@
 	.globl _min_caml_start
 	.align 2
 test.8:
-	li	%r2, 17
+	addi	%r2, %r0, 17	# li
 	bclr	20, %cr0	# blr
 _min_caml_start: # main entry point
 	mfspr	%r0, 8	# mflr
@@ -10,7 +10,7 @@ _min_caml_start: # main entry point
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 10
+	addi	%r2, %r0, 10	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8

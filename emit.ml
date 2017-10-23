@@ -62,7 +62,7 @@ let rec assemble oc = function
 and assemble_inst oc = function
   | NonTail(_), Nop -> ()
   (* li %reg, int *)
-  | NonTail(x), Li(i) when -32768 <= i && i < 32768 -> Printf.fprintf oc "\tli\t%s, %d\n" x i
+  | NonTail(x), Li(i) when -32768 <= i && i < 32768 -> Printf.fprintf oc "\taddi\t%s, %%r0, %d\t# li\n" x i
   (*
     lis %reg, int1
     ori %reg, %reg, int2

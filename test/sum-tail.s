@@ -15,8 +15,8 @@ _min_caml_start: # main entry point
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 0
-	li	%r5, 10000
+	addi	%r2, %r0, 0	# li
+	addi	%r5, %r0, 10000	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8

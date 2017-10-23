@@ -9,7 +9,7 @@ ack.15:
 ble_else.34:
 	cmp	%cr7, 0, %r5, 0	# cmpwi
 	bc	0100, %cr7, ble_else.35
-	li	%r5, 1
+	addi	%r5, %r0, 1	# li
 	addi	%r2, %r2, -1	# subi %r2, %r2, 1
 	b	ack.15
 ble_else.35:
@@ -32,8 +32,8 @@ _min_caml_start: # main entry point
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 3
-	li	%r5, 10
+	addi	%r2, %r0, 3	# li
+	addi	%r5, %r0, 10	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8

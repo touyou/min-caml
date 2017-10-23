@@ -23,7 +23,7 @@ _min_caml_start: # main entry point
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 21600
+	addi	%r2, %r0, 21600	# li
 	addis	%r5, %r0, 5	# lis
 	ori	%r5, %r5, 9820
 	mfspr	%r31, 8	# mflr

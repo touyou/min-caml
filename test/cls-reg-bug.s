@@ -56,7 +56,7 @@ h.26:
 	stw	%r13, 12(%r29)
 	stw	%r5, 8(%r29)
 	stw	%r2, 4(%r29)
-	li	%r2, 1
+	addi	%r2, %r0, 1	# li
 	lwz	%r28, 0(%r29)
 	mtspr	9, %r28	# mtctr
 	bctr
@@ -66,16 +66,16 @@ _min_caml_start: # main entry point
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 1
-	li	%r5, 2
-	li	%r6, 3
-	li	%r7, 4
-	li	%r8, 5
-	li	%r9, 6
-	li	%r10, 7
-	li	%r11, 8
-	li	%r12, 9
-	li	%r13, 10
+	addi	%r2, %r0, 1	# li
+	addi	%r5, %r0, 2	# li
+	addi	%r6, %r0, 3	# li
+	addi	%r7, %r0, 4	# li
+	addi	%r8, %r0, 5	# li
+	addi	%r9, %r0, 6	# li
+	addi	%r10, %r0, 7	# li
+	addi	%r11, %r0, 8	# li
+	addi	%r12, %r0, 9	# li
+	addi	%r13, %r0, 10	# li
 	or	%r4, %r14, %r4	# mr %r14, %r4
 	addi	%r4, %r4, 40
 	stw	%r13, 36(%r14)

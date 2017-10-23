@@ -13,7 +13,7 @@ f.9:
 	addi	%r3, %r3, -16	# subi
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
-	li	%r2, 1
+	addi	%r2, %r0, 1	# li
 	lwz	%r5, 4(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 12(%r3)
@@ -41,7 +41,7 @@ _min_caml_start: # main entry point
 	addis	%r2, %r0, ha16(f.9)	# lis
 	addi	%r2, %r2, lo16(f.9)
 	stw	%r2, 0(%r29)
-	li	%r2, 9
+	addi	%r2, %r0, 9	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8

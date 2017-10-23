@@ -17,7 +17,7 @@ l.28:	 # 0.000000
 	.align 2
 testf.10:
 	fadd	%f1, %f0, %f1
-	li	%r5, 4
+	addi	%r5, %r0, 4	# li
 	addis	%r31, %r0, ha16(l.28)	# lis
 	addi	%r31, %r31, lo16(l.28)
 	lfd	%f2, 0(%r31)
@@ -58,7 +58,7 @@ _min_caml_start: # main entry point
 	addis	%r31, %r0, ha16(l.33)	# lis
 	addi	%r31, %r31, lo16(l.33)
 	lfd	%f1, 0(%r31)
-	li	%r2, 2
+	addi	%r2, %r0, 2	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8

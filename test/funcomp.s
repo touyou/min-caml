@@ -77,7 +77,7 @@ _min_caml_start: # main entry point
 	lwz	%r31, 4(%r3)
 	or	%r2, %r29, %r2	# mr %r29, %r2
 	mtspr	8, %r31	# mtlr
-	li	%r2, 123
+	addi	%r2, %r0, 123	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
