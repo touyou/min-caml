@@ -1,0 +1,34 @@
+#!/bin/sh
+
+./min-caml test/ack
+./min-caml test/adder
+./min-caml test/cls-bug
+./min-caml test/cls-bug2
+./min-caml test/cls-rec
+./min-caml test/cls-reg-bug
+./min-caml test/cse_test
+./min-caml test/even-odd
+./min-caml test/fib
+./min-caml test/float
+./min-caml test/funcomp
+./min-caml test/gcd
+./min-caml test/inprod-loop
+./min-caml test/inprod-rec
+./min-caml test/inprod
+./min-caml test/join-reg
+./min-caml test/join-reg2
+./min-caml test/join-stack
+./min-caml test/join-stack2
+./min-caml test/join-stack3
+./min-caml test/matmul-flat
+./min-caml test/matmul
+./min-caml test/non-tail-if
+./min-caml test/non-tail-if2
+./min-caml test/print
+./min-caml test/shuffle
+./min-caml test/spill
+./min-caml test/spill2
+./min-caml test/spill3
+./min-caml test/sum-tail
+./min-caml test/sum
+./min-caml test/test

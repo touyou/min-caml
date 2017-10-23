@@ -171,71 +171,71 @@ and assemble_inst oc = function
   (* 末尾なら計算結果を第一レジスタにセットしてリターン *)
   | Tail, (Nop | Out(_) | Stw(_) | Stfd(_) | Comment(_) | Save(_) as exp) ->
     assemble_inst oc (NonTail(Id.gen_tmp Type.Unit), exp);
-    Printf.fprintf oc "\tblr\n"
+    Printf.fprintf oc "\tbclr\t20, %%cr0\t# blr\n"
   | Tail, (Li(_) | SetL(_) | Mr(_) | Neg(_) | Add(_) | Sub(_) | Mul(_) | Div(_) 
           | Xor(_) | Or(_) | And(_) | Sll(_) | Srl(_)
           | Slw(_) | Lwz(_) as exp) ->
     assemble_inst oc (NonTail(regs.(0)), exp);
-    Printf.fprintf oc "\tblr\n"
+    Printf.fprintf oc "\tbclr\t20, %%cr0\t# blr\n"
   | Tail, (FLi(_) | FMr(_) | FNeg(_) | FAdd(_) | FSub(_) | FMul(_) | FDiv(_) | Lfd(_) as exp) ->
     assemble_inst oc (NonTail(fregs.(0)), exp);
-    Printf.fprintf oc "\tblr\n"
+    Printf.fprintf oc "\tbclr\t20, %%cr0\t# blr\n"
   | Tail, (Restore(x) as exp) ->
     (match locate x with
      | [i] -> assemble_inst oc (NonTail(regs.(0)), exp)
      | [i; j] when i + 1 = j -> assemble_inst oc (NonTail(fregs.(0)), exp)
      | _ -> assert false);
-    Printf.fprintf oc "\tblr\n"
+    Printf.fprintf oc "\tbclr\t20, %%cr0\t# blr\n"
   (* 条件分岐：末尾 *)
   | Tail, IfEq(x, Var(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
-    assemble_tail_if oc e1 e2 "beq" "bne"
+    assemble_tail_if oc e1 e2 "beq" "bc\t1100," (* beq bne *)
   | Tail, IfEq(x, Const(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
-    assemble_tail_if oc e1 e2 "beq" "bne"
+    assemble_tail_if oc e1 e2 "beq" "bc\t1100," (* beq bne *)
   | Tail, IfLE(x, Var(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
-    assemble_tail_if oc e1 e2 "ble" "bgt"
+    assemble_tail_if oc e1 e2 "ble" "bc\t0100," (* ble bgt *)
   | Tail, IfLE(x, Const(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
-    assemble_tail_if oc e1 e2 "ble" "bgt"
+    assemble_tail_if oc e1 e2 "ble" "bc\t0100," (* ble bgt *)
   | Tail, IfGE(x, Var(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
-    assemble_tail_if oc e1 e2 "bge" "blt"
+    assemble_tail_if oc e1 e2 "bge" "bc\t1000," (* bge blt *)
   | Tail, IfGE(x, Const(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
-    assemble_tail_if oc e1 e2 "bge" "blt"
+    assemble_tail_if oc e1 e2 "bge" "bc\t1000," (* bge blt *)
   | Tail, IfFEq(x, y, e1, e2)->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
-    assemble_tail_if oc e1 e2 "beq" "bne"
+    assemble_tail_if oc e1 e2 "beq" "bc\t1100," (* beq bne *)
   | Tail, IfFLE(x, y, e1, e2)->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
-    assemble_tail_if oc e1 e2 "ble" "bgt"
+    assemble_tail_if oc e1 e2 "ble" "bc\t0100," (* ble bgt *)
   (* 条件分岐：末尾じゃない *)
   | NonTail(z), IfEq(x, Var(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bne"
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bc\t1100," (* beq bne *)
   | NonTail(z), IfEq(x, Const(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bne"
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bc\t1100," (* beq bne *)
   | NonTail(z), IfLE(x, Var(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bgt"
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bc\t0100," (* ble bgt *)
   | NonTail(z), IfLE(x, Const(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bgt"
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bc\t0100," (* ble bgt *)
   | NonTail(z), IfGE(x, Var(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "blt"
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "bc\t1000," (* bge blt *)
   | NonTail(z), IfGE(x, Const(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "blt"
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "bc\t1000," (* bge blt *)
   | NonTail(z), IfFEq(x, y, e1, e2) ->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bne"
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bc\t1100," (* beq bne *)
   | NonTail(z), IfFLE(x, y, e1, e2) ->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bgt"
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bc\t0100," (* ble bgt *)
   (* 関数呼び出し *)
   | Tail, CallCls(x, ys, zs) ->
     assemble_args oc [(x, reg_closure_addr)] ys zs;
@@ -277,7 +277,7 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tmtspr\t8, %s\t# mtlr\n" reg_tmp
 and assemble_tail_if oc e1 e2 b bn =
   let b_else = Id.gen_id (b ^ "_else") in
-  Printf.fprintf oc "\t%s\t%%cr7, %s\n" bn b_else;
+  Printf.fprintf oc "\t%s %%cr7, %s\n" bn b_else;
   let stackset_back = !stack_set in
   assemble oc (Tail, e1);
   Printf.fprintf oc "%s:\n" b_else;
@@ -286,7 +286,7 @@ and assemble_tail_if oc e1 e2 b bn =
 and assemble_non_tail_if oc dest e1 e2 b bn =
   let b_else = Id.gen_id (b ^ "_else") in
   let b_cont = Id.gen_id (b ^ "_cont") in
-  Printf.fprintf oc "\t%s\t%%cr7, %s\n" bn b_else;
+  Printf.fprintf oc "\t%s %%cr7, %s\n" bn b_else;
   let stackset_back = !stack_set in
   assemble oc (dest, e1);
   let stackset1 = !stack_set in
@@ -350,4 +350,4 @@ let main oc (Prog(data, fundefs, e)) =
   Printf.fprintf oc "\tlwz\t%%r0, 8(%%r1)\n";
   Printf.fprintf oc "\tmtspr\t8, %%r0\t# mtlr\n";
   Printf.fprintf oc "\tlmw\t%%r30, -8(%%r1)\n";
-  Printf.fprintf oc "\tblr\n"
+  Printf.fprintf oc "\tbclr\t20, %%cr0\t# blr\n"

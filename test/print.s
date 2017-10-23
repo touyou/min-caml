@@ -36,4 +36,4 @@ _min_caml_start: # main entry point
 	lwz	%r0, 8(%r1)
 	mtspr	8, %r0	# mtlr
 	lmw	%r30, -8(%r1)
-	blr
+	bclr	20, %cr0	# blr

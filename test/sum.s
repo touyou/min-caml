@@ -1,8 +1,25 @@
 	.text
 	.globl _min_caml_start
 	.align 2
-test.8:
-	li	%r2, 17
+sum.7:
+	li	%r5, 0
+	cmp	%cr7, 0, %r2, 0	# cmpwi
+	bc	0100, %cr7, ble_else.17
+	or	%r5, %r2, %r5	# mr %r2, %r5
+	bclr	20, %cr0	# blr
+ble_else.17:
+	addi	%r5, %r2, -1	# subi %r5, %r2, 1
+	stw	%r2, 0(%r3)
+	mfspr	%r31, 8	# mflr
+	or	%r5, %r2, %r5	# mr %r2, %r5
+	stw	%r31, 4(%r3)
+	addi	%r3, %r3, 8
+	bl	sum.7
+	addi	%r3, %r3, -8	# subi
+	lwz	%r31, 4(%r3)
+	mtspr	8, %r31	# mtlr
+	lwz	%r5, 0(%r3)
+	add	%r2, %r2, %r5
 	bclr	20, %cr0	# blr
 _min_caml_start: # main entry point
 	mfspr	%r0, 8	# mflr
@@ -10,11 +27,11 @@ _min_caml_start: # main entry point
 	stw	%r0, 8(%r1)
 	stwu	%r1, -96(%r1)
 #	main program starts
-	li	%r2, 10
+	li	%r2, 10000
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	test.8
+	bl	sum.7
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
