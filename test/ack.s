@@ -3,12 +3,12 @@
 	.align 2
 ack.15:
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	0100, %cr7, ble_else.34
+	bc	4, %cr7, ble_else.34
 	addi	%r2, %r5, 1
 	bclr	20, %cr0	# blr
 ble_else.34:
 	cmp	%cr7, 0, %r5, 0	# cmpwi
-	bc	0100, %cr7, ble_else.35
+	bc	4, %cr7, ble_else.35
 	addi	%r5, %r0, 1	# li
 	addi	%r2, %r2, -1	# subi %r2, %r2, 1
 	b	ack.15

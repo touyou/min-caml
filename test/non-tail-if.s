@@ -54,7 +54,7 @@ _min_caml_start: # main entry point
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	1000, %cr7, bge_else.34
+	bc	8, %cr7, bge_else.34
 	lwz	%r5, 0(%r3)
 	b	bge_cont.35
 bge_else.34:
@@ -62,7 +62,7 @@ bge_else.34:
 bge_cont.35:
 	lwz	%r6, 0(%r3)
 	cmp	%cr7, 0, %r6, 0	# cmpwi
-	bc	0100, %cr7, ble_else.36
+	bc	4, %cr7, ble_else.36
 	lwz	%r7, 4(%r3)
 	b	ble_cont.37
 ble_else.36:
@@ -71,7 +71,7 @@ ble_cont.37:
 	add	%r5, %r5, %r7
 	lwz	%r7, 4(%r3)
 	cmp	%cr7, 0, %r7, 0	# cmpwi
-	bc	1000, %cr7, bge_else.38
+	bc	8, %cr7, bge_else.38
 	b	bge_cont.39
 bge_else.38:
 	or	%r6, %r2, %r6	# mr %r2, %r6

@@ -21,7 +21,7 @@ l.44:	 # 1.230000
 	.align 2
 inprod.18:
 	cmp	%cr7, 0, %r6, 0	# cmpwi
-	bc	1000, %cr7, bge_else.52
+	bc	8, %cr7, bge_else.52
 	slwi	%r7, %r6, 3
 	lfdx	%f1, %r2, %r7
 	slwi	%r7, %r6, 3

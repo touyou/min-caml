@@ -3,12 +3,12 @@
 	.align 2
 gcd.7:
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	1100, %cr7, beq_else.17
+	bc	12, %cr7, beq_else.17
 	or	%r5, %r2, %r5	# mr %r2, %r5
 	bclr	20, %cr0	# blr
 beq_else.17:
 	cmp	%cr7, 0, %r2, %r5	# cmpw
-	bc	0100, %cr7, ble_else.18
+	bc	4, %cr7, ble_else.18
 	sub	%r5, %r5, %r2
 	b	gcd.7
 ble_else.18:

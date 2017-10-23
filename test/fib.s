@@ -3,7 +3,7 @@
 	.align 2
 fib.10:
 	cmp	%cr7, 0, %r2, 1	# cmpwi
-	bc	0100, %cr7, ble_else.24
+	bc	4, %cr7, ble_else.24
 	bclr	20, %cr0	# blr
 ble_else.24:
 	addi	%r5, %r2, -1	# subi %r5, %r2, 1

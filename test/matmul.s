@@ -63,7 +63,7 @@ loop3.282:
 	lwz	%r9, 8(%r29)
 	lwz	%r10, 4(%r29)
 	cmp	%cr7, 0, %r10, %r2	# cmpw
-	bc	0100, %cr7, ble_else.423
+	bc	4, %cr7, ble_else.423
 	slwi	%r10, %r6, 2
 	lwzx	%r10, %r7, %r10
 	slwi	%r11, %r6, 2
@@ -96,7 +96,7 @@ loop2.274:
 	lwz	%r9, 8(%r29)
 	lwz	%r10, 4(%r29)
 	cmp	%cr7, 0, %r10, %r2	# cmpw
-	bc	0100, %cr7, ble_else.425
+	bc	4, %cr7, ble_else.425
 	or	%r4, %r11, %r4	# mr %r11, %r4
 	addi	%r4, %r4, 32
 	addis	%r12, %r0, ha16(loop3.282)	# lis
@@ -138,7 +138,7 @@ loop1.269:
 	lwz	%r9, 4(%r29)
 	addi	%r10, %r0, 0	# li
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	1000, %cr7, bge_else.427
+	bc	8, %cr7, bge_else.427
 	or	%r4, %r11, %r4	# mr %r11, %r4
 	addi	%r4, %r4, 32
 	addis	%r12, %r0, ha16(loop2.274)	# lis
@@ -193,7 +193,7 @@ init.256:
 	lwz	%r7, 16(%r29)
 	lfd	%f0, 8(%r29)
 	cmp	%cr7, 0, %r7, %r2	# cmpw
-	bc	0100, %cr7, ble_else.429
+	bc	4, %cr7, ble_else.429
 	stw	%r29, 0(%r3)
 	stw	%r6, 4(%r3)
 	stw	%r2, 8(%r3)

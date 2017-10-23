@@ -57,7 +57,7 @@ l.329:	 # 0.000000
 	.align 2
 loop3.140:
 	cmp	%cr7, 0, %r5, 0	# cmpwi
-	bc	1000, %cr7, bge_else.424
+	bc	8, %cr7, bge_else.424
 	slwi	%r10, %r2, 2
 	lwzx	%r10, %r9, %r10
 	slwi	%r11, %r2, 2
@@ -82,7 +82,7 @@ bge_else.424:
 	bclr	20, %cr0	# blr
 loop2.147:
 	cmp	%cr7, 0, %r6, 0	# cmpwi
-	bc	1000, %cr7, bge_else.426
+	bc	8, %cr7, bge_else.426
 	addi	%r10, %r5, -1	# subi %r10, %r5, 1
 	stw	%r9, 0(%r3)
 	stw	%r8, 4(%r3)
@@ -110,7 +110,7 @@ bge_else.426:
 	bclr	20, %cr0	# blr
 loop1.154:
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	1000, %cr7, bge_else.428
+	bc	8, %cr7, bge_else.428
 	addi	%r10, %r6, -1	# subi %r10, %r6, 1
 	stw	%r9, 0(%r3)
 	stw	%r8, 4(%r3)
@@ -143,7 +143,7 @@ init.169:
 	lwz	%r7, 16(%r29)
 	lfd	%f0, 8(%r29)
 	cmp	%cr7, 0, %r7, %r2	# cmpw
-	bc	0100, %cr7, ble_else.430
+	bc	4, %cr7, ble_else.430
 	stw	%r5, 0(%r3)
 	stw	%r29, 4(%r3)
 	stw	%r6, 8(%r3)

@@ -22,7 +22,7 @@ _min_caml_start: # main entry point
 	mtspr	8, %r31	# mtlr
 	stw	%r2, 0(%r3)
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	0100, %cr7, ble_else.23
+	bc	4, %cr7, ble_else.23
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8

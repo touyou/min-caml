@@ -4,7 +4,7 @@
 sum.7:
 	addi	%r5, %r0, 0	# li
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	0100, %cr7, ble_else.17
+	bc	4, %cr7, ble_else.17
 	or	%r5, %r2, %r5	# mr %r2, %r5
 	bclr	20, %cr0	# blr
 ble_else.17:

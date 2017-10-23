@@ -5,9 +5,9 @@ odd.21:
 	lwz	%r5, 8(%r29)
 	lwz	%r29, 4(%r29)
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	0100, %cr7, ble_else.44
+	bc	4, %cr7, ble_else.44
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	1000, %cr7, bge_else.45
+	bc	8, %cr7, bge_else.45
 	or	%r5, %r2, %r5	# mr %r2, %r5
 	bclr	20, %cr0	# blr
 bge_else.45:
@@ -31,9 +31,9 @@ even.17:
 	stw	%r6, 8(%r7)
 	stw	%r29, 4(%r7)
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	0100, %cr7, ble_else.46
+	bc	4, %cr7, ble_else.46
 	cmp	%cr7, 0, %r2, 0	# cmpwi
-	bc	1000, %cr7, bge_else.47
+	bc	8, %cr7, bge_else.47
 	or	%r5, %r2, %r5	# mr %r2, %r5
 	bclr	20, %cr0	# blr
 bge_else.47:
