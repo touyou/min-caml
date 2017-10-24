@@ -137,7 +137,7 @@ loop1.269:
 	lwz	%r8, 8(%r29)
 	lwz	%r9, 4(%r29)
 	addi	%r10, %r0, 0	# li
-	cmp	%cr7, 0, %r2, 0	# cmpwi
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
 	bc	8, %cr7, bge_else.427
 	or	%r4, %r11, %r4	# mr %r11, %r4
 	addi	%r4, %r4, 32

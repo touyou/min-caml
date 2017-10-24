@@ -2,7 +2,7 @@
 	.globl _min_caml_start
 	.align 2
 sum.8:
-	cmp	%cr7, 0, %r5, 0	# cmpwi
+	cmpi	%cr7, 0, %r5, 0	# cmpwi
 	bc	4, %cr7, ble_else.19
 	bclr	20, %cr0	# blr
 ble_else.19:

@@ -2,7 +2,7 @@
 	.globl _min_caml_start
 	.align 2
 gcd.7:
-	cmp	%cr7, 0, %r2, 0	# cmpwi
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
 	bc	12, %cr7, beq_else.17
 	or	%r5, %r2, %r5	# mr %r2, %r5
 	bclr	20, %cr0	# blr

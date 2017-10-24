@@ -50,7 +50,7 @@ _min_caml_start: # main entry point
 	add	%r21, %r20, %r20
 	add	%r22, %r21, %r21
 	lwz	%r6, 4(%r6)
-	cmp	%cr7, 0, %r6, 0	# cmpwi
+	cmpi	%cr7, 0, %r6, 0	# cmpwi
 	bc	12, %cr7, beq_else.77
 	mfspr	%r31, 8	# mflr
 	or	%r5, %r2, %r5	# mr %r2, %r5

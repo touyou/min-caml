@@ -20,7 +20,7 @@ l.44:	 # 1.230000
 	.globl _min_caml_start
 	.align 2
 inprod.18:
-	cmp	%cr7, 0, %r6, 0	# cmpwi
+	cmpi	%cr7, 0, %r6, 0	# cmpwi
 	bc	8, %cr7, bge_else.52
 	slwi	%r7, %r6, 3
 	lfdx	%f1, %r2, %r7

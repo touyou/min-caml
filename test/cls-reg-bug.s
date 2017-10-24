@@ -21,7 +21,7 @@ g.52:
 	add	%r6, %r7, %r6
 	add	%r5, %r6, %r5
 	add	%r5, %r5, %r13
-	cmp	%cr7, 0, %r2, 0	# cmpwi
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
 	bc	4, %cr7, ble_else.90
 	neg	%r2, %r2
 	lwz	%r28, 0(%r29)

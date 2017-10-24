@@ -191,19 +191,19 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_tail_if oc e1 e2 "beq" "bc\t12," (* beq bne *)
   | Tail, IfEq(x, Const(y), e1, e2)->
-    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
+    Printf.fprintf oc "\tcmpi\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_tail_if oc e1 e2 "beq" "bc\t12," (* beq bne *)
   | Tail, IfLE(x, Var(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_tail_if oc e1 e2 "ble" "bc\t4," (* ble bgt *)
   | Tail, IfLE(x, Const(y), e1, e2)->
-    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
+    Printf.fprintf oc "\tcmpi\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_tail_if oc e1 e2 "ble" "bc\t4," (* ble bgt *)
   | Tail, IfGE(x, Var(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_tail_if oc e1 e2 "bge" "bc\t8," (* bge blt *)
   | Tail, IfGE(x, Const(y), e1, e2)->
-    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
+    Printf.fprintf oc "\tcmpi\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_tail_if oc e1 e2 "bge" "bc\t8," (* bge blt *)
   | Tail, IfFEq(x, y, e1, e2)->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
@@ -216,19 +216,19 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bc\t12," (* beq bne *)
   | NonTail(z), IfEq(x, Const(y), e1, e2) ->
-    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
+    Printf.fprintf oc "\tcmpi\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bc\t12," (* beq bne *)
   | NonTail(z), IfLE(x, Var(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bc\t4," (* ble bgt *)
   | NonTail(z), IfLE(x, Const(y), e1, e2) ->
-    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
+    Printf.fprintf oc "\tcmpi\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bc\t4," (* ble bgt *)
   | NonTail(z), IfGE(x, Var(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %s\t# cmpw\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "bc\t8," (* bge blt *)
   | NonTail(z), IfGE(x, Const(y), e1, e2) ->
-    Printf.fprintf oc "\tcmp\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
+    Printf.fprintf oc "\tcmpi\t%%cr7, 0, %s, %d\t# cmpwi\n" x y;
     assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "bc\t8," (* bge blt *)
   | NonTail(z), IfFEq(x, y, e1, e2) ->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;

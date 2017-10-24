@@ -39,7 +39,7 @@ _min_caml_start: # main entry point
 	addi	%r3, %r3, -16	# subi
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
-	cmp	%cr7, 0, %r2, 0	# cmpwi
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
 	bc	12, %cr7, beq_else.35
 	lwz	%r2, 0(%r3)
 	addi	%r2, %r2, 1

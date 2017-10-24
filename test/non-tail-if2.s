@@ -22,7 +22,7 @@ _min_caml_start: # main entry point
 	addis	%r5, %r0, 1	# lis
 	ori	%r5, %r5, 2354
 	lwz	%r6, 0(%r2)
-	cmp	%cr7, 0, %r6, 3	# cmpwi
+	cmpi	%cr7, 0, %r6, 3	# cmpwi
 	bc	12, %cr7, beq_else.33
 	stw	%r5, 0(%r3)
 	stw	%r2, 4(%r3)

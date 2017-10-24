@@ -56,7 +56,7 @@ l.329:	 # 0.000000
 	.globl _min_caml_start
 	.align 2
 loop3.140:
-	cmp	%cr7, 0, %r5, 0	# cmpwi
+	cmpi	%cr7, 0, %r5, 0	# cmpwi
 	bc	8, %cr7, bge_else.424
 	slwi	%r10, %r2, 2
 	lwzx	%r10, %r9, %r10
@@ -81,7 +81,7 @@ loop3.140:
 bge_else.424:
 	bclr	20, %cr0	# blr
 loop2.147:
-	cmp	%cr7, 0, %r6, 0	# cmpwi
+	cmpi	%cr7, 0, %r6, 0	# cmpwi
 	bc	8, %cr7, bge_else.426
 	addi	%r10, %r5, -1	# subi %r10, %r5, 1
 	stw	%r9, 0(%r3)
@@ -109,7 +109,7 @@ loop2.147:
 bge_else.426:
 	bclr	20, %cr0	# blr
 loop1.154:
-	cmp	%cr7, 0, %r2, 0	# cmpwi
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
 	bc	8, %cr7, bge_else.428
 	addi	%r10, %r6, -1	# subi %r10, %r6, 1
 	stw	%r9, 0(%r3)

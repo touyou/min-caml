@@ -4,7 +4,7 @@
 f.8:
 	lwz	%r5, 4(%r29)
 	addi	%r6, %r0, 0	# li
-	cmp	%cr7, 0, %r2, 0	# cmpwi
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
 	bc	12, %cr7, beq_else.21
 	or	%r6, %r2, %r6	# mr %r2, %r6
 	bclr	20, %cr0	# blr
