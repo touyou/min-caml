@@ -12,6 +12,8 @@ let rec not_effect = function
   | In(_) | Out(_) | App(_) | Get(_) | Put(_) | ExtArray(_) | ExtFunApp(_) -> false
   | _ -> true
 
+(* TODO: let recを超えて共通部分式削除するとむしろ悪化するらしい  *)
+
 let rec cse env e =
   try
     let id = CseMap.find e env in
