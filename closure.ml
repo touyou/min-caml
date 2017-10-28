@@ -26,6 +26,7 @@ type t =
   | AppCls of Id.t * Id.t list
   | AppDir of Id.label * Id.t list
   | Tuple of Id.t list
+  | NTuple of Id.t list * Type.t
   | LetTuple of (Id.t * Type.t) list * Id.t * t
   | In
   | Out of Id.t
@@ -50,7 +51,7 @@ let rec free_var = function
   | Var(x) -> MiniSet.singleton x
   | MakeCls((x, t), { entry = l; actual_free_var = ys }, e) -> MiniSet.remove x (MiniSet.union (MiniSet.of_list ys) (free_var e))
   | AppCls(x, ys) -> MiniSet.of_list (x :: ys)
-  | AppDir(_, xs) | Tuple(xs) -> MiniSet.of_list xs
+  | AppDir(_, xs) | Tuple(xs) | NTuple(xs, _) -> MiniSet.of_list xs
   | LetTuple(xts, y, e) -> MiniSet.add y (MiniSet.diff (free_var e) (MiniSet.of_list (List.map fst xts)))
   | Put(x, y, z) -> MiniSet.of_list [x; y; z]
 

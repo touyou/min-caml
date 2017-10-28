@@ -26,6 +26,7 @@ type t =
   | AppCls of Id.t * Id.t list
   | AppDir of Id.label * Id.t list
   | Tuple of Id.t list
+  | NTuple of Id.t list * Type.t
   | LetTuple of (Id.t * Type.t) list * Id.t * t
   | In
   | Out of Id.t
