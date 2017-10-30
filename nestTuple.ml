@@ -11,9 +11,11 @@ let rec nest_closured_form env tenv = function
     let tenv' = MiniMap.add x t tenv in
     Closure.Let((x, t), nest_closured_form env tenv e1, nest_closured_form env' tenv' e2)
   | Closure.MakeCls((x, t), { entry = l; actual_free_var = ys }, e) ->
+    (* envを更新する必要はあるのか？  *)
     let tenv' = MiniMap.add x t tenv in
     Closure.MakeCls((x, t), { entry = l; actual_free_var = ys }, nest_closured_form env tenv' e)
   | Closure.LetTuple(xts, x, e) ->
+    (* こっちも。展開しちゃってeを探すという説？ *)
     let tenv' = MiniMap.add_list xts tenv in
     Closure.LetTuple(xts, x, nest_closured_form env tenv' e)
   | exp -> exp
