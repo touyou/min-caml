@@ -1,5 +1,6 @@
 let limit = ref 1000
 let dmode = ref 0b0000
+let is_optimize = ref false
 
 (* 最適化のリスト
    Beta β簡約
@@ -50,7 +51,7 @@ let lexbuf outchan l =
   let alpha_converted = Alpha.main normalized in
   (if (!dmode lsr 10) land 1 = 1 then
      print_string ("Alpha---\n"  ^ (Debug.string_of_knormal alpha_converted) ^ "\n\n"));
-  let opted = iter !limit alpha_converted in
+  let opted = (if !is_optimize then iter !limit alpha_converted  else alpha_converted) in
   let closured = Closure.main opted in
   (if (!dmode lsr 3) land 1 = 1 then
      print_string ("Closured---\n" ^ (Debug.string_of_cl_prog closured) ^ "\n\n"));
@@ -83,7 +84,8 @@ let () =
       ("-inline", Arg.Int(fun i -> Inline.threshold := i), "maximum size of functions inlined");
       ("-iter", Arg.Int(fun i -> limit := i), "maximum number of optimizations iterated");
       ("-debug", Arg.String(fun i -> dmode := int_of_string i),
-       "debug option by byte number(parse,type,knormal,alpha,beta,assoc,inline,constFold,cse,elim,closure,virtual,simm,regalloc)")
+       "debug option by byte number(parse,type,knormal,alpha,beta,assoc,inline,constFold,cse,elim,closure,virtual,simm,regalloc)");
+      ("-O", Arg.Unit(fun () -> is_optimize := true), "optimization") 
     ]
     (fun s -> files := !files @ [s])
     ("Mitou Min-Caml Compiler (C) Eijiro Sumii\nedited by touyou. 2017\n" ^
