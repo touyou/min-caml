@@ -97,12 +97,11 @@ and assemble_inst oc = function
   *)
   | NonTail(x), Sub(y, Const(z)) ->
     Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi %s, %s, %d\n" x y (-z) x y z
-  (* TO-DO: かけ算割り算は少ないから適当に *)
-  | NonTail(x), Mul(y, Var(z)) -> Printf.fprintf oc "\tmullw\t%s, %s, %s\n" x y z
-  | NonTail(x), Mul(y, Const(z)) -> Printf.fprintf oc "\tmulli\t%s, %s, %d" x y z
-  | NonTail(x), Div(y, Var(z)) -> Printf.fprintf oc "\tdivw\t%s, %s, %s\n" x y z
-  | NonTail(x), Div(y, Const(z)) ->
-    Printf.fprintf oc "\taddi\t%s, %%r0, %d\n\tdivw\t%s, %s, %s\n" x z x y x
+  (* かけ算割り算は少ないので即値だけシフトに、そうじゃない場合はinvalidをつけた命令を吐く→無視の方向 or float_to_intなどでfmulとかで対処する *)
+  | NonTail(x), Mul(y, Var(z)) -> Printf.fprintf oc "\tinvalid_mull\t%s, %s, %s\n" x y z
+  | NonTail(x), Mul(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d" x y (z/2)
+  | NonTail(x), Div(y, Var(z)) -> Printf.fprintf oc "\tinvalid_div\t%s, %s, %s\n" x y z
+  | NonTail(x), Div(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d" x y (z/2)
   (* 論理演算周り *)
   | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" x y z
   | NonTail(x), Xor(y, Const(z)) -> Printf.fprintf oc "\txori\t%s, %s, %d\n" x y z
@@ -112,7 +111,7 @@ and assemble_inst oc = function
   | NonTail(x), And(y, Const(z)) -> Printf.fprintf oc "\tandi\t%s, %s, %d\n" x y z
   (* シフト系 *)
   | NonTail(x), Sll(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s\n" x y z
-  | NonTail(x), Sll(y, Const(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %d\n" x y z
+  | NonTail(x), Sll(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d\n" x y z
   | NonTail(x), Srl(y, Var(z)) -> Printf.fprintf oc "\tsraw\t%s, %s, %s\n" x y z
   | NonTail(x), Srl(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d\n" x y z
   (* slw %r1, %r2, %r3 *)
