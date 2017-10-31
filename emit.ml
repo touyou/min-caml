@@ -98,9 +98,11 @@ and assemble_inst oc = function
   | NonTail(x), Sub(y, Const(z)) ->
     Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi %s, %s, %d\n" x y (-z) x y z
   (* かけ算割り算は少ないので即値だけシフトに、そうじゃない場合はinvalidをつけた命令を吐く→無視の方向 or float_to_intなどでfmulとかで対処する *)
-  | NonTail(x), Mul(y, Var(z)) -> Printf.fprintf oc "\tinvalid_mull\t%s, %s, %s\n" x y z
+  | NonTail(x), Mul(y, Var(z)) -> assert false
+  (*Printf.fprintf oc "\tinvalid_mull\t%s, %s, %s\n" x y z*)
   | NonTail(x), Mul(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d" x y (z/2)
-  | NonTail(x), Div(y, Var(z)) -> Printf.fprintf oc "\tinvalid_div\t%s, %s, %s\n" x y z
+  | NonTail(x), Div(y, Var(z)) -> assert false
+  (*Printf.fprintf oc "\tinvalid_div\t%s, %s, %s\n" x y z*)
   | NonTail(x), Div(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d" x y (z/2)
   (* 論理演算周り *)
   | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" x y z
@@ -150,9 +152,8 @@ and assemble_inst oc = function
   (* comment *)
   | NonTail(_), Comment(s) -> Printf.fprintf oc "#\t%s\n" s
   (* TO-DO: 入出力 *)
-  | NonTail(x), In -> ()
-  | Tail, In -> ()
-  | NonTail(x), Out(y) -> ()
+  | NonTail(x), In -> Printf.fprintf oc "\tin\t%s, %d\n" x 0
+  | NonTail(x), Out(y) -> Printf.fprintf oc "\tout\t%s, %d\n" y 0
   (* 待避の実装 *)
   | NonTail(_), Save(x, y) when List.mem x all_regs && not (MiniSet.mem y !stack_set) ->
     save y;
@@ -274,6 +275,7 @@ and assemble_inst oc = function
     else if List.mem a all_fregs && a <> fregs.(0) then
       Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0);
     Printf.fprintf oc "\tmtspr\t8, %s\t# mtlr\n" reg_tmp
+  | Tail, _ -> assert false
 and assemble_tail_if oc e1 e2 b bn =
   let b_else = Id.gen_id (b ^ "_else") in
   Printf.fprintf oc "\t%s %%cr7, %s\n" bn b_else;
