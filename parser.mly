@@ -3,6 +3,7 @@
     open Syntax
     open Lexing
     let add_type x = (x, Type.gen_type ())
+    let gen_fun = Id.gen_id "fun"
 %}
 
 /* 字句を表すデータ型  */
@@ -38,10 +39,12 @@
 %token LET
 %token IN
 %token REC
+%token FUN
 %token COMMA
 %token ARRAY_CREATE
 %token DOT
 %token LESS_MINUS
+%token MINUS_GREATER
 %token SEMICOLON
 %token LPAREN
 %token RPAREN
@@ -55,7 +58,7 @@
 %right LESS_MINUS
 %nonassoc prec_tuple
 %left COMMA
-%left EQUAL LESS_GREATER LESS GREATER LESS_EQUAL GREATER_EQUAL
+%left EQUAL LESS_GREATER MINUS_GREATER LESS GREATER LESS_EQUAL GREATER_EQUAL
 %left PLUS MINUS PLUS_DOT MINUS_DOT
 %left AST SLASH AST_DOT SLASH_DOT
 %left XOR OR AND
@@ -155,6 +158,13 @@ exp:
 | LPAREN LET REC fun_def RPAREN
     %prec prec_let
     { LetRecDef($4) }
+| FUN formal_args MINUS_GREATER exp
+    %prec prec_let
+    {
+    let fun_name = gen_fun in
+    let fun_and_type = add_type fun_name in
+      LetRec({ name = fun_and_type; args = $2; body = $4}, Var(fun_name))
+    }
 | simple_exp actual_args
     %prec prec_app
     { App($1, $2) }
