@@ -7,6 +7,21 @@ let ext_env = ref MiniMap.empty
 
 let gen_env = ref MiniMap.empty
 
+let rec string_of_type = function
+  | Type.Unit -> "Unit"
+  | Type.Bool -> "Bool"
+  | Type.Int -> "Int"
+  | Type.Float -> "Float"
+  | Type.Fun(t1, t2) -> (string_of_type (Type.Tuple(t1))) ^ " -> " ^ (string_of_type t2)
+  | Type.Tuple(ts) -> "(" ^ (string_of_types ts) ^ ")"
+  | Type.Array(t) -> "[" ^ (string_of_type t) ^ "]"
+  | Type.Var(t) ->
+    let t' = !t in (match t' with Some(t2) -> string_of_type t2 | None -> "T")
+and string_of_types = function
+  | [] -> ""
+  | t :: [] -> string_of_type t
+  | t :: tr -> (string_of_type t) ^ ", " ^ (string_of_types tr)
+
 (* 型変数を中身で置き換える *)
 let rec deref_type = function
   | Type.Fun(t1s, t2) -> Type.Fun(List.map deref_type t1s, deref_type t2)
@@ -186,7 +201,9 @@ let rec infer env e =
         unify (Type.Array(t)) (infer env e1);
         unify Type.Int (infer env e2);
         Type.Unit
-  with Unify(t1, t2) -> raise (Error(deref_term e, deref_type t1, deref_type t2))
+  with Unify(t1, t2) ->
+    failwith (Printf.sprintf "unify error correct: %s wrong: %s." (string_of_type (deref_type t1)) (string_of_type (deref_type t2)))
+    (*raise (Error(deref_term e, deref_type t1, deref_type t2)))*)
 
 let main e =
   ext_env := MiniMap.empty;
