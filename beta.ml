@@ -43,6 +43,6 @@ let rec beta_cond env = function
   | App(g, xs) -> App(find g env, List.map (fun x -> find x env) xs)
   | ExtVar(x, t) -> ExtVar(x, t)
   | ExtArray(x) -> ExtArray(x)
-  | ExtFunApp(x, ys) -> ExtFunApp(x, ListLabels.map (fun x -> find x env) ys)
+  | ExtFunApp(x, ys) -> ExtFunApp(x, List.map (fun y -> find y env) ys)
 
 let main = beta_cond MiniMap.empty

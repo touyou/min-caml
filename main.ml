@@ -1,6 +1,7 @@
 let limit = ref 1000
 let dmode = ref 0b0000
 let is_optimize = ref false
+let is_start = ref false
 
 (* 最適化のリスト
    Beta β簡約
@@ -85,7 +86,8 @@ let () =
       ("-iter", Arg.Int(fun i -> limit := i), "maximum number of optimizations iterated");
       ("-debug", Arg.String(fun i -> dmode := int_of_string i),
        "debug option by byte number(parse,type,knormal,alpha,beta,assoc,inline,constFold,cse,elim,closure,virtual,simm,regalloc)");
-      ("-O", Arg.Unit(fun () -> is_optimize := true), "optimization") 
+      ("-O", Arg.Unit(fun () -> is_optimize := true), "optimization");
+      ("-include-start", Arg.Unit(fun () -> is_start := true), "include start section")
     ]
     (fun s -> files := !files @ [s])
     ("Mitou Min-Caml Compiler (C) Eijiro Sumii\nedited by touyou. 2017\n" ^
