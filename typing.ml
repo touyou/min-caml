@@ -129,11 +129,22 @@ let rec infer env e =
         unify Type.Int (infer env e);
         Type.Int
     | Add(e1, e2) | Sub(e1, e2) | Mul(e1, e2) | Div(e1, e2)
-    | Xor(e1, e2) | Or(e1, e2) | And(e1, e2)
     | Sll(e1, e2) | Srl(e1, e2) ->
         unify Type.Int (infer env e1);
         unify Type.Int (infer env e2);
         Type.Int
+    | Xor(e1, e2) | Or(e1, e2) | And(e1, e2) ->
+      (try
+        unify Type.Bool (infer env e1);
+        unify Type.Bool (infer env e2);
+        Type.Bool
+      with Unify(t1, t2) ->
+        if t1 = Type.Int then
+           (unify Type.Int (infer env e1);
+           unify Type.Int (infer env e2);
+           Type.Int)
+        else
+           raise (Unify(t1, t2)))
     | FNeg(e) ->
         unify Type.Float (infer env e);
         Type.Float

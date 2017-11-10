@@ -28,7 +28,7 @@ let rec iter n e =
     let constfolded = ConstFold.main inlined in
     (if (!dmode lsr 6) land 1 = 1 then
        print_string ("ConstFold---\n" ^ (Debug.string_of_knormal constfolded) ^ "\n\n"));
-    let csed = Cse.main constfolded in
+    let csed = (*Cse.main*) constfolded in
     (if (!dmode lsr 5) land 1 = 1 then
        print_string ("Cse---\n" ^ (Debug.string_of_knormal csed) ^ "\n\n"));
     let e' = Elim.main csed in
