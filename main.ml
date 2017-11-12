@@ -41,9 +41,12 @@ let lexbuf outchan l =
   Id.counter := 0;
   Typing.ext_env := MiniMap.empty;
   let parsed = Parser.exp Lexer.token l in
-  (if (!dmode lsr 13) land 1 = 1 then
+  (if (!dmode lsr 14) land 1 = 1 then
      print_string ("Parser---\n" ^ (Debug.string_of_syntax parsed) ^ "\n\n"));
-  let typed = Typing.main parsed in
+  let eta_converted = Eta.main parsed in
+  (if (!dmode lsr 13) land 1 = 1 then
+     print_string ("Eta---\n" ^ (Debug.string_of_syntax eta_converted) ^ "\n\n"));
+  let typed = Typing.main eta_converted in
   (if (!dmode lsr 12) land 1 = 1 then
      print_string ("Typed---\n" ^ (Debug.string_of_syntax typed) ^ "\n\n"));
   let normalized = KNormal.main typed in
@@ -85,7 +88,7 @@ let () =
       ("-inline", Arg.Int(fun i -> Inline.threshold := i), "maximum size of functions inlined");
       ("-iter", Arg.Int(fun i -> limit := i), "maximum number of optimizations iterated");
       ("-debug", Arg.String(fun i -> dmode := int_of_string i),
-       "debug option by byte number(parse,type,knormal,alpha,beta,assoc,inline,constFold,cse,elim,closure,virtual,simm,regalloc)");
+       "debug option by byte number(parse,eta,type,knormal,alpha,beta,assoc,inline,constFold,cse(current invalid),elim,closure,virtual,simm,regalloc)");
       ("-O", Arg.Unit(fun () -> is_optimize := true), "optimization");
       ("-include-start", Arg.Unit(fun () -> is_start := true), "include start section")
     ]

@@ -10,7 +10,7 @@ $(RESULT): debug-code top
 clean:: nobackup
 
 SOURCES = float.c type.ml id.ml miniMap.ml miniSet.ml \
-syntax.ml parser.mly lexer.mll typing.mli typing.ml kNormal.mli kNormal.ml \
+syntax.ml parser.mly lexer.mll eta.mli eta.ml typing.mli typing.ml kNormal.mli kNormal.ml \
 closure.mli closure.ml asm.mli asm.ml virtual.mli virtual.ml \
 debug.ml \
 cseMap.ml \
