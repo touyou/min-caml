@@ -50,22 +50,22 @@ let rec eta_conv env = function
   | App(Var(x), es) when MiniMap.mem x env ->
     let yts = MiniMap.find x env in
     (* 実際の引数よりも多い場合は型エラーをおこすからとりあえずここではスルー *)
-    if (List.length yts) <= (List.length es) then App(Var(x), (List.map (eta_conv env tenv) es))
+    if (List.length yts) <= (List.length es) then App(Var(x), (List.map (eta_conv env) es))
     else
       let name = gen_fun in
       let (_, typ) = add_type name in
       let nts = ntail (List.length es) yts in
-      LetRec({ name = (name, typ); args = nts; body = App(Var(x), (List.map (eta_conv env tenv) es) @ (List.map (fun (x, _) -> Var(x)) nts))}, Var(name))
+      LetRec({ name = (name, typ); args = nts; body = App(Var(x), (List.map (eta_conv env) es) @ (List.map (fun (x, _) -> Var(x)) nts))}, Var(name))
   | App(Var(x), es) when MiniMap.mem x !genv ->
     let yts = MiniMap.find x !genv in
-    if (List.length yts) <= (List.length es) then App(Var(x), (List.map (eta_conv env tenv) es))
+    if (List.length yts) <= (List.length es) then App(Var(x), (List.map (eta_conv env) es))
     else
       let name = gen_fun in
       let (_, typ) = add_type name in
       let nts = ntail (List.length es) yts in
-      LetRec({ name = (name, typ); args = nts; body = App(Var(x), (List.map (eta_conv env tenv) es) @ (List.map (fun (x, _) -> Var(x)) nts))}, Var(name))
-  | App(e, es) -> App(eta_conv env e, (List.map (eta_conv env tenv) es))
-  | Tuple(es) -> Tuple(List.map (eta_conv env tenv) es)
+      LetRec({ name = (name, typ); args = nts; body = App(Var(x), (List.map (eta_conv env) es) @ (List.map (fun (x, _) -> Var(x)) nts))}, Var(name))
+  | App(e, es) -> App(eta_conv env e, (List.map (eta_conv env) es))
+  | Tuple(es) -> Tuple(List.map (eta_conv env) es)
   | LetTuple(xts, e1, e2) -> LetTuple(xts, eta_conv env e1, eta_conv env e2)
   | Array(e1, e2) -> Array(eta_conv env e1, eta_conv env e2)
   | In(e) -> In(eta_conv env e)

@@ -89,6 +89,21 @@ let () =
       ("-iter", Arg.Int(fun i -> limit := i), "maximum number of optimizations iterated");
       ("-debug", Arg.String(fun i -> dmode := int_of_string i),
        "debug option by byte number(parse,eta,type,knormal,alpha,beta,assoc,inline,constFold,cse(current invalid),elim,closure,virtual,simm,regalloc)");
+      ("-dump-parsed", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 14)), "dumped parsed code");
+      ("-dump-eta", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 13)), "dumped eta code");
+      ("-dump-typed", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 12)), "dumped typed code");
+      ("-dump-knormalized", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 11)), "dumped knormalized code");
+      ("-dump-alpha", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 10)), "dumped alpha code");
+      ("-dump-beta", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 9)), "dumped beta code");
+      ("-dump-assoc", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 8)), "dumped associated code");
+      ("-dump-inlined", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 7)), "dumped inlined code");
+      ("-dump-const-folded", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 6)), "dumped const folded code");
+      ("-dump-cse", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 5)), "dumped cse code");
+      ("-dump-eliminated", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 4)), "dumped eliminated code");
+      ("-dump-closure", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 3)), "dumped closure code");
+      ("-dump-virtualized", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 2)), "dumped virtualized code");
+      ("-dump-simm", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 1)), "dumped simm code");
+      ("-dump-regalloc", Arg.Unit(fun () -> dmode := !dmode lor 1), "dumped regalloc code");
       ("-O", Arg.Unit(fun () -> is_optimize := true), "optimization");
       ("-include-start", Arg.Unit(fun () -> is_start := true), "include start section")
     ]

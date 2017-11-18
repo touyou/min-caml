@@ -7,6 +7,12 @@ let ext_env = ref MiniMap.empty
 
 let gen_env = ref MiniMap.empty
 
+let string_of_id id = id
+let rec string_of_ids = function
+  | [] -> ""
+  | e :: [] -> string_of_id e
+  | e :: er -> (string_of_id e) ^ ", " ^ (string_of_ids er)
+
 let rec string_of_type = function
   | Type.Unit -> "Unit"
   | Type.Bool -> "Bool"
@@ -21,6 +27,80 @@ and string_of_types = function
   | [] -> ""
   | t :: [] -> string_of_type t
   | t :: tr -> (string_of_type t) ^ ", " ^ (string_of_types tr)
+
+let rec string_of_args = function
+  | [] -> ""
+  | (id, typ) :: [] -> "(" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ")"
+  | (id, typ) :: args -> "(" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ "), " ^ (string_of_args args)
+
+let rec string_of_nest n =
+  if n = 0 then ""
+  else "  " ^ (string_of_nest (n-1))
+
+let string_of_syntax elem =
+  let rec string_of_syntax' nest elem =
+    (string_of_nest nest) ^ (match elem with
+        | Syntax.Unit -> "()"
+        | Syntax.Bool(e) -> if e then "true" else "false"
+        | Syntax.Int(e) -> string_of_int e
+        | Syntax.Float(e) -> string_of_float e
+        | Syntax.Not(e) -> "not(" ^ (string_of_syntax' 0 e) ^ ")"
+        | Syntax.Neg(e) | Syntax.FNeg(e) -> "-(" ^ (string_of_syntax' 0 e) ^ ")"
+        | Syntax.Add(e1, e2) | Syntax.FAdd(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " + " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Sub(e1, e2) | Syntax.FSub(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " - " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Mul(e1, e2) | Syntax.FMul(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " * " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Div(e1, e2) | Syntax.FDiv(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " / " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Xor(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " ^ " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Or(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " | " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.And(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " & " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Sll(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " << " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Srl(e1, e2) ->
+          "(" ^ (string_of_syntax' 0 e1) ^ " >> " ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Eq(e1, e2) -> (string_of_syntax' 0 e1) ^ " == " ^ (string_of_syntax' 0 e2)
+        | Syntax.LE(e1, e2) -> (string_of_syntax' 0 e1) ^ " <= " ^ (string_of_syntax' 0 e2)
+        | Syntax.If(e1, e2, e3) ->
+          "if " ^ (string_of_syntax' 0 e1) ^ " then\n"
+          ^ (string_of_syntax' (nest+1) e2) ^ "\n"
+          ^ (string_of_nest nest) ^ "else\n" ^ (string_of_syntax' (nest+1) e3)
+        | Syntax.Let((id, typ), e1, e2) ->
+          "let " ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ " =\n"
+          ^ (string_of_syntax' (nest+1) e1) ^ "\n"
+          ^ (string_of_nest nest) ^ "in\n" ^ (string_of_syntax' (nest+1) e2)
+        | Syntax.LetDef((id, typ), e1) ->
+          "let " ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ "=\n"
+          ^ (string_of_syntax' (nest+1) e1)
+        | Syntax.Var id -> string_of_id id
+        | Syntax.LetRec({ name = (id, typ); args = args; body = e1}, e2) ->
+          "let rec (" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ") " ^ "(" ^ (string_of_args args) ^ ") =\n"
+          ^ (string_of_syntax' (nest+1) e1)
+          ^ "\n" ^ (string_of_nest nest) ^ "in\n" ^ (string_of_syntax' (nest+1) e2)
+        | Syntax.LetRecDef({ name = (id, typ); args = args; body = e1 }) ->
+          "let rec (" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ") " ^ "(" ^ (string_of_args args) ^ ") =\n"
+          ^ (string_of_syntax' (nest+1) e1)
+        | Syntax.App(e, es) -> (string_of_syntax' 0 e) ^ "(" ^ (string_of_elems es) ^ ")"
+        | Syntax.Tuple(es) -> "(" ^ string_of_elems es ^ ")"
+        | Syntax.LetTuple(args, e1, e2) ->
+          "let (" ^ (string_of_args args) ^ ") =\n"
+          ^ (string_of_syntax' (nest+1) e1) ^ "\n" ^ (string_of_nest nest) ^ "in\n" ^ (string_of_syntax' (nest+1) e2)
+        | Syntax.Array(e1, e2) -> "Array.create " ^ (string_of_syntax' 0 e1) ^ " " ^ (string_of_syntax' 0 e2)
+        | Syntax.In(e1) -> "input " ^ (string_of_syntax' 0 e1)
+        | Syntax.Out(e1) -> "output " ^ (string_of_syntax' 0 e1)
+        | Syntax.Get(e1, e2) -> (string_of_syntax' 0 e1) ^ ".(" ^ (string_of_syntax' 0 e2) ^ ")"
+        | Syntax.Put(e1, e2, e3) -> (string_of_syntax' 0 e1) ^ ".(" ^ (string_of_syntax' 0 e2) ^ ") <- " ^ (string_of_syntax' 0 e3)
+      )
+  and string_of_elems = function
+    | [] -> ""
+    | e :: [] -> string_of_syntax' 0 e
+    | e :: er -> (string_of_syntax' 0 e) ^ ", " ^ (string_of_elems er)
+  in string_of_syntax' 0 elem
 
 (* 型変数を中身で置き換える *)
 let rec deref_type = function
@@ -134,17 +214,18 @@ let rec infer env e =
         unify Type.Int (infer env e2);
         Type.Int
     | Xor(e1, e2) | Or(e1, e2) | And(e1, e2) ->
-      (try
-        unify Type.Bool (infer env e1);
-        unify Type.Bool (infer env e2);
-        Type.Bool
-      with Unify(t1, t2) ->
-        if t1 = Type.Int then
-           (unify Type.Int (infer env e1);
-           unify Type.Int (infer env e2);
-           Type.Int)
-        else
-           raise (Unify(t1, t2)))
+      let t1 = infer env e1 in
+      let t2 = infer env e2 in
+      if t1 = Type.Bool || t2 = Type.Bool then
+        (unify Type.Bool t1;
+         unify Type.Bool t2;
+         Type.Bool)
+      else if t1 = Type.Int || t2 = Type.Int then
+        (unify Type.Int t1;
+         unify Type.Int t2;
+         Type.Int)
+      else
+        (unify t1 t2; t1)
     | FNeg(e) ->
         unify Type.Float (infer env e);
         Type.Float
@@ -213,7 +294,7 @@ let rec infer env e =
         unify Type.Int (infer env e2);
         Type.Unit
   with Unify(t1, t2) ->
-    failwith (Printf.sprintf "unify error correct: %s wrong: %s." (string_of_type (deref_type t1)) (string_of_type (deref_type t2)))
+    failwith (Printf.sprintf "unify error correct: %s, wrong: %s." (string_of_type (deref_type t1)) (string_of_type (deref_type t2)))
     (*raise (Error(deref_term e, deref_type t1, deref_type t2)))*)
 
 let main e =
