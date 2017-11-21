@@ -6,10 +6,31 @@
 
 ## 使い方
 
+※現在大きなプログラムに対応してないのでCSEはコメントアウトしています。また部分適用は限られたパターンのみ利用可能です。
+
 0. `make`する
 0. `./min-caml file_name_without_ml`でコンパイル
-0. `-debug`オプションをつくりました。(parse,type,knormal,alpha,beta,assoc,inline,constFold,cse,elim,closure,virtual,simm,regalloc)の順にもしデバッグ出力してほしいものがあればそこのビットを立てた２進数を渡します。(例：`-debug 0b10100000000000`とするとParse後のコードとK正規化後のコードのみ表示されます。)
+0. `-debug`オプションをつくりました。(parse,type,knormal,alpha,beta,assoc,inline,constFold,cse,elim,closure,virtual,simm,regalloc)の順にもしdebug出力してほしいものがあればそこのビットを立てた２進数を渡します。(例：`-debug 0b10100000000000`とするとParse後のコードとK正規化後のコードのみ表示されます。)
+0. `-dump-hoge`でhogeのdebug出力ができるようにしました。キーワードとしては下にリストしてるものが使えます。
 0. `-O`オプションをつくりました。通常の状態では最適化が走らず、このオプションをつけることで最適化されます。即値最適化に関してはオプションに関わらず実行されます。
+
+### デバッグオプション一覧
+
+- `-dump-parsed`
+- `-dump-eta`
+- `-dump-typed`
+- `-dump-knormalized`
+- `-dump-alpha`
+- `-dump-beta`
+- `-dump-assoc`
+- `-dump-inlined`
+- `-dump-const-folded`
+- `-dump-cse`
+- `-dump-eliminated`
+- `-dump-closure`
+- `-dump-virtualized`
+- `-dump-simm`
+- `-dump-regalloc`
 
 ## フォルダ構成
 
@@ -25,7 +46,7 @@
 
 ## emitからはかれている命令の現状
 ### シミュレータにある
- 
+
 - 0 add
 - 2 addi
 - 8 or
