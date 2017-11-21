@@ -1,7 +1,7 @@
 let limit = ref 1000
 let dmode = ref 0b0000
 let is_optimize = ref false
-let is_start = ref false
+let library = ref "libmincaml"
 
 (* 最適化のリスト
    Beta β簡約
@@ -37,13 +37,15 @@ let rec iter n e =
     if e = e' then e else
       iter (n - 1) e'
 
-let lexbuf outchan l =
+let lexbuf outchan l lib =
   Id.counter := 0;
   Typing.ext_env := MiniMap.empty;
   let parsed = Parser.exp Lexer.token l in
   (if (!dmode lsr 14) land 1 = 1 then
      print_string ("Parser---\n" ^ (Debug.string_of_syntax parsed) ^ "\n\n"));
-  let eta_converted = Eta.main parsed in
+  let libparsed = Parser.exp Lexer.token lib in
+  let lib_joined = JoinLibrary.main parsed libparsed in
+  let eta_converted = Eta.main lib_joined in
   (if (!dmode lsr 13) land 1 = 1 then
      print_string ("Eta---\n" ^ (Debug.string_of_syntax eta_converted) ^ "\n\n"));
   let typed = Typing.main eta_converted in
@@ -70,14 +72,16 @@ let lexbuf outchan l =
      print_string ("RegAllocation--\n" ^ (Debug.string_of_asm_prog allocated) ^ "\n\n"));
   Emit.main outchan allocated
 
-let string s = lexbuf stdout (Lexing.from_string s)
+let string s lib = lexbuf stdout (Lexing.from_string s) (Lexing.from_string lib)
 
 let file f =
   let inchan = open_in (f ^ ".ml") in
+  let libchan = open_in (!library ^ ".ml") in
   let outchan = open_out (f ^ ".s") in
   try
-    lexbuf outchan (Lexing.from_channel inchan);
+    lexbuf outchan (Lexing.from_channel inchan) (Lexing.from_channel libchan);
     close_in inchan;
+    close_in libchan;
     close_out outchan;
   with e -> (close_in inchan; close_out outchan; raise e)
 
@@ -105,7 +109,7 @@ let () =
       ("-dump-simm", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 1)), "dumped simm code");
       ("-dump-regalloc", Arg.Unit(fun () -> dmode := !dmode lor 1), "dumped regalloc code");
       ("-O", Arg.Unit(fun () -> is_optimize := true), "optimization");
-      ("-include-start", Arg.Unit(fun () -> is_start := true), "include start section")
+      ("-as-library", Arg.String(fun s -> library := s), "compile as library code")
     ]
     (fun s -> files := !files @ [s])
     ("Mitou Min-Caml Compiler (C) Eijiro Sumii\nedited by touyou. 2017\n" ^

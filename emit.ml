@@ -172,7 +172,7 @@ and assemble_inst oc = function
   | Tail, (Nop | Out(_) | Stw(_) | Stfd(_) | Comment(_) | Save(_) as exp) ->
     assemble_inst oc (NonTail(Id.gen_tmp Type.Unit), exp);
     Printf.fprintf oc "\tbclr\t20, %%cr0\t# blr\n"
-  | Tail, (Li(_) | SetL(_) | Mr(_) | Neg(_) | Add(_) | Sub(_) | Mul(_) | Div(_) 
+  | Tail, (Li(_) | SetL(_) | Mr(_) | Neg(_) | Add(_) | Sub(_) | Mul(_) | Div(_)
           | Xor(_) | Or(_) | And(_) | Sll(_) | Srl(_)
           | Slw(_) | Lwz(_) as exp) ->
     assemble_inst oc (NonTail(regs.(0)), exp);

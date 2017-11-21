@@ -13,6 +13,7 @@
 0. `-debug`オプションをつくりました。(parse,type,knormal,alpha,beta,assoc,inline,constFold,cse,elim,closure,virtual,simm,regalloc)の順にもしdebug出力してほしいものがあればそこのビットを立てた２進数を渡します。(例：`-debug 0b10100000000000`とするとParse後のコードとK正規化後のコードのみ表示されます。)
 0. `-dump-hoge`でhogeのdebug出力ができるようにしました。キーワードとしては下にリストしてるものが使えます。
 0. `-O`オプションをつくりました。通常の状態では最適化が走らず、このオプションをつけることで最適化されます。即値最適化に関してはオプションに関わらず実行されます。
+0. `-as-library`でライブラリとして組み込みたいファイル名を指定します。デフォルトでコンパイラと同じ場所にある`libmincaml.ml`がライブラリとして使われます。（例：`./min-caml -O -as-library mylib compilecode`で`mylib.ml`をライブラリとして`compilecode.ml`がコンパイルされます。）（注意：ライブラリは上に行くほど依存度の低い関数がくるように書いてください。相互再帰とかも対応してないはず。）
 
 ### デバッグオプション一覧
 
