@@ -324,6 +324,15 @@ let assemble_fun oc { name = Id.Label(x); args = _; fargs = _; body = e; ret = _
 
 let main oc (Prog(data, fundefs, e)) =
   Format.eprintf "generating assembly...@.";
+  Printf.fprintf oc "\t.globl _start\n";
+  Printf.fprintf oc "\t.text\n";
+  Printf.fprintf oc "_start:\n";
+  Printf.fprintf oc "# 0x000000 | code & data seg |\n";
+  Printf.fprintf oc "# 0x010000 | stack       seg |\n";
+  Printf.fprintf oc "# 0x180000 | heap        seg |\n";
+  Printf.fprintf oc "\tlis\t%%r3, 0x0001\t# sp\n";
+  Printf.fprintf oc "\tlis\t%%r4, 0x0018\t# hp\n";
+  Printf.fprintf oc "\tb\t_min_caml_start\n";
   if data <> [] then
     (Printf.fprintf oc "\t.data\n\t.literal8\n";
      List.iter
@@ -338,17 +347,17 @@ let main oc (Prog(data, fundefs, e)) =
   Printf.fprintf oc "\t.align 2\n";
   List.iter (fun fundef -> assemble_fun oc fundef) fundefs;
   Printf.fprintf oc "_min_caml_start: # main entry point\n";
-  Printf.fprintf oc "\tmfspr\t%%r0, 8\t# mflr\n";
+  (* Printf.fprintf oc "\tmfspr\t%%r0, 8\t# mflr\n";
   Printf.fprintf oc "\tstmw\t%%r30, -8(%%r1)\n";
   Printf.fprintf oc "\tstw\t%%r0, 8(%%r1)\n";
-  Printf.fprintf oc "\tstwu\t%%r1, -96(%%r1)\n";
+  Printf.fprintf oc "\tstwu\t%%r1, -96(%%r1)\n"; *)
   Printf.fprintf oc "#\tmain program starts\n";
   stack_set := MiniSet.empty;
   stack_map := [];
   assemble oc (NonTail("_R_0"), e);
-  Printf.fprintf oc "#\tmain program ends\n";
-  Printf.fprintf oc "\tlwz\t%%r1, 0(%%r1)\n";
+  Printf.fprintf oc "#\tmain program ends\n"
+  (* Printf.fprintf oc "\tlwz\t%%r1, 0(%%r1)\n";
   Printf.fprintf oc "\tlwz\t%%r0, 8(%%r1)\n";
   Printf.fprintf oc "\tmtspr\t8, %%r0\t# mtlr\n";
   Printf.fprintf oc "\tlmw\t%%r30, -8(%%r1)\n";
-  Printf.fprintf oc "\tbclr\t20, %%cr0\t# blr\n"
+  Printf.fprintf oc "\tbclr\t20, %%cr0\t# blr\n" *)

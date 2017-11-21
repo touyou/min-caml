@@ -1,3 +1,12 @@
+	.globl _start
+	.text
+_start:
+# 0x000000 | code & data seg |
+# 0x010000 | stack       seg |
+# 0x180000 | heap        seg |
+	lis	%r3, 0x0001	# sp
+	lis	%r4, 0x0018	# hp
+	b	_min_caml_start
 	.text
 	.globl _min_caml_start
 	.align 2
@@ -34,10 +43,6 @@ ble_else.37:
 	add	%r2, %r5, %r2
 	bclr	20, %cr0	# blr
 _min_caml_start: # main entry point
-	mfspr	%r0, 8	# mflr
-	stmw	%r30, -8(%r1)
-	stw	%r0, 8(%r1)
-	stwu	%r1, -96(%r1)
 #	main program starts
 	addi	%r2, %r0, 30	# li
 	mfspr	%r31, 8	# mflr
@@ -55,8 +60,3 @@ _min_caml_start: # main entry point
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
 #	main program ends
-	lwz	%r1, 0(%r1)
-	lwz	%r0, 8(%r1)
-	mtspr	8, %r0	# mtlr
-	lmw	%r30, -8(%r1)
-	bclr	20, %cr0	# blr
