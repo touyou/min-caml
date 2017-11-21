@@ -95,3 +95,43 @@
 - [ ] sub rx, ry, rz = subf rx, rz, ry = rx := not(rz) + ry + 1
 - [ ] slwi ra,rs,n =  rlwinm ra,rs,n,0,31-n
 
+### ほしいものリスト
+
+#### 浮動小数点
+
+基本右側の実装であとは誤差を考慮すればオーケー？
+
+- [ ] fiszero (let rec fiszero f = if f = 0.0 then true else false)
+- [ ] fispos  (let rec fispos f = if f > 0.0 then true else false)
+- [ ] fisneg  (let rec fisneg f = not (fispos f))
+- [ ] fneg    (let rec fneg f = 0.0 -. f) (0.0いらないかも？)
+- [ ] fsqr    (sqrtの計算を浮動小数の演算子で書き写す)
+- [ ] fabs    (absを浮動小数で)
+- [ ] fless   (let rec fless a b = if a < b then true else false)
+- [ ] fhalf   (let rec fhalf f = f /. 2.0)
+
+#### 入出力
+
+これで動く、多分（コード的にprint_charには文字コードに直したのが渡されている→もしかしたらprint_intは数字一文字ごとに出力するようにしなきゃいけない）（48 = '0'とされている）
+
+- [ ] read_int  (let rec read_int i = input i)
+- [ ] read_float (これはlivaさんの参考に)
+- [ ] print_char  (let rec print_char c = output c)
+- [ ] print_int   (let rec print_int i = output i)
+
+#### 配列
+
+どうしよう
+
+- [ ] create_float_array
+- [ ] create_array
+
+#### 済（仮）
+
+- [x] sqrt
+- [x] cos
+- [x] sin
+- [x] floor
+- [x] atan
+- [x] int_of_float
+- [x] float_of_int
