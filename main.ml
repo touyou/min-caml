@@ -37,7 +37,7 @@ let rec iter n e =
     if e = e' then e else
       iter (n - 1) e'
 
-let lexbuf outchan l lib =
+let lexbuf outchan l lib array_str =
   Id.counter := 0;
   Typing.ext_env := MiniMap.empty;
   let parsed = Parser.exp Lexer.token l in
@@ -70,16 +70,24 @@ let lexbuf outchan l lib =
   let allocated = RegAlloc.main simmed in
   (if (!dmode lsr 0) land 1 = 1 then
      print_string ("RegAllocation--\n" ^ (Debug.string_of_asm_prog allocated) ^ "\n\n"));
-  Emit.main outchan allocated
+  Emit.main outchan array_str allocated
 
-let string s lib = lexbuf stdout (Lexing.from_string s) (Lexing.from_string lib)
+let string s lib = lexbuf stdout (Lexing.from_string s) (Lexing.from_string lib) ""
 
 let file f =
   let inchan = open_in (f ^ ".ml") in
   let libchan = open_in (!library ^ ".ml") in
+  let arraychan = open_in ("array.s") in
+  let arraystr = ref "" in
+  let rec read_all () =
+    let str = input_line arraychan in
+    arraystr := !arraystr ^ str ^ "\n";
+    read_all ()
+  in
+  (try read_all () with End_of_file -> close_in arraychan);
   let outchan = open_out (f ^ ".s") in
   try
-    lexbuf outchan (Lexing.from_channel inchan) (Lexing.from_channel libchan);
+    lexbuf outchan (Lexing.from_channel inchan) (Lexing.from_channel libchan) !arraystr;
     close_in inchan;
     close_in libchan;
     close_out outchan;

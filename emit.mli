@@ -1,1 +1,1 @@
-val main : out_channel -> Asm.prog -> unit
+val main : out_channel -> string -> Asm.prog -> unit

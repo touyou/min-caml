@@ -322,7 +322,7 @@ let assemble_fun oc { name = Id.Label(x); args = _; fargs = _; body = e; ret = _
   stack_map := [];
   assemble oc (Tail, e)
 
-let main oc (Prog(data, fundefs, e)) =
+let main oc array_str (Prog(data, fundefs, e)) =
   Format.eprintf "generating assembly...@.";
   Printf.fprintf oc "\t.globl _start\n";
   Printf.fprintf oc "\t.text\n";
@@ -333,6 +333,8 @@ let main oc (Prog(data, fundefs, e)) =
   Printf.fprintf oc "\tlis\t%%r3, 0x0001\t# sp\n";
   Printf.fprintf oc "\tlis\t%%r4, 0x0018\t# hp\n";
   Printf.fprintf oc "\tb\t_min_caml_start\n";
+  (* create_arrayを埋め込む *)
+  Printf.fprintf oc "%s" array_str;
   if data <> [] then
     (Printf.fprintf oc "\t.data\n\t.literal8\n";
      List.iter
