@@ -1,34 +1,37 @@
 #!/bin/sh
 
-./min-caml test/ack
-./min-caml test/adder
-./min-caml test/cls-bug
-./min-caml test/cls-bug2
-./min-caml test/cls-rec
-./min-caml test/cls-reg-bug
-./min-caml test/cse_test
-./min-caml test/even-odd
-./min-caml test/fib
-./min-caml test/float
-./min-caml test/funcomp
-./min-caml test/gcd
-./min-caml test/inprod-loop
-./min-caml test/inprod-rec
-./min-caml test/inprod
-./min-caml test/join-reg
-./min-caml test/join-reg2
-./min-caml test/join-stack
-./min-caml test/join-stack2
-./min-caml test/join-stack3
-./min-caml test/matmul-flat
-./min-caml test/matmul
-./min-caml test/non-tail-if
-./min-caml test/non-tail-if2
-./min-caml test/print
-./min-caml test/shuffle
-./min-caml test/spill
-./min-caml test/spill2
-./min-caml test/spill3
-./min-caml test/sum-tail
-./min-caml test/sum
-./min-caml test/test
+./min-caml -O test/ack -as-library $1
+./min-caml -O test/adder -as-library $1
+./min-caml -O test/cls-bug -as-library $1
+./min-caml -O test/cls-bug2 -as-library $1
+./min-caml -O test/cls-rec -as-library $1
+./min-caml -O test/cls-reg-bug -as-library $1
+./min-caml -O test/cse_test -as-library $1
+./min-caml -O test/even-odd -as-library $1
+./min-caml -O test/fib -as-library $1
+./min-caml -O test/float -as-library $1
+./min-caml -O test/fun-partition -as-library $1
+./min-caml -O test/fun-test -as-library $1
+./min-caml -O test/funcomp -as-library $1
+./min-caml -O test/gcd -as-library $1
+./min-caml -O test/inprod-loop -as-library $1
+./min-caml -O test/inprod-rec -as-library $1
+./min-caml -O test/inprod -as-library $1
+./min-caml -O test/join-reg -as-library $1
+./min-caml -O test/join-reg2 -as-library $1
+./min-caml -O test/join-stack -as-library $1
+./min-caml -O test/join-stack2 -as-library $1
+./min-caml -O test/join-stack3 -as-library $1
+./min-caml -O test/mandelbrot -as-library $1
+./min-caml -O test/matmul-flat -as-library $1
+./min-caml -O test/matmul -as-library $1
+./min-caml -O test/non-tail-if -as-library $1
+./min-caml -O test/non-tail-if2 -as-library $1
+./min-caml -O test/print -as-library $1
+./min-caml -O test/shuffle -as-library $1
+./min-caml -O test/spill -as-library $1
+./min-caml -O test/spill2 -as-library $1
+./min-caml -O test/spill3 -as-library $1
+./min-caml -O test/sum-tail -as-library $1
+./min-caml -O test/sum -as-library $1
+./min-caml -O test/test -as-library $1

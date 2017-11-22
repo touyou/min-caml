@@ -42,26 +42,49 @@ create_float_array_cont:
 	.text
 	.globl _min_caml_start
 	.align 2
-print_int.8:
+print_int.15:
 	out	%r2, 0
 	bclr	20, %cr0	# blr
-test.10:
-	addi	%r2, %r0, 17	# li
+odd.23:
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	bc	4, %cr7, ble_else.40
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	bc	8, %cr7, bge_else.41
+	addi	%r2, %r0, 456	# li
 	bclr	20, %cr0	# blr
+bge_else.41:
+	addi	%r2, %r2, 1
+	b	even.19
+ble_else.40:
+	addi	%r2, %r2, -1	# subi %r2, %r2, 1
+	b	even.19
+even.19:
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	bc	4, %cr7, ble_else.42
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	bc	8, %cr7, bge_else.43
+	addi	%r2, %r0, 123	# li
+	bclr	20, %cr0	# blr
+bge_else.43:
+	addi	%r2, %r2, 1
+	b	odd.23
+ble_else.42:
+	addi	%r2, %r2, -1	# subi %r2, %r2, 1
+	b	odd.23
 _min_caml_start: # main entry point
 #	main program starts
-	addi	%r2, %r0, 10	# li
+	addi	%r2, %r0, 789	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	test.10
+	bl	even.19
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	print_int.8
+	bl	print_int.15
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr

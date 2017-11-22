@@ -45,16 +45,22 @@ create_float_array_cont:
 print_int.8:
 	out	%r2, 0
 	bclr	20, %cr0	# blr
-test.10:
-	addi	%r2, %r0, 17	# li
+sum.10:
+	cmpi	%cr7, 0, %r5, 0	# cmpwi
+	bc	4, %cr7, ble_else.23
 	bclr	20, %cr0	# blr
+ble_else.23:
+	add	%r2, %r2, %r5
+	addi	%r5, %r5, -1	# subi %r5, %r5, 1
+	b	sum.10
 _min_caml_start: # main entry point
 #	main program starts
-	addi	%r2, %r0, 10	# li
+	addi	%r2, %r0, 0	# li
+	addi	%r5, %r0, 10000	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	test.10
+	bl	sum.10
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr

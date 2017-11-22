@@ -42,26 +42,42 @@ create_float_array_cont:
 	.text
 	.globl _min_caml_start
 	.align 2
-print_int.8:
+print_int.7:
 	out	%r2, 0
 	bclr	20, %cr0	# blr
-test.10:
-	addi	%r2, %r0, 17	# li
+sum.9:
+	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	bc	4, %cr7, ble_else.21
+	addi	%r2, %r0, 0	# li
+	bclr	20, %cr0	# blr
+ble_else.21:
+	addi	%r5, %r2, -1	# subi %r5, %r2, 1
+	stw	%r2, 0(%r3)
+	mfspr	%r31, 8	# mflr
+	or	%r5, %r2, %r5	# mr %r2, %r5
+	stw	%r31, 4(%r3)
+	addi	%r3, %r3, 8
+	bl	sum.9
+	addi	%r3, %r3, -8	# subi
+	lwz	%r31, 4(%r3)
+	mtspr	8, %r31	# mtlr
+	lwz	%r5, 0(%r3)
+	add	%r2, %r2, %r5
 	bclr	20, %cr0	# blr
 _min_caml_start: # main entry point
 #	main program starts
-	addi	%r2, %r0, 10	# li
+	addi	%r2, %r0, 10000	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	test.10
+	bl	sum.9
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	print_int.8
+	bl	print_int.7
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr

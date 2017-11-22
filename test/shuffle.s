@@ -39,77 +39,81 @@ create_float_array_cont:
 	addi  %r5, %r5, -1  # subi	%r5, %r5, 1
 	addi	%r4, %r4, 8
 	b	create_float_array_loop
-	.data
-	.literal8
-	.align 3
-l.35:	 # 2.000000
-	.long	0
-	.long	1073741824
-	.align 3
-l.34:	 # 10.000000
-	.long	0
-	.long	1076101120
-	.align 3
-l.30:	 # 0.000000
-	.long	0
-	.long	0
 	.text
 	.globl _min_caml_start
 	.align 2
-testf.12:
-	fadd	%f2, %f0, %f1
-	fadd	%f1, %f0, %f1
-	addi	%r5, %r0, 4	# li
-	addis	%r31, %r0, ha16(l.30)	# lis
-	addi	%r31, %r31, lo16(l.30)
-	lfd	%f3, 0(%r31)
-	stfd	%f1, 0(%r3)
-	stfd	%f2, 8(%r3)
-	stfd	%f0, 16(%r3)
-	stw	%r2, 24(%r3)
-	mfspr	%r31, 8	# mflr
-	or	%r5, %r2, %r5	# mr %r2, %r5
-	fmr	%f0, %f3
-	stw	%r31, 28(%r3)
-	addi	%r3, %r3, 32
-	bl	min_caml_create_float_array
-	addi	%r3, %r3, -32	# subi
-	lwz	%r31, 28(%r3)
-	mtspr	8, %r31	# mtlr
-	lwz	%r5, 24(%r3)
-	slwi	%r6, %r5, 3
-	lfdx	%f0, %r2, %r6
-	slwi	%r6, %r5, 3
-	lfd	%f1, 16(%r3)
-	stfdx	%f1, %r2, %r6
-	slwi	%r5, %r5, 3
-	lfdx	%f1, %r2, %r5
-	lfd	%f2, 0(%r3)
-	lfd	%f3, 8(%r3)
-	fadd	%f2, %f3, %f2
-	fadd	%f0, %f2, %f0
-	fadd	%f0, %f0, %f1
+print_int.12:
+	out	%r2, 0
 	bclr	20, %cr0	# blr
+foo.14:
+	stw	%r9, 0(%r3)
+	stw	%r8, 4(%r3)
+	stw	%r7, 8(%r3)
+	stw	%r6, 12(%r3)
+	stw	%r5, 16(%r3)
+	mfspr	%r31, 8	# mflr
+	stw	%r31, 20(%r3)
+	addi	%r3, %r3, 24
+	bl	print_int.12
+	addi	%r3, %r3, -24	# subi
+	lwz	%r31, 20(%r3)
+	mtspr	8, %r31	# mtlr
+	lwz	%r2, 16(%r3)
+	mfspr	%r31, 8	# mflr
+	stw	%r31, 20(%r3)
+	addi	%r3, %r3, 24
+	bl	print_int.12
+	addi	%r3, %r3, -24	# subi
+	lwz	%r31, 20(%r3)
+	mtspr	8, %r31	# mtlr
+	lwz	%r2, 12(%r3)
+	mfspr	%r31, 8	# mflr
+	stw	%r31, 20(%r3)
+	addi	%r3, %r3, 24
+	bl	print_int.12
+	addi	%r3, %r3, -24	# subi
+	lwz	%r31, 20(%r3)
+	mtspr	8, %r31	# mtlr
+	lwz	%r2, 8(%r3)
+	mfspr	%r31, 8	# mflr
+	stw	%r31, 20(%r3)
+	addi	%r3, %r3, 24
+	bl	print_int.12
+	addi	%r3, %r3, -24	# subi
+	lwz	%r31, 20(%r3)
+	mtspr	8, %r31	# mtlr
+	lwz	%r2, 4(%r3)
+	mfspr	%r31, 8	# mflr
+	stw	%r31, 20(%r3)
+	addi	%r3, %r3, 24
+	bl	print_int.12
+	addi	%r3, %r3, -24	# subi
+	lwz	%r31, 20(%r3)
+	mtspr	8, %r31	# mtlr
+	lwz	%r2, 0(%r3)
+	b	print_int.12
+bar.21:
+	or	%r9, %r28, %r9	# mr %r28, %r9
+	or	%r6, %r9, %r6	# mr %r9, %r6
+	or	%r7, %r6, %r7	# mr %r6, %r7
+	or	%r8, %r7, %r8	# mr %r7, %r8
+	or	%r28, %r8, %r28	# mr %r8, %r28
+	or	%r5, %r28, %r5	# mr %r28, %r5
+	or	%r2, %r5, %r2	# mr %r5, %r2
+	or	%r28, %r2, %r28	# mr %r2, %r28
+	b	foo.14
 _min_caml_start: # main entry point
 #	main program starts
-	addis	%r31, %r0, ha16(l.34)	# lis
-	addi	%r31, %r31, lo16(l.34)
-	lfd	%f0, 0(%r31)
-	addis	%r31, %r0, ha16(l.35)	# lis
-	addi	%r31, %r31, lo16(l.35)
-	lfd	%f1, 0(%r31)
-	addi	%r2, %r0, 2	# li
+	addi	%r2, %r0, 1	# li
+	addi	%r5, %r0, 2	# li
+	addi	%r6, %r0, 3	# li
+	addi	%r7, %r0, 4	# li
+	addi	%r8, %r0, 5	# li
+	addi	%r9, %r0, 6	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	testf.12
-	addi	%r3, %r3, -8	# subi
-	lwz	%r31, 4(%r3)
-	mtspr	8, %r31	# mtlr
-	mfspr	%r31, 8	# mflr
-	stw	%r31, 4(%r3)
-	addi	%r3, %r3, 8
-	bl	min_caml_print_float
+	bl	bar.21
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr

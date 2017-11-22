@@ -42,27 +42,51 @@ create_float_array_cont:
 	.text
 	.globl _min_caml_start
 	.align 2
-print_int.8:
+print_int.13:
 	out	%r2, 0
 	bclr	20, %cr0	# blr
-test.10:
-	addi	%r2, %r0, 17	# li
+f.15:
+	addi	%r2, %r0, 12345	# li
 	bclr	20, %cr0	# blr
 _min_caml_start: # main entry point
 #	main program starts
 	addi	%r2, %r0, 10	# li
+	addi	%r5, %r0, 3	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	test.10
+	bl	min_caml_create_array
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
+	addis	%r5, %r0, 1	# lis
+	ori	%r5, %r5, 2354
+	lwz	%r6, 0(%r2)
+	cmpi	%cr7, 0, %r6, 3	# cmpwi
+	bc	12, %cr7, beq_else.37
+	stw	%r5, 0(%r3)
+	stw	%r2, 4(%r3)
 	mfspr	%r31, 8	# mflr
-	stw	%r31, 4(%r3)
-	addi	%r3, %r3, 8
-	bl	print_int.8
-	addi	%r3, %r3, -8	# subi
-	lwz	%r31, 4(%r3)
+	stw	%r31, 12(%r3)
+	addi	%r3, %r3, 16
+	bl	f.15
+	addi	%r3, %r3, -16	# subi
+	lwz	%r31, 12(%r3)
+	mtspr	8, %r31	# mtlr
+	lwz	%r5, 4(%r3)
+	lwz	%r5, 4(%r5)
+	add	%r2, %r2, %r5
+	lwz	%r5, 0(%r3)
+	add	%r2, %r2, %r5
+	b	beq_cont.38
+beq_else.37:
+	addi	%r2, %r0, 7	# li
+beq_cont.38:
+	mfspr	%r31, 8	# mflr
+	stw	%r31, 12(%r3)
+	addi	%r3, %r3, 16
+	bl	print_int.13
+	addi	%r3, %r3, -16	# subi
+	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 #	main program ends
