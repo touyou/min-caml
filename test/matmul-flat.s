@@ -15,11 +15,11 @@ min_caml_create_array:
 	or  %r2, %r6, %r2  # mr	%r6, %r2
 	or  %r4, %r2, %r4  # mr	%r2, %r4
 create_array_loop:
-	cmpi  %cr7, 0, %r6, 0 # cmpwi	%cr7, %r6, 0
+	cmpwi	%cr7, %r6, 0
 	bc  12, %cr7, create_array_cont  # bne	%cr7, create_array_cont
 	b	create_array_exit
 create_array_exit:
-	bclr  20, %cr0     # blr
+	blr
 create_array_cont:
 	stw	  %r5, 0(%r4)
 	addi  %r6, %r6, -1  # subi  %r6, %r6, 1
@@ -31,9 +31,9 @@ min_caml_create_float_array:
 	or  %r2, %r5, %r2  # mr	%r5, %r2
 	or  %r4, %r2, %r4  # mr	%r2, %r4
 create_float_array_loop:
-	cmpi  %cr7, 0, %r5, 0  # cmpwi	%cr7, %r5, 0
+	cmpwi	%cr7, %r5, 0
 	bc  12, %cr7, create_float_array_cont # bne	%cr7, create_float_array_cont
-	bclr  20, %cr0     # blr
+	blr
 create_float_array_cont:
 	stfd	%f0, 0(%r4)
 	addi  %r5, %r5, -1  # subi	%r5, %r5, 1
@@ -98,9 +98,9 @@ l.330:	 # 0.000000
 	.align 2
 print_int.140:
 	out	%r2, 0
-	bclr	20, %cr0	# blr
+	blr
 loop3.142:
-	cmpi	%cr7, 0, %r5, 0	# cmpwi
+	cmpwi	%cr7, %r5, 0
 	bc	8, %cr7, bge_else.410
 	slwi	%r10, %r2, 2
 	lwzx	%r10, %r9, %r10
@@ -123,9 +123,9 @@ loop3.142:
 	addi	%r5, %r5, -1	# subi %r5, %r5, 1
 	b	loop3.142
 bge_else.410:
-	bclr	20, %cr0	# blr
+	blr
 loop2.149:
-	cmpi	%cr7, 0, %r6, 0	# cmpwi
+	cmpwi	%cr7, %r6, 0
 	bc	8, %cr7, bge_else.412
 	addi	%r10, %r5, -1	# subi %r10, %r5, 1
 	stw	%r9, 0(%r3)
@@ -151,9 +151,9 @@ loop2.149:
 	lwz	%r9, 0(%r3)
 	b	loop2.149
 bge_else.412:
-	bclr	20, %cr0	# blr
+	blr
 loop1.156:
-	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	cmpwi	%cr7, %r2, 0
 	bc	8, %cr7, bge_else.414
 	addi	%r10, %r6, -1	# subi %r10, %r6, 1
 	stw	%r9, 0(%r3)
@@ -179,12 +179,12 @@ loop1.156:
 	lwz	%r9, 0(%r3)
 	b	loop1.156
 bge_else.414:
-	bclr	20, %cr0	# blr
+	blr
 mul.163:
 	addi	%r2, %r2, -1	# subi %r2, %r2, 1
 	b	loop1.156
 init.171:
-	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	cmpwi	%cr7, %r2, 0
 	bc	8, %cr7, bge_else.416
 	addis	%r31, %r0, ha16(l.330)	# lis
 	addi	%r31, %r31, lo16(l.330)
@@ -209,7 +209,7 @@ init.171:
 	or	%r7, %r6, %r7	# mr %r6, %r7
 	b	init.171
 bge_else.416:
-	bclr	20, %cr0	# blr
+	blr
 make.175:
 	stw	%r5, 0(%r3)
 	stw	%r2, 4(%r3)
@@ -234,7 +234,7 @@ make.175:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	lwz	%r2, 8(%r3)
-	bclr	20, %cr0	# blr
+	blr
 _min_caml_start: # main entry point
 #	main program starts
 	addi	%r2, %r0, 0	# li

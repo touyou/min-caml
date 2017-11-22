@@ -15,11 +15,11 @@ min_caml_create_array:
 	or  %r2, %r6, %r2  # mr	%r6, %r2
 	or  %r4, %r2, %r4  # mr	%r2, %r4
 create_array_loop:
-	cmpi  %cr7, 0, %r6, 0 # cmpwi	%cr7, %r6, 0
+	cmpwi	%cr7, %r6, 0
 	bc  12, %cr7, create_array_cont  # bne	%cr7, create_array_cont
 	b	create_array_exit
 create_array_exit:
-	bclr  20, %cr0     # blr
+	blr
 create_array_cont:
 	stw	  %r5, 0(%r4)
 	addi  %r6, %r6, -1  # subi  %r6, %r6, 1
@@ -31,9 +31,9 @@ min_caml_create_float_array:
 	or  %r2, %r5, %r2  # mr	%r5, %r2
 	or  %r4, %r2, %r4  # mr	%r2, %r4
 create_float_array_loop:
-	cmpi  %cr7, 0, %r5, 0  # cmpwi	%cr7, %r5, 0
+	cmpwi	%cr7, %r5, 0
 	bc  12, %cr7, create_float_array_cont # bne	%cr7, create_float_array_cont
-	bclr  20, %cr0     # blr
+	blr
 create_float_array_cont:
 	stfd	%f0, 0(%r4)
 	addi  %r5, %r5, -1  # subi	%r5, %r5, 1
@@ -98,14 +98,14 @@ l.333:	 # 0.000000
 	.align 2
 print_int.140:
 	out	%r2, 0
-	bclr	20, %cr0	# blr
+	blr
 loop3.284:
 	lwz	%r5, 20(%r29)
 	lwz	%r6, 16(%r29)
 	lwz	%r7, 12(%r29)
 	lwz	%r8, 8(%r29)
 	lwz	%r9, 4(%r29)
-	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	cmpwi	%cr7, %r2, 0
 	bc	8, %cr7, bge_else.412
 	slwi	%r10, %r6, 2
 	lwzx	%r10, %r7, %r10
@@ -130,14 +130,14 @@ loop3.284:
 	mtspr	9, %r28	# mtctr
 	bctr
 bge_else.412:
-	bclr	20, %cr0	# blr
+	blr
 loop2.276:
 	lwz	%r5, 20(%r29)
 	lwz	%r6, 16(%r29)
 	lwz	%r7, 12(%r29)
 	lwz	%r8, 8(%r29)
 	lwz	%r9, 4(%r29)
-	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	cmpwi	%cr7, %r2, 0
 	bc	8, %cr7, bge_else.414
 	or	%r4, %r10, %r4	# mr %r10, %r4
 	addi	%r4, %r4, 24
@@ -170,14 +170,14 @@ loop2.276:
 	mtspr	9, %r28	# mtctr
 	bctr
 bge_else.414:
-	bclr	20, %cr0	# blr
+	blr
 loop1.271:
 	lwz	%r5, 20(%r29)
 	lwz	%r6, 16(%r29)
 	lwz	%r7, 12(%r29)
 	lwz	%r8, 8(%r29)
 	lwz	%r9, 4(%r29)
-	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	cmpwi	%cr7, %r2, 0
 	bc	8, %cr7, bge_else.416
 	or	%r4, %r10, %r4	# mr %r10, %r4
 	addi	%r4, %r4, 24
@@ -210,7 +210,7 @@ loop1.271:
 	mtspr	9, %r28	# mtctr
 	bctr
 bge_else.416:
-	bclr	20, %cr0	# blr
+	blr
 mul.142:
 	or	%r4, %r29, %r4	# mr %r29, %r4
 	addi	%r4, %r4, 24
@@ -229,7 +229,7 @@ mul.142:
 init.258:
 	lwz	%r5, 8(%r29)
 	lwz	%r6, 4(%r29)
-	cmpi	%cr7, 0, %r2, 0	# cmpwi
+	cmpwi	%cr7, %r2, 0
 	bc	8, %cr7, bge_else.418
 	addis	%r31, %r0, ha16(l.333)	# lis
 	addi	%r31, %r31, lo16(l.333)
@@ -255,7 +255,7 @@ init.258:
 	mtspr	9, %r28	# mtctr
 	bctr
 bge_else.418:
-	bclr	20, %cr0	# blr
+	blr
 make.150:
 	lwz	%r6, 4(%r29)
 	stw	%r2, 0(%r3)
@@ -290,7 +290,7 @@ make.150:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	lwz	%r2, 8(%r3)
-	bclr	20, %cr0	# blr
+	blr
 _min_caml_start: # main entry point
 #	main program starts
 	addi	%r2, %r0, 0	# li

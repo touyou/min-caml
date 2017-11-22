@@ -15,11 +15,11 @@ min_caml_create_array:
 	or  %r2, %r6, %r2  # mr	%r6, %r2
 	or  %r4, %r2, %r4  # mr	%r2, %r4
 create_array_loop:
-	cmpi  %cr7, 0, %r6, 0 # cmpwi	%cr7, %r6, 0
+	cmpwi	%cr7, %r6, 0
 	bc  12, %cr7, create_array_cont  # bne	%cr7, create_array_cont
 	b	create_array_exit
 create_array_exit:
-	bclr  20, %cr0     # blr
+	blr
 create_array_cont:
 	stw	  %r5, 0(%r4)
 	addi  %r6, %r6, -1  # subi  %r6, %r6, 1
@@ -31,9 +31,9 @@ min_caml_create_float_array:
 	or  %r2, %r5, %r2  # mr	%r5, %r2
 	or  %r4, %r2, %r4  # mr	%r2, %r4
 create_float_array_loop:
-	cmpi  %cr7, 0, %r5, 0  # cmpwi	%cr7, %r5, 0
+	cmpwi	%cr7, %r5, 0
 	bc  12, %cr7, create_float_array_cont # bne	%cr7, create_float_array_cont
-	bclr  20, %cr0     # blr
+	blr
 create_float_array_cont:
 	stfd	%f0, 0(%r4)
 	addi  %r5, %r5, -1  # subi	%r5, %r5, 1
@@ -74,16 +74,16 @@ l.65:	 # 1000000.000000
 	.align 2
 print_int.23:
 	out	%r2, 0
-	bclr	20, %cr0	# blr
+	blr
 getx.25:
 	lfd	%f0, 0(%r2)
-	bclr	20, %cr0	# blr
+	blr
 gety.27:
 	lfd	%f0, 8(%r2)
-	bclr	20, %cr0	# blr
+	blr
 getz.29:
 	lfd	%f0, 16(%r2)
-	bclr	20, %cr0	# blr
+	blr
 inprod.31:
 	stw	%r2, 0(%r3)
 	stw	%r5, 4(%r3)
@@ -149,7 +149,7 @@ inprod.31:
 	fmul	%f0, %f1, %f0
 	lfd	%f1, 32(%r3)
 	fadd	%f0, %f1, %f0
-	bclr	20, %cr0	# blr
+	blr
 _min_caml_start: # main entry point
 #	main program starts
 	addis	%r31, %r0, ha16(l.65)	# lis
