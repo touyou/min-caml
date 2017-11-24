@@ -103,7 +103,7 @@ and assemble_inst oc = function
   | NonTail(x), Mul(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d" x y (z/2)
   | NonTail(x), Div(y, Var(z)) -> assert false
   (*Printf.fprintf oc "\tinvalid_div\t%s, %s, %s\n" x y z*)
-  | NonTail(x), Div(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d" x y (z/2)
+  | NonTail(x), Div(y, Const(z)) -> Printf.fprintf oc "\tsrwi\t%s, %s, %d" x y (z/2)
   (* 論理演算周り *)
   | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" x y z
   | NonTail(x), Xor(y, Const(z)) -> Printf.fprintf oc "\txori\t%s, %s, %d\n" x y z
@@ -114,8 +114,8 @@ and assemble_inst oc = function
   (* シフト系 *)
   | NonTail(x), Sll(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s\n" x y z
   | NonTail(x), Sll(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d\n" x y z
-  | NonTail(x), Srl(y, Var(z)) -> Printf.fprintf oc "\tsraw\t%s, %s, %s\n" x y z
-  | NonTail(x), Srl(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d\n" x y z
+  | NonTail(x), Srl(y, Var(z)) -> Printf.fprintf oc "\tsrw\t%s, %s, %s\n" x y z
+  | NonTail(x), Srl(y, Const(z)) -> Printf.fprintf oc "\tsrwi\t%s, %s, %d\n" x y z
   (* slw %r1, %r2, %r3 *)
   | NonTail(x), Slw(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s\n" x y z
   (* slwi %r1, %r2, num *)
