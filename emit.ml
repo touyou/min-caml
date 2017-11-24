@@ -75,6 +75,7 @@ and assemble_inst oc = function
   (* label lfd %reg, 0(%reg) *)
   | NonTail(x), FLi(Id.Label(l)) ->
     let s = load_label reg_tmp l in
+    (* let s = Printf.sprintf "\taddis\t%s, %%r0, ha16(%s)\t# lis\n" reg_tmp l in *)
     Printf.fprintf oc "%s\tlfd\t%s, 0(%s)\n" s x reg_tmp
   (* label *)
   | NonTail(x), SetL(Id.Label(y)) ->
@@ -341,8 +342,10 @@ let main oc array_str (Prog(data, fundefs, e)) =
        (fun (Id.Label(x), d) ->
           Printf.fprintf oc "\t.align 3\n";
           Printf.fprintf oc "%s:\t # %f\n" x d;
-          Printf.fprintf oc "\t.long\t%ld\n" (gethi d);
-          Printf.fprintf oc "\t.long\t%ld\n" (getlo d))
+          Printf.fprintf oc "\t.long\t0\n";
+          Printf.fprintf oc "\t.long\t%d\n" (Type.conv_float d))
+          (* Printf.fprintf oc "\t.long\t%ld\n" (gethi d);
+          Printf.fprintf oc "\t.long\t%ld\n" (getlo d)) *)
        data);
   Printf.fprintf oc "\t.text\n";
   Printf.fprintf oc "\t.globl _min_caml_start\n";
