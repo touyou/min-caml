@@ -211,94 +211,114 @@ and string_of_cl_funs = function
   | [] -> ""
   | e :: es -> (string_of_cl_fun e) ^ "\n" ^ (string_of_cl_funs es)
 
-let rec string_of_asm_t = function
-  | Asm.Ans(exp) -> string_of_asm_exp exp
-  | Asm.Let((id, typ), exp, e) -> "(" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ") = "
-                                  ^ (string_of_asm_exp exp) ^ "; " ^ (string_of_asm_t e)
-and string_of_asm_exp = function
-  | Asm.Nop -> "Nop"
-  | Asm.Li(i) -> "Li(" ^ (string_of_int i) ^ ")"
-  | Asm.FLi(Id.Label(l)) -> "FLi(" ^ l ^ ")"
-  | Asm.SetL(Id.Label(l)) -> "SetL(" ^ l ^ ")"
-  | Asm.Mr(e) -> "Mr(" ^ (string_of_id e) ^ ")"
-  | Asm.Neg(e) -> "Neg(" ^ (string_of_id e) ^ ")"
-  | Asm.Add(e1, Asm.Var(e2)) -> "Add(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Add(e, Asm.Const(i)) -> "Add(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Sub(e1, Asm.Var(e2)) -> "Sub(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Sub(e, Asm.Const(i)) -> "Sub(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Mul(e1, Asm.Var(e2)) -> "Mul(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Mul(e, Asm.Const(i)) -> "Mul(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Div(e1, Asm.Var(e2)) -> "Div(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Div(e, Asm.Const(i)) -> "Div(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Xor(e1, Asm.Var(e2)) -> "Xor(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Xor(e, Asm.Const(i)) -> "Xor(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Or(e1, Asm.Var(e2)) -> "Or(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Or(e, Asm.Const(i)) -> "Or(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.And(e1, Asm.Var(e2)) -> "And(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.And(e, Asm.Const(i)) -> "And(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Srl(e1, Asm.Var(e2)) -> "Srl(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Srl(e, Asm.Const(i)) -> "Srl(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
+let rec string_of_asm_t elem =
+  let rec string_of_asm_t' nest elem =
+    (string_of_nest nest) ^ (match elem with
+        | Asm.Ans(exp) -> (string_of_asm_exp nest exp) ^ "\n"
+        | Asm.Let((id, typ), exp, e) -> "(" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ") =\n"
+                                        ^ (string_of_nest (nest+1)) ^ (string_of_asm_exp (nest+1) exp) ^ "\n"
+                                        ^ (string_of_asm_t' nest e))
+  and string_of_asm_exp nest = function
+    | Asm.Nop -> "Nop"
+    | Asm.Li(i) -> "Li " ^ (string_of_int i)
+    | Asm.FLi(Id.Label(l)) -> "FLi " ^ l
+    | Asm.SetL(Id.Label(l)) -> "SetL " ^ l
+    | Asm.Mr(e) -> "Mr " ^ (string_of_id e)
+    | Asm.Neg(e) -> "Neg " ^ (string_of_id e)
+    | Asm.Add(e1, Asm.Var(e2)) -> "Add " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Add(e, Asm.Const(i)) -> "Add " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
+    | Asm.Sub(e1, Asm.Var(e2)) -> "Sub " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Sub(e, Asm.Const(i)) -> "Sub " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
+    | Asm.Mul(e1, Asm.Var(e2)) -> "Mul " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Mul(e, Asm.Const(i)) -> "Mul " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
+    | Asm.Div(e1, Asm.Var(e2)) -> "Div " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Div(e, Asm.Const(i)) -> "Div " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
+    | Asm.Xor(e1, Asm.Var(e2)) -> "Xor " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Xor(e, Asm.Const(i)) -> "Xor " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
+    | Asm.Or(e1, Asm.Var(e2)) -> "Or " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Or(e, Asm.Const(i)) -> "Or " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
+    | Asm.And(e1, Asm.Var(e2)) -> "And " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.And(e, Asm.Const(i)) -> "And " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
+    | Asm.Srl(e1, Asm.Var(e2)) -> "Srl " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Srl(e, Asm.Const(i)) -> "Srl " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
 
-  | Asm.Slw(e1, Asm.Var(e2)) | Asm.Sll(e1, Asm.Var(e2)) ->
-    "Slw(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Slw(e, Asm.Const(i)) | Asm.Sll(e, Asm.Const(i))->
-    "Slw(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Lwz(e1, Asm.Var(e2)) -> "Lwz(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Lwz(e, Asm.Const(i)) -> "Lwz(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Stw(e1, e2, Asm.Var(e3)) ->
-    "Stw(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ", " ^ (string_of_id e3) ^ ")"
-  | Asm.Stw(e1, e2, Asm.Const(i)) ->
-    "Stw(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.FMr(e) -> "FMr(" ^ (string_of_id e) ^ ")"
-  | Asm.FNeg(e) -> "FNeg(" ^ (string_of_id e) ^ ")"
-  | Asm.FAdd(e1, e2) -> "FAdd(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.FSub(e1, e2) -> "FSub(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.FMul(e1, e2) -> "FMul(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.FDiv(e1, e2) -> "FDiv(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.In -> "In"
-  | Asm.Out(e) -> "Out(" ^ (string_of_id e) ^ ")"
-  | Asm.Lfd(e1, Asm.Var(e2)) -> "Lfd(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Lfd(e, Asm.Const(i)) -> "Lfd(" ^ (string_of_id e) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Stfd(e1, e2, Asm.Var(e3)) ->
-    "Stfd(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ", " ^ (string_of_id e3) ^ ")"
-  | Asm.Stfd(e1, e2, Asm.Const(i)) ->
-    "Stfd(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ", " ^ (string_of_int i) ^ ")"
-  | Asm.Comment(c) -> "Comment(\"" ^ c ^ "\")"
-  | Asm.IfEq(id1, Asm.Var(id2), e1, e2) ->
-    "IfEq(" ^ (string_of_id id1) ^ ", " ^ (string_of_id id2) ^ ", " ^ (string_of_asm_t e1) ^ ", " ^ (string_of_asm_t e2) ^ ")"
-  | Asm.IfEq(id, Asm.Const(i), e1, e2) ->
-    "IfEq(" ^ (string_of_id id) ^ ", " ^ (string_of_int i) ^ ", " ^ (string_of_asm_t e1) ^ ", " ^ (string_of_asm_t e2) ^ ")"
-  | Asm.IfLE(id1, Asm.Var(id2), e1, e2) ->
-    "IfLE(" ^ (string_of_id id1) ^ ", " ^ (string_of_id id2) ^ ", " ^ (string_of_asm_t e1) ^ ", " ^ (string_of_asm_t e2) ^ ")"
-  | Asm.IfLE(id, Asm.Const(i), e1, e2) ->
-    "IfLE(" ^ (string_of_id id) ^ ", " ^ (string_of_int i) ^ ", " ^ (string_of_asm_t e1) ^ ", " ^ (string_of_asm_t e2) ^ ")"
-  | Asm.IfGE(id1, Asm.Var(id2), e1, e2) ->
-    "IfEq(" ^ (string_of_id id1) ^ ", " ^ (string_of_id id2) ^ ", " ^ (string_of_asm_t e1) ^ ", " ^ (string_of_asm_t e2) ^ ")"
-  | Asm.IfGE(id, Asm.Const(i), e1, e2) ->
-    "IfEq(" ^ (string_of_id id) ^ ", " ^ (string_of_int i) ^ ", " ^ (string_of_asm_t e1) ^ ", " ^ (string_of_asm_t e2) ^ ")"
-  | Asm.IfFEq(id1, id2, e1, e2) ->
-    "IfFEq(" ^ (string_of_id id1) ^ ", " ^ (string_of_id id2) ^ ", " ^ (string_of_asm_t e1) ^ ", " ^ (string_of_asm_t e2) ^ ")"
-  | Asm.IfFLE(id1, id2, e1, e2) ->
-    "IfEq(" ^ (string_of_id id1) ^ ", " ^ (string_of_id id2) ^ ", " ^ (string_of_asm_t e1) ^ ", " ^ (string_of_asm_t e2) ^ ")"
-  | Asm.CallCls(name, args1, args2) ->
-    "(" ^ (string_of_id name) ^ ", " ^ (string_of_ids args1) ^ ")(" ^ (string_of_ids args2) ^ ")"
-  | Asm.CallDir(Id.Label(l), args1, args2) ->
-    l ^ "(" ^ (string_of_ids args1) ^ ")(" ^ (string_of_ids args2) ^ ")"
-  | Asm.Save(e1, e2) -> "Save(" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
-  | Asm.Restore(e) -> "Restore(" ^ (string_of_id e) ^ ")"
+    | Asm.Slw(e1, Asm.Var(e2)) | Asm.Sll(e1, Asm.Var(e2)) ->
+      "Slw " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Slw(e, Asm.Const(i)) | Asm.Sll(e, Asm.Const(i))->
+      "Slw " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
+    | Asm.Lwz(e1, Asm.Var(e2)) -> "Lwz " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Lwz(e, Asm.Const(i)) -> "Lwz " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
+    | Asm.Stw(e1, e2, Asm.Var(e3)) ->
+      "Stw " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ", " ^ (string_of_id e3)
+    | Asm.Stw(e1, e2, Asm.Const(i)) ->
+      "Stw " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ", " ^ (string_of_int i)
+    | Asm.FMr(e) -> "FMr " ^ (string_of_id e)
+    | Asm.FNeg(e) -> "FNeg " ^ (string_of_id e)
+    | Asm.FAdd(e1, e2) -> "FAdd " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.FSub(e1, e2) -> "FSub " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.FMul(e1, e2) -> "FMul " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.FDiv(e1, e2) -> "FDiv " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.In -> "In"
+    | Asm.Out(e) -> "Out " ^ (string_of_id e)
+    | Asm.Lfd(e1, Asm.Var(e2)) -> "Lfd " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Lfd(e, Asm.Const(i)) -> "Lfd " ^ (string_of_id e) ^ ", " ^ (string_of_int i)
+    | Asm.Stfd(e1, e2, Asm.Var(e3)) ->
+      "Stfd " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ", " ^ (string_of_id e3)
+    | Asm.Stfd(e1, e2, Asm.Const(i)) ->
+      "Stfd " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ", " ^ (string_of_int i)
+    | Asm.Comment(c) -> "Comment \"" ^ c ^ "\""
+    | Asm.IfEq(id1, Asm.Var(id2), e1, e2) ->
+      "IfEq " ^ (string_of_id id1) ^ ", " ^ (string_of_id id2) ^ " Then\n"
+      ^ (string_of_asm_t' (nest+1) e1) ^ (string_of_nest nest) ^ "Else\n"
+      ^ (string_of_asm_t' (nest+1) e2) ^ (string_of_nest nest) ^ "End"
+    | Asm.IfEq(id, Asm.Const(i), e1, e2) ->
+      "IfEq " ^ (string_of_id id) ^ ", " ^ (string_of_int i) ^ " Then\n"
+      ^ (string_of_asm_t' (nest+1) e1) ^ (string_of_nest nest) ^ "Else\n"
+      ^ (string_of_asm_t' (nest+1) e2) ^ (string_of_nest nest) ^ "End"
+    | Asm.IfLE(id1, Asm.Var(id2), e1, e2) ->
+      "IfLE " ^ (string_of_id id1) ^ ", " ^ (string_of_id id2) ^ " Then\n"
+      ^ (string_of_asm_t' (nest+1) e1) ^ (string_of_nest nest) ^ "Else\n"
+      ^ (string_of_asm_t' (nest+1) e2) ^ (string_of_nest nest) ^ "End"
+    | Asm.IfLE(id, Asm.Const(i), e1, e2) ->
+      "IfLE " ^ (string_of_id id) ^ ", " ^ (string_of_int i) ^ " Then\n"
+      ^ (string_of_asm_t' (nest+1) e1) ^ (string_of_nest nest) ^ "Else\n"
+      ^ (string_of_asm_t' (nest+1) e2) ^ (string_of_nest nest) ^ "End"
+    | Asm.IfGE(id1, Asm.Var(id2), e1, e2) ->
+      "IfEq " ^ (string_of_id id1) ^ ", " ^ (string_of_id id2) ^ " Then\n"
+      ^ (string_of_asm_t' (nest+1) e1) ^ (string_of_nest nest) ^ "Else\n"
+      ^ (string_of_asm_t' (nest+1) e2) ^ (string_of_nest nest) ^ "End"
+    | Asm.IfGE(id, Asm.Const(i), e1, e2) ->
+      "IfEq " ^ (string_of_id id) ^ ", " ^ (string_of_int i) ^ " Then\n"
+      ^ (string_of_asm_t' (nest+1) e1) ^ (string_of_nest nest) ^ "Else\n"
+      ^ (string_of_asm_t' (nest+1) e2) ^ (string_of_nest nest) ^ "End"
+    | Asm.IfFEq(id1, id2, e1, e2) ->
+      "IfFEq " ^ (string_of_id id1) ^ ", " ^ (string_of_id id2) ^ " Then\n"
+      ^ (string_of_asm_t' (nest+1) e1) ^ (string_of_nest nest) ^ "Else\n"
+      ^ (string_of_asm_t' (nest+1) e2) ^ (string_of_nest nest) ^ "End"
+    | Asm.IfFLE(id1, id2, e1, e2) ->
+      "IfEq " ^ (string_of_id id1) ^ ", " ^ (string_of_id id2) ^ " Then\n"
+      ^ (string_of_asm_t' (nest+1) e1) ^ (string_of_nest nest) ^ "Else\n"
+      ^ (string_of_asm_t' (nest+1) e2) ^ (string_of_nest nest) ^ "End"
+    | Asm.CallCls(name, args1, args2) ->
+      (string_of_id name) ^ "(" ^ (string_of_ids args1) ^ ") (" ^ (string_of_ids args2) ^ ")"
+    | Asm.CallDir(Id.Label(l), args1, args2) ->
+      l ^ "(" ^ (string_of_ids args1) ^ ") (" ^ (string_of_ids args2) ^ ")"
+    | Asm.Save(e1, e2) -> "Save " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.Restore(e) -> "Restore " ^ (string_of_id e)
+  in string_of_asm_t' 1 elem
 
 let string_of_asm_fun e =
   let { Asm.name = Id.Label(l); Asm.args = args; Asm.fargs = fargs; Asm.body = e; Asm.ret = typ } = e in
-  l ^ "(" ^ (string_of_ids args) ^ "; " ^ (string_of_ids fargs) ^ ") -> "
-  ^ (string_of_type typ) ^ " = " ^ (string_of_asm_t e)
+  l ^ "[args = (" ^ (string_of_ids args) ^ "); fargs=(" ^ (string_of_ids fargs) ^ ")] -> "
+  ^ (string_of_type typ) ^ " =\n" ^ (string_of_asm_t e)
 
 let rec string_of_asm_prog = function
   | Asm.Prog(labels, funs, exp) ->
-    "[" ^ (string_of_asm_labels labels) ^ "] {\n" ^ (string_of_asm_funs funs) ^ "}\ntop:\n\t" ^ (string_of_asm_t exp)
+    "[" ^ (string_of_asm_labels labels) ^ "] {\n" ^ (string_of_asm_funs funs) ^ "}\ntop:\n" ^ (string_of_asm_t exp)
 and string_of_asm_labels = function
   | [] -> ""
   | (Id.Label(l), d) :: [] -> l ^ "(" ^ (string_of_float d) ^ ")"
   | (Id.Label(l), d) :: xr -> l ^ "(" ^ (string_of_float d) ^ "), " ^ (string_of_asm_labels xr)
 and string_of_asm_funs = function
   | [] -> ""
-  | f :: fr -> "\t" ^ (string_of_asm_fun f) ^ "\n" ^ (string_of_asm_funs fr)
+  | f :: fr -> (string_of_asm_fun f) ^ "\n" ^ (string_of_asm_funs fr)
