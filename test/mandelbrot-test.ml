@@ -14,4 +14,4 @@ let rec test x y =
         iloop (i - 1) zr zi zr2 zi2 cr ci in
   iloop 1000 0.0 0.0 0.0 0.0 cr ci
 in
-test 200 103
+test 200 10
