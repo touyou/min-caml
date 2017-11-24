@@ -68,6 +68,8 @@ let rec eta_conv env = function
   | Tuple(es) -> Tuple(List.map (eta_conv env) es)
   | LetTuple(xts, e1, e2) -> LetTuple(xts, eta_conv env e1, eta_conv env e2)
   | Array(e1, e2) -> Array(eta_conv env e1, eta_conv env e2)
+  | I2F(e) -> I2F(eta_conv env e)
+  | F2I(e) -> F2I(eta_conv env e)
   | In(e) -> In(eta_conv env e)
   | Out(e) -> Out(eta_conv env e)
   | Get(e1, e2) -> Get(eta_conv env e1, eta_conv env e2)

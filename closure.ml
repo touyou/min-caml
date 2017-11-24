@@ -28,6 +28,8 @@ type t =
   | Tuple of Id.t list
   | NTuple of Id.t list * Type.t
   | LetTuple of (Id.t * Type.t) list * Id.t * t
+  | I2F of Id.t
+  | F2I of Id.t
   | In
   | Out of Id.t
   | Get of Id.t * Id.t
@@ -42,7 +44,7 @@ type prog = Prog of fun_def list * t
 
 let rec free_var = function
   | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) | In -> MiniSet.empty
-  | Neg(x) | FNeg(x) | Out(x) -> MiniSet.singleton x
+  | Neg(x) | FNeg(x) | I2F(x) | F2I(x) | Out(x) -> MiniSet.singleton x
   | Add(x, y) | Sub(x, y) | Mul(x, y) | Div(x, y)
   | Xor(x, y) | Or(x, y) | And(x, y) | Sll(x, y) | Srl(x, y)
   | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | Get(x, y) -> MiniSet.of_list [x; y]
@@ -116,6 +118,8 @@ let rec closure_conv env known = function
   | KNormal.App(f, xs) -> AppCls(f, xs)
   | KNormal.Tuple(xs) -> Tuple(xs)
   | KNormal.LetTuple(xts, y, e) -> LetTuple(xts, y, closure_conv (MiniMap.add_list xts env) known e)
+  | KNormal.I2F(x) -> I2F(x)
+  | KNormal.F2I(x) -> F2I(x)
   | KNormal.In(x) -> In
   | KNormal.Out(x) -> Out(x)
   | KNormal.Get(x, y) -> Get(x, y)

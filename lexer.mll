@@ -93,6 +93,10 @@ rule token = parse
     { IDENT(Id.gen_tmp Type.Unit) }
 | "Array.create" | "Array.make" | "create_array"
     { ARRAY_CREATE }
+| "i2f"
+    { I2F }
+| "f2i"
+    { F2I }
 | "input"
     { INPUT }
 | "output"

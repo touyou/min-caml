@@ -32,6 +32,8 @@ type t =
   | Tuple of t list
   | LetTuple of (Id.t * Type.t) list * t * t
   | Array of t * t
+  | I2F of t
+  | F2I of t
   | In of t
   | Out of t
   | Get of t * t

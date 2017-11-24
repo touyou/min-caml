@@ -25,6 +25,8 @@ type t =
   | App of Id.t * Id.t list
   | Tuple of Id.t list
   | LetTuple of (Id.t * Type.t) list * Id.t * t
+  | I2F of Id.t
+  | F2I of Id.t
   | In of Id.t
   | Out of Id.t
   | Get of Id.t * Id.t

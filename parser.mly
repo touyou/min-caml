@@ -42,6 +42,8 @@
 %token FUN
 %token COMMA
 %token ARRAY_CREATE
+%token I2F
+%token F2I
 %token DOT
 %token LESS_MINUS
 %token MINUS_GREATER
@@ -182,6 +184,12 @@ exp:
 | ARRAY_CREATE simple_exp simple_exp
     %prec prec_app
     { Array($2, $3) }
+| I2F simple_exp
+    %prec prec_app
+    { I2F($2) }
+| F2I simple_exp
+    %prec prec_app
+    { F2I($2) }
 | INPUT simple_exp
     %prec prec_app
     { In($2) }

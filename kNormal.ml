@@ -26,6 +26,8 @@ type t =
   | App of Id.t * Id.t list
   | Tuple of Id.t list
   | LetTuple of (Id.t * Type.t) list * Id.t * t
+  | I2F of Id.t
+  | F2I of Id.t
   | In of Id.t
   | Out of Id.t
   | Get of Id.t * Id.t
@@ -38,7 +40,7 @@ and fun_def = { name : Id.t * Type.t; args : (Id.t * Type.t) list; body : t }
 (* 自由変数の割当 *)
 let rec free_var = function
   | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) -> MiniSet.empty
-  | Neg(x) | FNeg(x) | In(x) | Out(x) -> MiniSet.singleton x
+  | Neg(x) | FNeg(x) | I2F(x) | F2I(x) | In(x) | Out(x) -> MiniSet.singleton x
   | Add(x, y) | Sub(x, y) | Mul(x, y) | Div(x, y)
   | Xor(x, y) | Or(x, y) | And(x, y) | Sll(x, y) | Srl(x, y)
   | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | Get(x, y) ->
@@ -216,6 +218,12 @@ let rec normalize env = function
                 | Type.Float -> "create_float_array"
                 | _ -> "create_array" in
               ExtFunApp(l, [x; y]), Type.Array(t2)))
+  | Syntax.I2F(e1) ->
+    insert_let (normalize env e1)
+      (fun x -> I2F(x), Type.Float)
+  | Syntax.F2I(e1) ->
+    insert_let (normalize env e1)
+      (fun x -> F2I(x), Type.Int)
   | Syntax.In(e1) ->
     insert_let (normalize env e1)
       (fun x -> In(x), Type.Int)

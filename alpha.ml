@@ -43,6 +43,8 @@ let rec alpha_conv env = function
     LetTuple(List.map (fun (x, t) -> (find x env', t)) xts,
              find y env,
              alpha_conv env' e)
+  | I2F(x) -> I2F(find x env)
+  | F2I(x) -> F2I(find x env)
   | In(x) -> In(find x env)
   | Out(x) -> Out(find x env)
   | Get(x, y) -> Get(find x env, find y env)

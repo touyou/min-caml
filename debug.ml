@@ -89,6 +89,8 @@ let string_of_syntax elem =
           "let (" ^ (string_of_args args) ^ ") =\n"
           ^ (string_of_syntax' (nest+1) e1) ^ "\n" ^ (string_of_nest nest) ^ "in\n" ^ (string_of_syntax' (nest+1) e2)
         | Syntax.Array(e1, e2) -> "Array.create " ^ (string_of_syntax' 0 e1) ^ " " ^ (string_of_syntax' 0 e2)
+        | Syntax.I2F(e1) -> "int_to_float " ^ (string_of_syntax' 0 e1)
+        | Syntax.F2I(e1) -> "float_to_int " ^ (string_of_syntax' 0 e1)
         | Syntax.In(e1) -> "input " ^ (string_of_syntax' 0 e1)
         | Syntax.Out(e1) -> "output " ^ (string_of_syntax' 0 e1)
         | Syntax.Get(e1, e2) -> (string_of_syntax' 0 e1) ^ ".(" ^ (string_of_syntax' 0 e2) ^ ")"
@@ -118,7 +120,7 @@ let string_of_knormal elem =
         | KNormal.Srl(e1, e2) -> "(" ^ (string_of_id e1) ^ " >> " ^ (string_of_id e2) ^ ")"
         | KNormal.IfEq(id1, id2, e1, e2) ->
           "if " ^ (string_of_id id1) ^ " == " ^ (string_of_id id2) ^ " then\n"
-          ^ (string_of_knormal' (nest+1) e1) ^ "\n" 
+          ^ (string_of_knormal' (nest+1) e1) ^ "\n"
           ^ (string_of_nest nest) ^ "else\n" ^ (string_of_knormal' (nest+1) e2)
         | KNormal.IfLE(id1, id2, e1, e2) ->
           "if " ^ (string_of_id id1) ^ " <= " ^ (string_of_id id2) ^ " then\n"
@@ -131,14 +133,16 @@ let string_of_knormal elem =
         | KNormal.Var(e) -> string_of_id e
         | KNormal.LetRec({ KNormal.name = (id, typ); KNormal.args = args; KNormal.body = e1}, e2) ->
           "let rec (" ^ (string_of_id id) ^ ": " ^ (string_of_type typ) ^ ") (" ^ (string_of_args args) ^ ") =\n"
-          ^ (string_of_knormal' (nest+1) e1) ^ "\n" 
+          ^ (string_of_knormal' (nest+1) e1) ^ "\n"
           ^ (string_of_nest nest) ^ "in\n" ^ (string_of_knormal' (nest+1) e2)
         | KNormal.App(e, ids) | KNormal.ExtFunApp(e, ids) -> (string_of_id e) ^ "(" ^ (string_of_ids ids) ^ ")"
         | KNormal.Tuple(ids) -> "(" ^ (string_of_ids ids) ^ ")"
         | KNormal.LetTuple(args, id, e) ->
-          "let " ^ (string_of_args args) ^ ") =\n" 
+          "let " ^ (string_of_args args) ^ ") =\n"
           ^ (string_of_id id) ^ "\n"
           ^ (string_of_nest nest) ^ "in\n" ^ (string_of_knormal' 0 e)
+        | KNormal.I2F(e1) -> "int_to_float " ^ (string_of_id e1)
+        | KNormal.F2I(e1) -> "float_to_int " ^ (string_of_id e1)
         | KNormal.In(e1) -> "input " ^ (string_of_id e1)
         | KNormal.Out(e1) -> "output " ^ (string_of_id e1)
         | KNormal.Get(e1, e2) -> (string_of_id e1) ^ ".(" ^ (string_of_id e2) ^ ")"
@@ -186,6 +190,8 @@ let string_of_closure elem =
         | Closure.LetTuple(xts, x, t) ->
           "let (" ^ (string_of_args xts) ^ ") = " ^ (string_of_id x) ^ " in\n"
           ^ (string_of_closure' (nest+1) t)
+        | Closure.I2F(e1) -> "int_to_float " ^ (string_of_id e1)
+        | Closure.F2I(e1) -> "float_to_int " ^ (string_of_id e1)
         | Closure.In -> "input"
         | Closure.Out(e1) -> "output " ^ (string_of_id e1)
         | Closure.Get(e1, e2) -> (string_of_id e1) ^ ".(" ^ (string_of_id e2) ^ ")"
@@ -295,4 +301,4 @@ and string_of_asm_labels = function
   | (Id.Label(l), d) :: xr -> l ^ "(" ^ (string_of_float d) ^ "), " ^ (string_of_asm_labels xr)
 and string_of_asm_funs = function
   | [] -> ""
-  | f :: fr -> "\t" ^ (string_of_asm_fun f) ^ "\n" ^ (string_of_asm_funs fr) 
+  | f :: fr -> "\t" ^ (string_of_asm_fun f) ^ "\n" ^ (string_of_asm_funs fr)

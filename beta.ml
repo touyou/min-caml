@@ -36,6 +36,8 @@ let rec beta_cond env = function
   | Var(x) -> Var(find x env)
   | Tuple(xs) -> Tuple(List.map (fun x -> find x env) xs)
   | LetTuple(xts, y, e) -> LetTuple(xts, find y env, beta_cond env e)
+  | I2F(x) -> I2F(find x env)
+  | F2I(x) -> F2I(find x env)
   | In(x) -> In(find x env)
   | Out(x) -> Out(find x env)
   | Get(x, y) -> Get(find x env, find y env)
