@@ -42,21 +42,21 @@ create_float_array_cont:
 	.text
 	.globl _min_caml_start
 	.align 2
-print_int.213:
+print_int.353:
 	out	%r2, 0
 	blr
-fib.231:
+fib.355:
 	cmpwi	%cr7, %r2, 1
-	bc	4, %cr7, ble_else.468
+	bc	4, %cr7, ble_else.666
 	blr
-ble_else.468:
+ble_else.666:
 	addi	%r5, %r2, -1	# subi %r5, %r2, 1
 	stw	%r2, 0(%r3)
 	mfspr	%r31, 8	# mflr
 	or	%r5, %r2, %r5	# mr %r2, %r5
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	fib.231
+	bl	fib.355
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
@@ -67,7 +67,7 @@ ble_else.468:
 	or	%r5, %r2, %r5	# mr %r2, %r5
 	stw	%r31, 12(%r3)
 	addi	%r3, %r3, 16
-	bl	fib.231
+	bl	fib.355
 	addi	%r3, %r3, -16	# subi
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
@@ -80,14 +80,14 @@ _min_caml_start: # main entry point
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	fib.231
+	bl	fib.355
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	print_int.213
+	bl	print_int.353
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
