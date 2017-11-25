@@ -291,11 +291,13 @@ and assemble_inst oc = function
   | Tail, I2F(x) ->
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
-    Printf.fprintf oc "\tlfd\t%s, %d(%s)\n" fregs.(0) (ss - 4) reg_stack_p
+    Printf.fprintf oc "\tlfd\t%s, %d(%s)\n" fregs.(0) (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tblr\n"
   | Tail, F2I(x) ->
     let ss = stack_size () in
     Printf.fprintf oc "\tstfd\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
-    Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" regs.(0) (ss - 4) reg_stack_p
+    Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" regs.(0) (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tblr\n"
   | Tail, _ -> assert false
 and assemble_tail_if oc e1 e2 b bn =
   let b_else = Id.gen_id (b ^ "_else") in
