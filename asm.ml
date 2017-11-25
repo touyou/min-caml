@@ -30,6 +30,8 @@ and exp =
   | Lfd of Id.t * id_or_imm
   | Stfd of Id.t * Id.t * id_or_imm
   | Comment of string
+  | I2F of Id.t
+  | F2I of Id.t
   | In
   | Out of Id.t
   | IfEq of Id.t * id_or_imm * t * t
@@ -73,7 +75,7 @@ let rec remove_and_uniq xs = function
 let fv_id_or_imm = function Var(x) -> [x] | _ -> []
 let rec fv_exp = function
   | Nop | In | Li(_) | FLi(_) | SetL(_) | Comment(_) | Restore(_) -> []
-  | Mr(x) | Neg(x) | FMr(x) | FNeg(x) | Save(x, _) | Out(x) -> [x]
+  | Mr(x) | Neg(x) | FMr(x) | FNeg(x) | Save(x, _) | I2F(x) | F2I(x) | Out(x) -> [x]
   | Add(x, y') | Sub(x, y') | Mul(x, y') | Div(x, y')
   | Xor(x, y') | Or(x, y') | And(x, y')
   | Sll(x, y') | Srl(x, y')

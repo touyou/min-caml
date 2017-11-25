@@ -30,6 +30,8 @@ and exp =
   | Lfd of Id.t * id_or_imm
   | Stfd of Id.t * Id.t * id_or_imm
   | Comment of string
+  | I2F of Id.t
+  | F2I of Id.t
   | In
   | Out of Id.t
   | IfEq of Id.t * id_or_imm * t * t

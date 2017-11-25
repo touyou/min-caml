@@ -258,6 +258,8 @@ let rec string_of_asm_t elem =
     | Asm.FSub(e1, e2) -> "FSub " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
     | Asm.FMul(e1, e2) -> "FMul " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
     | Asm.FDiv(e1, e2) -> "FDiv " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
+    | Asm.I2F(e) -> "I2F " ^ (string_of_id e)
+    | Asm.F2I(e) -> "F2I " ^ (string_of_id e)
     | Asm.In -> "In"
     | Asm.Out(e) -> "Out " ^ (string_of_id e)
     | Asm.Lfd(e1, Asm.Var(e2)) -> "Lfd " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)

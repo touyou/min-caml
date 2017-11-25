@@ -276,6 +276,26 @@ and assemble_inst oc = function
     else if List.mem a all_fregs && a <> fregs.(0) then
       Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0);
     Printf.fprintf oc "\tmtspr\t8, %s\t# mtlr\n" reg_tmp
+  | NonTail(a), I2F(x) -> (* stwしてからlfd *)
+    let ss = stack_size () in
+    Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tlfd\t%s, %d(%s)\n" a (ss - 4) reg_stack_p;
+    if List.mem a all_fregs && a <> fregs.(0) then
+      Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0)
+  | NonTail(a), F2I(x) -> (* stfdしてからlwz *)
+    let ss = stack_size () in
+    Printf.fprintf oc "\tstfd\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" a (ss - 4) reg_stack_p;
+    if List.mem a all_regs && a <> regs.(0) then
+      Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" regs.(0) a regs.(0) a regs.(0)
+  | Tail, I2F(x) ->
+    let ss = stack_size () in
+    Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tlfd\t%s, %d(%s)\n" fregs.(0) (ss - 4) reg_stack_p
+  | Tail, F2I(x) ->
+    let ss = stack_size () in
+    Printf.fprintf oc "\tstfd\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" regs.(0) (ss - 4) reg_stack_p
   | Tail, _ -> assert false
 and assemble_tail_if oc e1 e2 b bn =
   let b_else = Id.gen_id (b ^ "_else") in

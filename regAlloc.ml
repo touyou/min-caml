@@ -143,6 +143,8 @@ and alloc_inst dest cont regenv = function
   | FSub(x, y) -> (Ans(FSub(find x Type.Float regenv, find y Type.Float regenv)), regenv)
   | FMul(x, y) -> (Ans(FMul(find x Type.Float regenv, find y Type.Float regenv)), regenv)
   | FDiv(x, y) -> (Ans(FDiv(find x Type.Float regenv, find y Type.Float regenv)), regenv)
+  | I2F(x) -> (Ans(I2F(find x Type.Int regenv)), regenv)
+  | F2I(x) -> (Ans(F2I(find x Type.Float regenv)), regenv)
   | Out(x) -> (Ans(Out(find x Type.Int regenv)), regenv)
   | Lfd(x, y') -> (Ans(Lfd(find x Type.Int regenv, find' y' regenv)), regenv)
   | Stfd(x, y, z') -> (Ans(Stfd(find x Type.Float regenv, find y Type.Int regenv, find' z' regenv)), regenv)

@@ -59,8 +59,8 @@ let rec virtualize_form env = function
   | Closure.FSub(x, y) -> Ans(FSub(x, y))
   | Closure.FMul(x, y) -> Ans(FMul(x, y))
   | Closure.FDiv(x, y) -> Ans(FDiv(x, y))
-  | Closure.I2F(x) -> Ans(FMr(x))
-  | Closure.F2I(x) -> Ans(Mr(x))
+  | Closure.I2F(x) -> Ans(I2F(x))
+  | Closure.F2I(x) -> Ans(F2I(x))
   | Closure.In -> Ans(In)
   | Closure.Out(x) -> Ans(Out(x))
   | Closure.IfEq(x, y, e1, e2) ->
