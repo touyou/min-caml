@@ -106,12 +106,12 @@ and assemble_inst oc = function
   (*Printf.fprintf oc "\tinvalid_div\t%s, %s, %s\n" x y z*)
   | NonTail(x), Div(y, Const(z)) -> Printf.fprintf oc "\tsrwi\t%s, %s, %d" x y (z/2)
   (* 論理演算周り *)
-  | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" x y z
-  | NonTail(x), Xor(y, Const(z)) -> Printf.fprintf oc "\txori\t%s, %s, %d\n" x y z
-  | NonTail(x), Or(y, Var(z)) -> Printf.fprintf oc "\tor\t%s, %s, %s\n" x y z
-  | NonTail(x), Or(y, Const(z)) -> Printf.fprintf oc "\tori\t%s, %s, %d\n" x y z
-  | NonTail(x), And(y, Var(z)) -> Printf.fprintf oc "\tand\t%s, %s, %s\n" x y z
-  | NonTail(x), And(y, Const(z)) -> Printf.fprintf oc "\tandi\t%s, %s, %d\n" x y z
+  | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" y x z
+  | NonTail(x), Xor(y, Const(z)) -> Printf.fprintf oc "\txori\t%s, %s, %d\n" y x z
+  | NonTail(x), Or(y, Var(z)) -> Printf.fprintf oc "\tor\t%s, %s, %s\n" y x z
+  | NonTail(x), Or(y, Const(z)) -> Printf.fprintf oc "\tori\t%s, %s, %d\n" y x z
+  | NonTail(x), And(y, Var(z)) -> Printf.fprintf oc "\tand\t%s, %s, %s\n" y x z
+  | NonTail(x), And(y, Const(z)) -> Printf.fprintf oc "\tandi\t%s, %s, %d\n" y x z
   (* シフト系 *)
   | NonTail(x), Sll(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s\n" x y z
   | NonTail(x), Sll(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d\n" x y z
