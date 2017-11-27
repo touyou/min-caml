@@ -101,10 +101,10 @@ and assemble_inst oc = function
   (* かけ算割り算は少ないので即値だけシフトに、そうじゃない場合はinvalidをつけた命令を吐く→無視の方向 or float_to_intなどでfmulとかで対処する *)
   | NonTail(x), Mul(y, Var(z)) -> assert false
   (*Printf.fprintf oc "\tinvalid_mull\t%s, %s, %s\n" x y z*)
-  | NonTail(x), Mul(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d" x y (z/2)
+  | NonTail(x), Mul(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d\n" x y (z/2)
   | NonTail(x), Div(y, Var(z)) -> assert false
   (*Printf.fprintf oc "\tinvalid_div\t%s, %s, %s\n" x y z*)
-  | NonTail(x), Div(y, Const(z)) -> Printf.fprintf oc "\tsrwi\t%s, %s, %d" x y (z/2)
+  | NonTail(x), Div(y, Const(z)) -> Printf.fprintf oc "\tsrwi\t%s, %s, %d\n" x y (z/2)
   (* 論理演算周り *)
   | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" y x z
   | NonTail(x), Xor(y, Const(z)) -> Printf.fprintf oc "\txori\t%s, %s, %d\n" y x z
