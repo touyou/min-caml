@@ -299,7 +299,7 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" regs.(0) (ss - 4) reg_stack_p;
     Printf.fprintf oc "\tblr\n"
   | Tail, In ->
-    Printf.fprintf oc "\tin %%r2, 0\n"
+    Printf.fprintf oc "\tin\t%%r2, 0\n"
   | Tail, e ->
     (Format.eprintf "error tail: %s@." (Debug.string_of_asm_t (Ans(e))); assert false)
 and assemble_tail_if oc e1 e2 b bn =
