@@ -42,16 +42,203 @@ create_float_array_cont:
 	.text
 	.globl _min_caml_start
 	.align 2
-print_int.7:
+mul_sub.809:
+	lwz	%r6, 8(%r29)
+	lwz	%r7, 4(%r29)
+	cmpwi	%cr7, %r5, -1
+	bc	12, %cr7, beq_else.854
+	blr
+beq_else.854:
+	addi	%r8, %r0, 1	# li
+	slw	%r8, %r8, %r5
+	and	%r6, %r6, %r8
+	cmpwi	%cr7, %r6, 0
+	bc	12, %cr7, beq_else.855
+	addi	%r5, %r5, -1	# subi %r5, %r5, 1
+	lwz	%r28, 0(%r29)
+	mtspr	9, %r28	# mtctr
+	bctr
+beq_else.855:
+	slw	%r6, %r7, %r5
+	add	%r2, %r2, %r6
+	addi	%r5, %r5, -1	# subi %r5, %r5, 1
+	lwz	%r28, 0(%r29)
+	mtspr	9, %r28	# mtctr
+	bctr
+mul.362:
+	cmpwi	%cr7, %r2, 0
+	bc	8, %cr7, bge_else.856
+	or	%r2, %r6, %r2	# mr %r6, %r2
+	b	bge_cont.857
+bge_else.856:
+	neg	%r6, %r2
+bge_cont.857:
+	cmpwi	%cr7, %r5, 0
+	bc	8, %cr7, bge_else.858
+	or	%r5, %r7, %r5	# mr %r7, %r5
+	b	bge_cont.859
+bge_else.858:
+	neg	%r7, %r5
+bge_cont.859:
+	or	%r4, %r29, %r4	# mr %r29, %r4
+	addi	%r4, %r4, 16
+	addis	%r8, %r0, ha16(mul_sub.809)	# lis
+	addi	%r8, %r8, lo16(mul_sub.809)
+	stw	%r8, 0(%r29)
+	stw	%r7, 8(%r29)
+	stw	%r6, 4(%r29)
+	addi	%r6, %r0, 0	# li
+	addi	%r7, %r0, 30	# li
+	stw	%r5, 0(%r3)
+	stw	%r2, 4(%r3)
+	mfspr	%r31, 8	# mflr
+	or	%r7, %r5, %r7	# mr %r5, %r7
+	or	%r6, %r2, %r6	# mr %r2, %r6
+	stw	%r31, 12(%r3)
+	addi	%r3, %r3, 16
+	lwz	%r31, 0(%r29)
+	mtspr	9, %r31	#mtctr
+	bctrl
+	addi	%r3, %r3, -16	# subi
+	lwz	%r31, 12(%r3)
+	mtspr	8, %r31	# mtlr
+	addis	%r5, %r0, 32767	# lis
+	ori	%r5, %r5, 65535
+	and	%r2, %r2, %r5
+	lwz	%r5, 4(%r3)
+	srwi	%r5, %r5, 31
+	lwz	%r6, 0(%r3)
+	srwi	%r6, %r6, 31
+	xor	%r5, %r5, %r6
+	cmpwi	%cr7, %r5, 0
+	bc	12, %cr7, beq_else.860
+	blr
+beq_else.860:
+	neg	%r2, %r2
+	blr
+div_sub.775:
+	cmpwi	%cr7, %r7, -1
+	bc	12, %cr7, beq_else.861
+	blr
+beq_else.861:
+	srw	%r8, %r5, %r7
+	cmp	%cr7, %r6, %r8
+	bc	4, %cr7, ble_else.862
+	addi	%r8, %r0, 1	# li
+	slw	%r8, %r8, %r7
+	add	%r2, %r8, %r2
+	slw	%r8, %r6, %r7
+	subf	%r5, %r8, %r5	# sub	%r5, %r5, %r8
+	addi	%r7, %r7, -1	# subi %r7, %r7, 1
+	b	div_sub.775
+ble_else.862:
+	addi	%r7, %r7, -1	# subi %r7, %r7, 1
+	b	div_sub.775
+div.365:
+	cmpwi	%cr7, %r2, 0
+	bc	8, %cr7, bge_else.863
+	or	%r2, %r6, %r2	# mr %r6, %r2
+	b	bge_cont.864
+bge_else.863:
+	neg	%r6, %r2
+bge_cont.864:
+	cmpwi	%cr7, %r5, 0
+	bc	8, %cr7, bge_else.865
+	or	%r5, %r7, %r5	# mr %r7, %r5
+	b	bge_cont.866
+bge_else.865:
+	neg	%r7, %r5
+bge_cont.866:
+	addi	%r8, %r0, 0	# li
+	addi	%r9, %r0, 30	# li
+	stw	%r5, 0(%r3)
+	stw	%r2, 4(%r3)
+	mfspr	%r31, 8	# mflr
+	or	%r6, %r5, %r6	# mr %r5, %r6
+	or	%r8, %r2, %r8	# mr %r2, %r8
+	or	%r7, %r6, %r7	# mr %r6, %r7
+	or	%r9, %r7, %r9	# mr %r7, %r9
+	stw	%r31, 12(%r3)
+	addi	%r3, %r3, 16
+	bl	div_sub.775
+	addi	%r3, %r3, -16	# subi
+	lwz	%r31, 12(%r3)
+	mtspr	8, %r31	# mtlr
+	addis	%r5, %r0, 32767	# lis
+	ori	%r5, %r5, 65535
+	and	%r2, %r2, %r5
+	lwz	%r5, 4(%r3)
+	srwi	%r5, %r5, 31
+	lwz	%r6, 0(%r3)
+	srwi	%r6, %r6, 31
+	xor	%r5, %r5, %r6
+	cmpwi	%cr7, %r5, 0
+	bc	12, %cr7, beq_else.867
+	blr
+beq_else.867:
+	neg	%r2, %r2
+	blr
+print_int_sub.755:
+	cmpwi	%cr7, %r2, 10
+	bc	8, %cr7, bge_else.868
+	addi	%r5, %r0, 10	# li
+	stw	%r2, 0(%r3)
+	mfspr	%r31, 8	# mflr
+	stw	%r31, 4(%r3)
+	addi	%r3, %r3, 8
+	bl	div.365
+	addi	%r3, %r3, -8	# subi
+	lwz	%r31, 4(%r3)
+	mtspr	8, %r31	# mtlr
+	mfspr	%r31, 8	# mflr
+	stw	%r31, 4(%r3)
+	addi	%r3, %r3, 8
+	bl	print_int_sub.755
+	addi	%r3, %r3, -8	# subi
+	lwz	%r31, 4(%r3)
+	mtspr	8, %r31	# mtlr
+	addi	%r5, %r0, 10	# li
+	lwz	%r2, 0(%r3)
+	mfspr	%r31, 8	# mflr
+	stw	%r31, 4(%r3)
+	addi	%r3, %r3, 8
+	bl	div.365
+	addi	%r3, %r3, -8	# subi
+	lwz	%r31, 4(%r3)
+	mtspr	8, %r31	# mtlr
+	addi	%r5, %r0, 10	# li
+	mfspr	%r31, 8	# mflr
+	stw	%r31, 4(%r3)
+	addi	%r3, %r3, 8
+	bl	mul.362
+	addi	%r3, %r3, -8	# subi
+	lwz	%r31, 4(%r3)
+	mtspr	8, %r31	# mtlr
+	lwz	%r5, 0(%r3)
+	subf	%r2, %r2, %r5	# sub	%r2, %r5, %r2
+	addi	%r2, %r2, 48
 	out	%r2, 0
 	blr
-f.10:
+bge_else.868:
+	addi	%r2, %r2, 48
+	out	%r2, 0
+	blr
+print_int.370:
+	cmpwi	%cr7, %r2, 0
+	bc	8, %cr7, bge_else.871
+	b	print_int_sub.755
+bge_else.871:
+	addi	%r5, %r0, 45	# li
+	out	%r5, 0
+	neg	%r2, %r2
+	b	print_int_sub.755
+f.434:
 	lwz	%r5, 4(%r29)
 	cmpwi	%cr7, %r2, 0
-	bc	12, %cr7, beq_else.25
+	bc	12, %cr7, beq_else.872
 	addi	%r2, %r0, 0	# li
 	blr
-beq_else.25:
+beq_else.872:
 	addi	%r2, %r2, -1	# subi %r2, %r2, 1
 	stw	%r5, 0(%r3)
 	mfspr	%r31, 8	# mflr
@@ -71,8 +258,8 @@ _min_caml_start: # main entry point
 	addi	%r2, %r0, 10	# li
 	or	%r4, %r29, %r4	# mr %r29, %r4
 	addi	%r4, %r4, 8
-	addis	%r5, %r0, ha16(f.10)	# lis
-	addi	%r5, %r5, lo16(f.10)
+	addis	%r5, %r0, ha16(f.434)	# lis
+	addi	%r5, %r5, lo16(f.434)
 	stw	%r5, 0(%r29)
 	stw	%r2, 4(%r29)
 	addi	%r2, %r0, 123	# li
@@ -88,7 +275,7 @@ _min_caml_start: # main entry point
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
-	bl	print_int.7
+	bl	print_int.370
 	addi	%r3, %r3, -8	# subi
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
