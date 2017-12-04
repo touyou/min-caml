@@ -61,8 +61,8 @@ let rec folding env = function
       xts
       (findt y env)
   | LetTuple(xts, y, e) -> LetTuple(xts, y, folding env e)
-  | I2F(x) when memi x env -> Float(Type.conv_int(findi x env))
-  | F2I(x) when memf x env -> Int(Type.conv_float(findf x env))
+  (* | I2F(x) when memi x env -> Float(Type.conv_int(findi x env))
+  | F2I(x) when memf x env -> Int(Type.conv_float(findf x env)) *)
   | e -> e
 
 let main = folding MiniMap.empty

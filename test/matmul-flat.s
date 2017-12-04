@@ -7,6 +7,38 @@ _start:
 	lis	%r3, 0x0001	# sp
 	lis	%r4, 0x0018	# hp
 	b	_min_caml_start
+	.data
+	.align 	8
+  .comm min_caml_n_objects, 4
+  .comm min_caml_objects, 240
+  .comm min_caml_screen, 24
+  .comm	min_caml_viewpoint, 24
+  .comm min_caml_light, 24
+  .comm min_caml_beam, 8
+  .comm min_caml_and_net, 200
+  .comm min_caml_or_net, 4
+  .comm min_caml_solver_dist, 8
+  .comm min_caml_intsec_rectside, 4
+  .comm min_caml_tmin, 8
+  .comm min_caml_intersection_point, 24
+  .comm min_caml_intersected_object_id, 4
+  .comm min_caml_nvector, 24
+  .comm min_caml_texture_color, 24
+  .comm min_caml_diffuse_ray, 24
+  .comm min_caml_rgb, 24
+  .comm min_caml_image_size, 8
+  .comm min_caml_image_center, 8
+  .comm min_caml_scan_pitch, 8
+  .comm min_caml_startp, 24
+  .comm min_caml_startp_fast, 24
+  .comm min_caml_screenx_dir, 24
+  .comm min_caml_screeny_dir, 24
+  .comm min_caml_screenz_dir, 24
+  .comm min_caml_ptrace_dirvec, 24
+  .comm min_caml_dirvecs, 20
+  .comm min_caml_light_dirvec, 264
+  .comm min_caml_reflections, 720
+  .comm min_caml_n_reflections, 4
 #	create_array
 	.text
 	.align	2
@@ -16,7 +48,7 @@ min_caml_create_array:
 	or  %r4, %r2, %r4  # mr	%r2, %r4
 create_array_loop:
 	cmpwi	%cr7, %r6, 0
-	bc  12, %cr7, create_array_cont  # bne	%cr7, create_array_cont
+	bne	%cr7, create_array_cont
 	b	create_array_exit
 create_array_exit:
 	blr
@@ -32,7 +64,7 @@ min_caml_create_float_array:
 	or  %r4, %r2, %r4  # mr	%r2, %r4
 create_float_array_loop:
 	cmpwi	%cr7, %r5, 0
-	bc  12, %cr7, create_float_array_cont # bne	%cr7, create_float_array_cont
+	bne	%cr7, create_float_array_cont
 	blr
 create_float_array_cont:
 	stfd	%f0, 0(%r4)
@@ -44,43 +76,43 @@ create_float_array_cont:
 	.align 3
 l.1189:	 # 12.000000
 	.long	0
-	.long	1094713344
+	.long	1076363264
 	.align 3
 l.1186:	 # 11.000000
 	.long	0
-	.long	1093664768
+	.long	1076232192
 	.align 3
 l.1183:	 # 10.000000
 	.long	0
-	.long	1092616192
+	.long	1076101120
 	.align 3
 l.1180:	 # 9.000000
 	.long	0
-	.long	1091567616
+	.long	1075970048
 	.align 3
 l.1177:	 # 8.000000
 	.long	0
-	.long	1090519040
+	.long	1075838976
 	.align 3
 l.1174:	 # 7.000000
 	.long	0
-	.long	1088421888
+	.long	1075576832
 	.align 3
 l.1171:	 # 6.000000
 	.long	0
-	.long	1086324736
+	.long	1075314688
 	.align 3
 l.1168:	 # 5.000000
 	.long	0
-	.long	1084227584
+	.long	1075052544
 	.align 3
 l.1165:	 # 4.000000
 	.long	0
-	.long	1082130432
+	.long	1074790400
 	.align 3
 l.1162:	 # 3.000000
 	.long	0
-	.long	1077936128
+	.long	1074266112
 	.align 3
 l.1159:	 # 2.000000
 	.long	0
@@ -88,7 +120,7 @@ l.1159:	 # 2.000000
 	.align 3
 l.1156:	 # 1.000000
 	.long	0
-	.long	1065353216
+	.long	1072693248
 	.align 3
 l.1153:	 # 0.000000
 	.long	0

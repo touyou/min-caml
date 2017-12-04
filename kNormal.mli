@@ -31,6 +31,7 @@ type t =
   | Out of Id.t
   | Get of Id.t * Id.t
   | Put of Id.t * Id.t * Id.t
+  | Ref of (Id.t * Type.t) * t
   | ExtVar of Id.t * Type.t
   | ExtArray of Id.t
   | ExtFunApp of Id.t * Id.t list

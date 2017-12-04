@@ -367,10 +367,8 @@ let main oc array_str (Prog(data, fundefs, e)) =
        (fun (Id.Label(x), d) ->
           Printf.fprintf oc "\t.align 3\n";
           Printf.fprintf oc "%s:\t # %f\n" x d;
-          Printf.fprintf oc "\t.long\t0\n";
-          Printf.fprintf oc "\t.long\t%d\n" (Type.conv_float d))
-          (* Printf.fprintf oc "\t.long\t%ld\n" (gethi d);
-          Printf.fprintf oc "\t.long\t%ld\n" (getlo d)) *)
+          Printf.fprintf oc "\t.long\t%ld\n" (gethi d);
+          Printf.fprintf oc "\t.long\t%ld\n" (getlo d))
        data);
   Printf.fprintf oc "\t.text\n";
   Printf.fprintf oc "\t.globl _min_caml_start\n";

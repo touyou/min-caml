@@ -39,7 +39,7 @@ min_caml_create_array:
 	or  %r4, %r2, %r4  # mr	%r2, %r4
 create_array_loop:
 	cmpwi	%cr7, %r6, 0
-	bc  12, %cr7, create_array_cont  # bne	%cr7, create_array_cont
+	bne	%cr7, create_array_cont
 	b	create_array_exit
 create_array_exit:
 	blr
@@ -55,7 +55,7 @@ min_caml_create_float_array:
 	or  %r4, %r2, %r4  # mr	%r2, %r4
 create_float_array_loop:
 	cmpwi	%cr7, %r5, 0
-	bc  12, %cr7, create_float_array_cont # bne	%cr7, create_float_array_cont
+	bne	%cr7, create_float_array_cont
 	blr
 create_float_array_cont:
 	stfd	%f0, 0(%r4)

@@ -236,7 +236,7 @@
 
 (let rec sqrt a =
    (*	if (a < 0.0) then nan
-     	else	*)
+     else	*)
    let rec f x = x *. x -. a in
    newton_sub f 2.0);
 
