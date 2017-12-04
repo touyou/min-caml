@@ -102,7 +102,7 @@ and assemble_inst oc = function
   | NonTail(x), Mul(y, Var(z)) -> assert false
   (*Printf.fprintf oc "\tinvalid_mull\t%s, %s, %s\n" x y z*)
   | NonTail(x), Mul(y, Const(z)) ->
-    Printf.fprintf oc "\taddis\t%%r1, %%r0, %d\t# lis\n" (z/2);
+    Printf.fprintf oc "\taddi\t%%r1, %%r0, %d\t# li\n" (z/2);
     Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y x
   | NonTail(x), Div(y, Var(z)) -> assert false
   (*Printf.fprintf oc "\tinvalid_div\t%s, %s, %s\n" x y z*)
@@ -113,11 +113,11 @@ and assemble_inst oc = function
   | NonTail(x), Or(y, Var(z)) -> Printf.fprintf oc "\tor\t%s, %s, %s\n" y x z
   | NonTail(x), Or(y, Const(z)) -> Printf.fprintf oc "\tori\t%s, %s, %d\n" y x z
   | NonTail(x), And(y, Var(z)) -> Printf.fprintf oc "\tand\t%s, %s, %s\n" y x z
-  | NonTail(x), And(y, Const(z)) -> Printf.fprintf oc "\tandi\t%s, %s, %d\n" y x z
+  | NonTail(x), And(y, Const(z)) -> Printf.fprintf oc "\tandi.\t%s, %s, %d\n" y x z
   (* シフト系 *)
   | NonTail(x), Sll(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s # swap\n" y x z
   | NonTail(x), Sll(y, Const(z)) ->
-    Printf.fprintf oc "\taddis\t%%r1, %%r0, %d\t# lis\n" z;
+    Printf.fprintf oc "\taddi\t%%r1, %%r0, %d\t# li\n" z;
     Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y x
   | NonTail(x), Srl(y, Var(z)) -> Printf.fprintf oc "\tsrw\t%s, %s, %s # swap\n" y x z
   | NonTail(x), Srl(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d # swap srwi\n" y x z
@@ -125,7 +125,7 @@ and assemble_inst oc = function
   | NonTail(x), Slw(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s # swap\n" y x z
   (* slwi %r1, %r2, num *)
   | NonTail(x), Slw(y, Const(z)) ->
-    Printf.fprintf oc "\taddis\t%%r1, %%r0, %d\t# lis\n" z;
+    Printf.fprintf oc "\taddi\t%%r1, %%r0, %d\t# li\n" z;
     Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y x
   (* lwzx %r1, %r2, %r3 *)
   | NonTail(x), Lwz(y, Var(z)) -> Printf.fprintf oc "\tlwzx\t%s, %s, %s\n" x y z
@@ -161,6 +161,16 @@ and assemble_inst oc = function
   (* TO-DO: 入出力 *)
   | NonTail(x), In -> Printf.fprintf oc "\tin\t%s, %d\n" x 0
   | NonTail(x), Out(y) -> Printf.fprintf oc "\tout\t%s, %d\n" y 0
+  (*| NonTail(x), Out(y) ->
+    let i = 0xF0001000 in
+    let n = i lsr 16 in
+    let m = i lxor (n lsl 16) in
+    Printf.fprintf oc "\taddi\t%s, %%r0, 24\t# lis\n" "%r1";
+    Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y y;
+    Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" "%r1" n;
+    Printf.fprintf oc "\tori\t%s, %s, %d\n" "%r1" "%r1" m;
+    Printf.fprintf oc "\tstw\t%s, 0(%s)\n" y "%r1";
+    Printf.fprintf oc "\tsrawi\t%s, %s, 24 # swap\n" y y*)
   (* 待避の実装 *)
   | NonTail(_), Save(x, y) when List.mem x all_regs && not (MiniSet.mem y !stack_set) ->
     save y;
@@ -196,53 +206,53 @@ and assemble_inst oc = function
   (* 条件分岐：末尾 *)
   | Tail, IfEq(x, Var(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, %s, %s\n" x y;
-    assemble_tail_if oc e1 e2 "beq" "bc\t12," (* beq bne *)
+    assemble_tail_if oc e1 e2 "beq" "bne" (* beq bne *)
   | Tail, IfEq(x, Const(y), e1, e2)->
     Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
-    assemble_tail_if oc e1 e2 "beq" "bc\t12," (* beq bne *)
+    assemble_tail_if oc e1 e2 "beq" "bne" (* beq bne *)
   | Tail, IfLE(x, Var(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, %s, %s\n" x y;
-    assemble_tail_if oc e1 e2 "ble" "bc\t4," (* ble bgt *)
+    assemble_tail_if oc e1 e2 "ble" "bgt" (* ble bgt *)
   | Tail, IfLE(x, Const(y), e1, e2)->
     Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
-    assemble_tail_if oc e1 e2 "ble" "bc\t4," (* ble bgt *)
+    assemble_tail_if oc e1 e2 "ble" "bgt" (* ble bgt *)
   | Tail, IfGE(x, Var(y), e1, e2)->
     Printf.fprintf oc "\tcmp\t%%cr7, %s, %s\n" x y;
-    assemble_tail_if oc e1 e2 "bge" "bc\t8," (* bge blt *)
+    assemble_tail_if oc e1 e2 "bge" "blt" (* bge blt *)
   | Tail, IfGE(x, Const(y), e1, e2)->
     Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
-    assemble_tail_if oc e1 e2 "bge" "bc\t8," (* bge blt *)
+    assemble_tail_if oc e1 e2 "bge" "blt" (* bge blt *)
   | Tail, IfFEq(x, y, e1, e2)->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
-    assemble_tail_if oc e1 e2 "beq" "bc\t12," (* beq bne *)
+    assemble_tail_if oc e1 e2 "beq" "bne" (* beq bne *)
   | Tail, IfFLE(x, y, e1, e2)->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
-    assemble_tail_if oc e1 e2 "ble" "bc\t4," (* ble bgt *)
+    assemble_tail_if oc e1 e2 "ble" "bgt" (* ble bgt *)
   (* 条件分岐：末尾じゃない *)
   | NonTail(z), IfEq(x, Var(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, %s, %s\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bc\t12," (* beq bne *)
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bne" (* beq bne *)
   | NonTail(z), IfEq(x, Const(y), e1, e2) ->
     Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bc\t12," (* beq bne *)
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bne" (* beq bne *)
   | NonTail(z), IfLE(x, Var(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, %s, %s\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bc\t4," (* ble bgt *)
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bgt" (* ble bgt *)
   | NonTail(z), IfLE(x, Const(y), e1, e2) ->
     Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\t\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bc\t4," (* ble bgt *)
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bgt" (* ble bgt *)
   | NonTail(z), IfGE(x, Var(y), e1, e2) ->
     Printf.fprintf oc "\tcmp\t%%cr7, %s, %s\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "bc\t8," (* bge blt *)
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "blt" (* bge blt *)
   | NonTail(z), IfGE(x, Const(y), e1, e2) ->
     Printf.fprintf oc "\tcmpwi\t%%cr7, %s, %d\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "bc\t8," (* bge blt *)
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "bge" "blt" (* bge blt *)
   | NonTail(z), IfFEq(x, y, e1, e2) ->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bc\t12," (* beq bne *)
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "beq" "bne" (* beq bne *)
   | NonTail(z), IfFLE(x, y, e1, e2) ->
     Printf.fprintf oc "\tfcmpu\t%%cr7, %s, %s\n" x y;
-    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bc\t4," (* ble bgt *)
+    assemble_non_tail_if oc (NonTail(z)) e1 e2 "ble" "bgt" (* ble bgt *)
   (* 関数呼び出し *)
   | Tail, CallCls(x, ys, zs) ->
     assemble_args oc [(x, reg_closure_addr)] ys zs;
@@ -368,7 +378,7 @@ let main oc array_str (Prog(data, fundefs, e)) =
   (* create_arrayを埋め込む *)
   Printf.fprintf oc "%s" array_str;
   if data <> [] then
-    (Printf.fprintf oc "\t.data\n\t.literal8\n";
+    (Printf.fprintf oc "\t.data\n\t#.literal8\n";
      List.iter
        (fun (Id.Label(x), d) ->
           Printf.fprintf oc "\t.align 3\n";
