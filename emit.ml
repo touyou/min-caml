@@ -33,7 +33,7 @@ let stack_size () = align ((List.length !stack_map + 1) * 4)
 
 let load_label r label =
   Printf.sprintf
-    "\taddis\t%s, %%r0, ha16(%s)\t# lis\n\taddi\t%s, %s, lo16(%s)\n"
+    "\taddis\t%s, %%r0, (%s)@h\t# lis\n\taddi\t%s, %s, (%s)@l\n"
     r label r r label
 
 (* 関数呼び出しのために引数を並び替え *)
@@ -75,7 +75,7 @@ and assemble_inst oc = function
   (* label lfd %reg, 0(%reg) *)
   | NonTail(x), FLi(Id.Label(l)) ->
     let s = load_label reg_tmp l in
-    (* let s = Printf.sprintf "\taddis\t%s, %%r0, ha16(%s)\t# lis\n" reg_tmp l in *)
+    (* let s = Printf.sprintf "\taddis\t%s, %%r0, (%s)@h\t# lis\n" reg_tmp l in *)
     Printf.fprintf oc "%s\tlfd\t%s, 0(%s)\n" s x reg_tmp
   (* label *)
   | NonTail(x), SetL(Id.Label(y)) ->
@@ -101,10 +101,12 @@ and assemble_inst oc = function
   (* かけ算割り算は少ないので即値だけシフトに、そうじゃない場合はinvalidをつけた命令を吐く→無視の方向 or float_to_intなどでfmulとかで対処する *)
   | NonTail(x), Mul(y, Var(z)) -> assert false
   (*Printf.fprintf oc "\tinvalid_mull\t%s, %s, %s\n" x y z*)
-  | NonTail(x), Mul(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d\n" x y (z/2)
+  | NonTail(x), Mul(y, Const(z)) ->
+    Printf.fprintf oc "\taddis\t%%r1, %%r0, %d\t# lis\n" (z/2);
+    Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y x
   | NonTail(x), Div(y, Var(z)) -> assert false
   (*Printf.fprintf oc "\tinvalid_div\t%s, %s, %s\n" x y z*)
-  | NonTail(x), Div(y, Const(z)) -> Printf.fprintf oc "\tsrwi\t%s, %s, %d\n" x y (z/2)
+  | NonTail(x), Div(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d # swap srwi\n" y x (z/2)
   (* 論理演算周り *)
   | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" y x z
   | NonTail(x), Xor(y, Const(z)) -> Printf.fprintf oc "\txori\t%s, %s, %d\n" y x z
@@ -113,14 +115,18 @@ and assemble_inst oc = function
   | NonTail(x), And(y, Var(z)) -> Printf.fprintf oc "\tand\t%s, %s, %s\n" y x z
   | NonTail(x), And(y, Const(z)) -> Printf.fprintf oc "\tandi\t%s, %s, %d\n" y x z
   (* シフト系 *)
-  | NonTail(x), Sll(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s\n" x y z
-  | NonTail(x), Sll(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d\n" x y z
-  | NonTail(x), Srl(y, Var(z)) -> Printf.fprintf oc "\tsrw\t%s, %s, %s\n" x y z
-  | NonTail(x), Srl(y, Const(z)) -> Printf.fprintf oc "\tsrwi\t%s, %s, %d\n" x y z
+  | NonTail(x), Sll(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s # swap\n" y x z
+  | NonTail(x), Sll(y, Const(z)) ->
+    Printf.fprintf oc "\taddis\t%%r1, %%r0, %d\t# lis\n" z;
+    Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y x
+  | NonTail(x), Srl(y, Var(z)) -> Printf.fprintf oc "\tsrw\t%s, %s, %s # swap\n" y x z
+  | NonTail(x), Srl(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d # swap srwi\n" y x z
   (* slw %r1, %r2, %r3 *)
-  | NonTail(x), Slw(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s\n" x y z
+  | NonTail(x), Slw(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s # swap\n" y x z
   (* slwi %r1, %r2, num *)
-  | NonTail(x), Slw(y, Const(z)) -> Printf.fprintf oc "\tslwi\t%s, %s, %d\n" x y z
+  | NonTail(x), Slw(y, Const(z)) ->
+    Printf.fprintf oc "\taddis\t%%r1, %%r0, %d\t# lis\n" z;
+    Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y x
   (* lwzx %r1, %r2, %r3 *)
   | NonTail(x), Lwz(y, Var(z)) -> Printf.fprintf oc "\tlwzx\t%s, %s, %s\n" x y z
   (* lwz %r1, num(%r2) *)
