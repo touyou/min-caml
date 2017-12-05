@@ -16,7 +16,7 @@ let unsigned_of_int i =
   if i < 0 then i + 4294967296
   else i
 
-(* let conv_float f =
+let conv_float f =
   let s = if f >= 0.0 then 0 else 1 in
   let f = abs_float(f) in
   let e, m = if f = 0.0 then 0, 0 else
@@ -33,4 +33,4 @@ let conv_int i =
     if (i land 2147483648) = 0 then
       f
     else
-      -.f *)
+      -.f

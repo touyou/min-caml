@@ -76,7 +76,7 @@ and assemble_inst oc = function
   | NonTail(x), FLi(Id.Label(l)) ->
     let s = load_label reg_tmp l in
     (* let s = Printf.sprintf "\taddis\t%s, %%r0, (%s)@h\t# lis\n" reg_tmp l in *)
-    Printf.fprintf oc "%s\tlfd\t%s, 0(%s)\n" s x reg_tmp
+    Printf.fprintf oc "%s\tlfs\t%s, 0(%s)\t# float\n" s x reg_tmp
   (* label *)
   | NonTail(x), SetL(Id.Label(y)) ->
     let s = load_label x y in
@@ -148,14 +148,14 @@ and assemble_inst oc = function
   | NonTail(x), FMul(y, z) -> Printf.fprintf oc "\tfmul\t%s, %s, %s\n" x y z
   (* fdiv %r1, %r2, %r3 *)
   | NonTail(x), FDiv(y, z) -> Printf.fprintf oc "\tfdiv\t%s, %s, %s\n" x y z
-  (* lfdx %r1, %r2, %r3 *)
+  (* lfdx %r1, %r2, %r3 TODO: lfsx?*)
   | NonTail(x), Lfd(y, Var(z)) -> Printf.fprintf oc "\tlfdx\t%s, %s, %s\n" x y z
   (* lfd %r1, num(%r2) *)
-  | NonTail(x), Lfd(y, Const(z)) -> Printf.fprintf oc "\tlfd\t%s, %d(%s)\n" x z y
+  | NonTail(x), Lfd(y, Const(z)) -> Printf.fprintf oc "\tlfs\t%s, %d(%s)\t# float\n" x z y
   (* stfdx %r1, %r2, %r3 *)
   | NonTail(_), Stfd(x, y, Var(z)) -> Printf.fprintf oc "\tstfdx\t%s, %s, %s\n" x y z
   (* stfd %r1, num(%r2) *)
-  | NonTail(_), Stfd(x, y, Const(z)) -> Printf.fprintf oc "\tstfd\t%s, %d(%s)\n" x z y
+  | NonTail(_), Stfd(x, y, Const(z)) -> Printf.fprintf oc "\tstfs\t%s, %d(%s)\t# float\n" x z y
   (* comment *)
   | NonTail(_), Comment(s) -> Printf.fprintf oc "#\t%s\n" s
   (* TO-DO: 入出力 *)
@@ -177,14 +177,14 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (offset y) reg_stack_p
   | NonTail(_), Save(x, y) when List.mem x all_fregs && not (MiniSet.mem y !stack_set) ->
     savef y;
-    Printf.fprintf oc "\tstfd\t%s, %d(%s)\n" x (offset y) reg_stack_p
+    Printf.fprintf oc "\tstfs\t%s, %d(%s)\t# float\n" x (offset y) reg_stack_p
   | NonTail(_), Save(x, y) -> assert (MiniSet.mem y !stack_set); ()
   (* 復帰の実装 *)
   | NonTail(x), Restore(y) when List.mem x all_regs ->
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" x (offset y) reg_stack_p
   | NonTail(x), Restore(y) ->
     assert (List.mem x all_fregs);
-    Printf.fprintf oc "\tlfd\t%s, %d(%s)\n" x (offset y) reg_stack_p
+    Printf.fprintf oc "\tlfs\t%s, %d(%s)\t# float\n" x (offset y) reg_stack_p
   (* 末尾なら計算結果を第一レジスタにセットしてリターン *)
   | Tail, (Nop | Out(_) | Stw(_) | Stfd(_) | Comment(_) | Save(_) as exp) ->
     assemble_inst oc (NonTail(Id.gen_tmp Type.Unit), exp);
@@ -295,23 +295,23 @@ and assemble_inst oc = function
   | NonTail(a), I2F(x) -> (* stwしてからlfd *)
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
-    Printf.fprintf oc "\tlfd\t%s, %d(%s)\n" a (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tlfs\t%s, %d(%s)\t# float\n" a (ss - 4) reg_stack_p;
     if List.mem a all_fregs && a <> fregs.(0) then
       Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0)
   | NonTail(a), F2I(x) -> (* stfdしてからlwz *)
     let ss = stack_size () in
-    Printf.fprintf oc "\tstfd\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tstfs\t%s, %d(%s)\t# float\n" x (ss - 4) reg_stack_p;
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" a (ss - 4) reg_stack_p;
     if List.mem a all_regs && a <> regs.(0) then
       Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" regs.(0) a regs.(0) a regs.(0)
   | Tail, I2F(x) ->
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
-    Printf.fprintf oc "\tlfd\t%s, %d(%s)\n" fregs.(0) (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tlfs\t%s, %d(%s)\t# float\n" fregs.(0) (ss - 4) reg_stack_p;
     Printf.fprintf oc "\tblr\n"
   | Tail, F2I(x) ->
     let ss = stack_size () in
-    Printf.fprintf oc "\tstfd\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tstfs\t%s, %d(%s)\t# float\n" x (ss - 4) reg_stack_p;
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" regs.(0) (ss - 4) reg_stack_p;
     Printf.fprintf oc "\tblr\n"
   | Tail, In ->
@@ -383,8 +383,9 @@ let main oc array_str (Prog(data, fundefs, e)) =
        (fun (Id.Label(x), d) ->
           Printf.fprintf oc "\t.align 3\n";
           Printf.fprintf oc "%s:\t # %f\n" x d;
-          Printf.fprintf oc "\t.long\t%ld\n" (gethi d);
-          Printf.fprintf oc "\t.long\t%ld\n" (getlo d))
+          Printf.fprintf oc "\t.long\t%d\n" (Type.conv_float d))
+          (* Printf.fprintf oc "\t.long\t%ld\n" (gethi d);
+          Printf.fprintf oc "\t.long\t%ld\n" (getlo d)) *)
        data);
   Printf.fprintf oc "\t.text\n";
   Printf.fprintf oc "\t.globl _min_caml_start\n";

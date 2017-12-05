@@ -78,20 +78,20 @@ mul_sub.859:
 	lwz	%r6, 8(%r29)
 	lwz	%r7, 4(%r29)
 	cmpwi	%cr7, %r5, -1
-	bc	12, %cr7, beq_else.924
+	bne %cr7, beq_else.924
 	blr
 beq_else.924:
 	addi	%r8, %r0, 1	# li
-	slw	%r8, %r8, %r5
+	slw	%r8, %r8, %r5 # swap
 	and	%r6, %r6, %r8
 	cmpwi	%cr7, %r6, 0
-	bc	12, %cr7, beq_else.925
+	bne %cr7, beq_else.925
 	addi	%r5, %r5, -1	# subi %r5, %r5, 1
 	lwz	%r28, 0(%r29)
 	mtspr	9, %r28	# mtctr
 	bctr
 beq_else.925:
-	slw	%r6, %r7, %r5
+	slw	%r7, %r6, %r5 # swap
 	add	%r2, %r2, %r6
 	addi	%r5, %r5, -1	# subi %r5, %r5, 1
 	lwz	%r28, 0(%r29)
@@ -99,14 +99,14 @@ beq_else.925:
 	bctr
 mul.381:
 	cmpwi	%cr7, %r2, 0
-	bc	8, %cr7, bge_else.926
+	blt %cr7, bge_else.926
 	or	%r2, %r6, %r2	# mr %r6, %r2
 	b	bge_cont.927
 bge_else.926:
 	neg	%r6, %r2
 bge_cont.927:
 	cmpwi	%cr7, %r5, 0
-	bc	8, %cr7, bge_else.928
+	blt %cr7, bge_else.928
 	or	%r5, %r7, %r5	# mr %r7, %r5
 	b	bge_cont.929
 bge_else.928:
@@ -114,8 +114,8 @@ bge_else.928:
 bge_cont.929:
 	or	%r4, %r29, %r4	# mr %r29, %r4
 	addi	%r4, %r4, 16
-	addis	%r8, %r0, ha16(mul_sub.859)	# lis
-	addi	%r8, %r8, lo16(mul_sub.859)
+	addis	%r8, %r0, (mul_sub.859)@h	# lis
+	addi	%r8, %r8, (mul_sub.859)@l
 	stw	%r8, 0(%r29)
 	stw	%r7, 8(%r29)
 	stw	%r6, 4(%r29)
@@ -138,28 +138,28 @@ bge_cont.929:
 	ori	%r5, %r5, 65535
 	and	%r2, %r2, %r5
 	lwz	%r5, 4(%r3)
-	srwi	%r5, %r5, 31
+	srawi	%r5, %r5, 31 # swap srwi
 	lwz	%r6, 0(%r3)
-	srwi	%r6, %r6, 31
+	srawi	%r6, %r6, 31 # swap srwi
 	xor	%r5, %r5, %r6
 	cmpwi	%cr7, %r5, 0
-	bc	12, %cr7, beq_else.930
+	bne %cr7, beq_else.930
 	blr
 beq_else.930:
 	neg	%r2, %r2
 	blr
 div_sub.825:
 	cmpwi	%cr7, %r7, -1
-	bc	12, %cr7, beq_else.931
+	bne %cr7, beq_else.931
 	blr
 beq_else.931:
-	srw	%r8, %r5, %r7
+	srw	%r5, %r8, %r7 # swap
 	cmp	%cr7, %r6, %r8
-	bc	4, %cr7, ble_else.932
+	bgt %cr7, ble_else.932
 	addi	%r8, %r0, 1	# li
-	slw	%r8, %r8, %r7
+	slw	%r8, %r8, %r7 # swap
 	add	%r2, %r8, %r2
-	slw	%r8, %r6, %r7
+	slw	%r6, %r8, %r7 # swap
 	subf	%r5, %r8, %r5	# sub	%r5, %r5, %r8
 	addi	%r7, %r7, -1	# subi %r7, %r7, 1
 	b	div_sub.825
@@ -168,14 +168,14 @@ ble_else.932:
 	b	div_sub.825
 div.384:
 	cmpwi	%cr7, %r2, 0
-	bc	8, %cr7, bge_else.933
+	blt %cr7, bge_else.933
 	or	%r2, %r6, %r2	# mr %r6, %r2
 	b	bge_cont.934
 bge_else.933:
 	neg	%r6, %r2
 bge_cont.934:
 	cmpwi	%cr7, %r5, 0
-	bc	8, %cr7, bge_else.935
+	blt %cr7, bge_else.935
 	or	%r5, %r7, %r5	# mr %r7, %r5
 	b	bge_cont.936
 bge_else.935:
@@ -200,12 +200,12 @@ bge_cont.936:
 	ori	%r5, %r5, 65535
 	and	%r2, %r2, %r5
 	lwz	%r5, 4(%r3)
-	srwi	%r5, %r5, 31
+	srawi	%r5, %r5, 31 # swap srwi
 	lwz	%r6, 0(%r3)
-	srwi	%r6, %r6, 31
+	srawi	%r6, %r6, 31 # swap srwi
 	xor	%r5, %r5, %r6
 	cmpwi	%cr7, %r5, 0
-	bc	12, %cr7, beq_else.937
+	bne %cr7, beq_else.937
 	blr
 beq_else.937:
 	neg	%r2, %r2
@@ -216,7 +216,7 @@ print_newline.387:
 	blr
 print_int_sub.805:
 	cmpwi	%cr7, %r2, 10
-	bc	8, %cr7, bge_else.939
+	blt %cr7, bge_else.939
 	addi	%r5, %r0, 10	# li
 	stw	%r2, 0(%r3)
 	mfspr	%r31, 8	# mflr
@@ -261,7 +261,7 @@ bge_else.939:
 	blr
 print_int.389:
 	cmpwi	%cr7, %r2, 0
-	bc	8, %cr7, bge_else.942
+	blt %cr7, bge_else.942
 	b	print_int_sub.805
 bge_else.942:
 	addi	%r5, %r0, 45	# li
@@ -289,7 +289,7 @@ g.478:
 	add	%r5, %r6, %r5
 	add	%r5, %r5, %r13
 	cmpwi	%cr7, %r2, 0
-	bc	4, %cr7, ble_else.943
+	bgt %cr7, ble_else.943
 	neg	%r2, %r2
 	lwz	%r28, 0(%r29)
 	mtspr	9, %r28	# mtctr
@@ -310,8 +310,8 @@ h.452:
 	lwz	%r2, 0(%r2)
 	or	%r4, %r29, %r4	# mr %r29, %r4
 	addi	%r4, %r4, 48
-	addis	%r14, %r0, ha16(g.478)	# lis
-	addi	%r14, %r14, lo16(g.478)
+	addis	%r14, %r0, (g.478)@h	# lis
+	addi	%r14, %r14, (g.478)@l
 	stw	%r14, 0(%r29)
 	stw	%r6, 40(%r29)
 	stw	%r7, 36(%r29)
