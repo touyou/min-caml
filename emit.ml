@@ -33,7 +33,7 @@ let stack_size () = align ((List.length !stack_map + 1) * 4)
 
 let load_label r label =
   Printf.sprintf
-    "\taddis\t%s, %%r0, (%s)@h\t# lis\n\taddi\t%s, %s, (%s)@l\n"
+    "\taddis\t%s, %%r0, (%s)@h\t# lis\n\tori\t%s, %s, (%s)@l\n"
     r label r r label
 
 (* 関数呼び出しのために引数を並び替え *)
@@ -164,9 +164,32 @@ and assemble_inst oc = function
   | NonTail(_), Comment(s) -> Printf.fprintf oc "#\t%s\n" s
   (* TO-DO: 入出力 *)
   | NonTail(x), In -> Printf.fprintf oc "\tin\t%s, %d\n" x 0
+                        (*
+    let inlabel = Id.gen_id ("in") in
+    (
+      let i = 0xF0001014 in
+      let n = i lsr 16 in
+      let m = i lxor (n lsl 16) in
+      Printf.fprintf oc "%s:\n" inlabel;
+      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" "%r1" n;
+      Printf.fprintf oc "\tori\t%s, %s, %d\n" "%r1" "%r1" m;
+      Printf.fprintf oc "\tlwz\t%%r1, 0(%%r1)\n";
+      Printf.fprintf oc "\tandis.\t%%r1, %%r1, 0x0100\n";
+      Printf.fprintf oc "\tbeq\t%%cr0, %s\n" inlabel
+    );
+    (
+      let i = 0xF0001000 in
+      let n = i lsr 16 in
+      let m = i lxor (n lsl 16) in
+      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" "%r1" n;
+      Printf.fprintf oc "\tori\t%s, %s, %d\n" "%r1" "%r1" m;
+      Printf.fprintf oc "\tlwz\t%s, 0(%%r1)\n" x;
+      Printf.fprintf oc "\taddi\t%%r1, %%r0, 24\t# lis\n";
+      Printf.fprintf oc "\tsrw\t%s, %s, %%r1 # swap\n" x x;
+    )
+                           *)
   | NonTail(x), Out(y) -> Printf.fprintf oc "\tout\t%s, %d\n" y 0
-  (*
-  | NonTail(x), Out(y) ->
+                            (*
     let outlabel = Id.gen_id ("out") in
     (
       let i = 0xF0001014 in
@@ -191,7 +214,7 @@ and assemble_inst oc = function
       Printf.fprintf oc "\taddi\t%%r1, %%r0, 24\t# lis\n";
       Printf.fprintf oc "\tsrw\t%s, %s, %%r1 # swap\n" y y;
     )
-     *)
+      *)
   (* 待避の実装 *)
   | NonTail(_), Save(x, y) when List.mem x all_regs && not (MiniSet.mem y !stack_set) ->
     save y;
