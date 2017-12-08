@@ -106,7 +106,9 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y x
   | NonTail(x), Div(y, Var(z)) -> assert false
   (*Printf.fprintf oc "\tinvalid_div\t%s, %s, %s\n" x y z*)
-  | NonTail(x), Div(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d # swap srwi\n" y x (z/2)
+  | NonTail(x), Div(y, Const(z)) ->
+    Printf.fprintf oc "\taddi\t%%r1, %%r0, %d\t# lis\n" (z/2);
+    Printf.fprintf oc "\tsrw\t%s, %s, %%r1 # swap\n" y x
   (* 論理演算周り *)
   | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" y x z
   | NonTail(x), Xor(y, Const(z)) -> Printf.fprintf oc "\txori\t%s, %s, %d\n" y x z
@@ -120,7 +122,9 @@ and assemble_inst oc = function
     Printf.fprintf oc "\taddi\t%%r1, %%r0, %d\t# li\n" z;
     Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y x
   | NonTail(x), Srl(y, Var(z)) -> Printf.fprintf oc "\tsrw\t%s, %s, %s # swap\n" y x z
-  | NonTail(x), Srl(y, Const(z)) -> Printf.fprintf oc "\tsrawi\t%s, %s, %d # swap srwi\n" y x z
+  | NonTail(x), Srl(y, Const(z)) ->
+    Printf.fprintf oc "\taddi\t%%r1, %%r0, %d\t# lis\n" z;
+    Printf.fprintf oc "\tsrw\t%s, %s, %%r1 # swap\n" y x
   (* slw %r1, %r2, %r3 *)
   | NonTail(x), Slw(y, Var(z)) -> Printf.fprintf oc "\tslw\t%s, %s, %s # swap\n" y x z
   (* slwi %r1, %r2, num *)
@@ -161,16 +165,33 @@ and assemble_inst oc = function
   (* TO-DO: 入出力 *)
   | NonTail(x), In -> Printf.fprintf oc "\tin\t%s, %d\n" x 0
   | NonTail(x), Out(y) -> Printf.fprintf oc "\tout\t%s, %d\n" y 0
-  (*| NonTail(x), Out(y) ->
-    let i = 0xF0001000 in
-    let n = i lsr 16 in
-    let m = i lxor (n lsl 16) in
-    Printf.fprintf oc "\taddi\t%s, %%r0, 24\t# lis\n" "%r1";
-    Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y y;
-    Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" "%r1" n;
-    Printf.fprintf oc "\tori\t%s, %s, %d\n" "%r1" "%r1" m;
-    Printf.fprintf oc "\tstw\t%s, 0(%s)\n" y "%r1";
-    Printf.fprintf oc "\tsrawi\t%s, %s, 24 # swap\n" y y*)
+  (*
+  | NonTail(x), Out(y) ->
+    let outlabel = Id.gen_id ("out") in
+    (
+      let i = 0xF0001014 in
+      let n = i lsr 16 in
+      let m = i lxor (n lsl 16) in
+      Printf.fprintf oc "%s:\n" outlabel;
+      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" "%r1" n;
+      Printf.fprintf oc "\tori\t%s, %s, %d\n" "%r1" "%r1" m;
+      Printf.fprintf oc "\tlwz\t%%r1, 0(%%r1)\n";
+      Printf.fprintf oc "\tandis.\t%%r1, %%r1, 0x4000\n";
+      Printf.fprintf oc "\tbeq\t%%cr0, %s\n" outlabel
+    );
+    (
+      let i = 0xF0001000 in
+      let n = i lsr 16 in
+      let m = i lxor (n lsl 16) in
+      Printf.fprintf oc "\taddi\t%%r1, %%r0, 24\t# lis\n";
+      Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y y;
+      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" "%r1" n;
+      Printf.fprintf oc "\tori\t%s, %s, %d\n" "%r1" "%r1" m;
+      Printf.fprintf oc "\tstw\t%s, 0(%%r1)\n" y;
+      Printf.fprintf oc "\taddi\t%%r1, %%r0, 24\t# lis\n";
+      Printf.fprintf oc "\tsrw\t%s, %s, %%r1 # swap\n" y y;
+    )
+     *)
   (* 待避の実装 *)
   | NonTail(_), Save(x, y) when List.mem x all_regs && not (MiniSet.mem y !stack_set) ->
     save y;
