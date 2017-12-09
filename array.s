@@ -58,7 +58,7 @@ create_float_array_loop:
 	bne	%cr7, create_float_array_cont
 	blr
 create_float_array_cont:
-	stfd	%f0, 0(%r4)
+	stfs	%f0, 0(%r4)
 	addi  %r5, %r5, -1  # subi	%r5, %r5, 1
-	addi	%r4, %r4, 8
+	addi	%r4, %r4, 4
 	b	create_float_array_loop
