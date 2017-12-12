@@ -414,10 +414,10 @@ let main oc array_str (Prog(data, fundefs, e)) =
   Printf.fprintf oc "\t.text\n";
   Printf.fprintf oc "_start:\n";
   Printf.fprintf oc "# 0x000000 | code & data seg |\n";
-  Printf.fprintf oc "# 0x010000 | stack       seg |\n";
-  Printf.fprintf oc "# 0x180000 | heap        seg |\n";
-  Printf.fprintf oc "\tlis\t%%r3, 0x0001\t# sp\n";
-  Printf.fprintf oc "\tlis\t%%r4, 0x0018\t# hp\n";
+  Printf.fprintf oc "# 0x2_0000 | stack       seg |\n";
+  Printf.fprintf oc "# 0x8_0000 | heap        seg |\n";
+  Printf.fprintf oc "\tlis\t%%r3, 0x0002\t# sp\n";
+  Printf.fprintf oc "\tlis\t%%r4, 0x0008\t# hp\n";
   Printf.fprintf oc "\tb\t_min_caml_start\n";
   (* create_arrayを埋め込む *)
   Printf.fprintf oc "%s" array_str;
@@ -444,7 +444,8 @@ let main oc array_str (Prog(data, fundefs, e)) =
   stack_set := MiniSet.empty;
   stack_map := [];
   assemble oc (NonTail("_R_0"), e);
-  Printf.fprintf oc "#\tmain program ends\n"
+  Printf.fprintf oc "#\tmain program ends\n";
+  Printf.fprintf oc "\tsc\n"
   (* Printf.fprintf oc "\tlwz\t%%r1, 0(%%r1)\n";
   Printf.fprintf oc "\tlwz\t%%r0, 8(%%r1)\n";
   Printf.fprintf oc "\tmtspr\t8, %%r0\t# mtlr\n";
