@@ -364,7 +364,7 @@ and assemble_inst oc = function
     (Format.eprintf "error tail: %s@." (Debug.string_of_asm_t (Ans(e))); assert false)
 and assemble_tail_if oc e1 e2 b bn =
   let b_else = Id.gen_id (b ^ "_else") in
-  Printf.fprintf oc "\t%s %%cr7, %s\n" bn b_else;
+  Printf.fprintf oc "\t%s\t%%cr7, %s\n" bn b_else;
   let stackset_back = !stack_set in
   assemble oc (Tail, e1);
   Printf.fprintf oc "%s:\n" b_else;
@@ -373,7 +373,7 @@ and assemble_tail_if oc e1 e2 b bn =
 and assemble_non_tail_if oc dest e1 e2 b bn =
   let b_else = Id.gen_id (b ^ "_else") in
   let b_cont = Id.gen_id (b ^ "_cont") in
-  Printf.fprintf oc "\t%s %%cr7, %s\n" bn b_else;
+  Printf.fprintf oc "\t%s\t%%cr7, %s\n" bn b_else;
   let stackset_back = !stack_set in
   assemble oc (dest, e1);
   let stackset1 = !stack_set in

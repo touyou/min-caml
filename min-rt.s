@@ -239,14 +239,14 @@ mul_sub.7075:
 	lwz	%r6, 8(%r29)
 	lwz	%r7, 4(%r29)
 	cmpwi	%cr7, %r5, -1
-	bne %cr7, beq_else.9380
+	bne	%cr7, beq_else.9380
 	blr
 beq_else.9380:
 	addi	%r8, %r0, 1	# li
 	slw	%r8, %r8, %r5 # swap
 	and	%r6, %r6, %r8
 	cmpwi	%cr7, %r6, 0
-	bne %cr7, beq_else.9381
+	bne	%cr7, beq_else.9381
 	addi	%r5, %r5, -1	# subi %r5, %r5, 1
 	lwz	%r28, 0(%r29)
 	mtspr	9, %r28	# mtctr
@@ -260,14 +260,14 @@ beq_else.9381:
 	bctr
 mul.2952:
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9382
+	blt	%cr7, bge_else.9382
 	or	%r2, %r6, %r2	# mr %r6, %r2
 	b	bge_cont.9383
 bge_else.9382:
 	neg	%r6, %r2
 bge_cont.9383:
 	cmpwi	%cr7, %r5, 0
-	blt %cr7, bge_else.9384
+	blt	%cr7, bge_else.9384
 	or	%r5, %r7, %r5	# mr %r7, %r5
 	b	bge_cont.9385
 bge_else.9384:
@@ -306,19 +306,19 @@ bge_cont.9385:
 	srw	%r6, %r6, %r1 # swap
 	xor	%r5, %r5, %r6
 	cmpwi	%cr7, %r5, 0
-	bne %cr7, beq_else.9386
+	bne	%cr7, beq_else.9386
 	blr
 beq_else.9386:
 	neg	%r2, %r2
 	blr
 div_sub.7041:
 	cmpwi	%cr7, %r7, -1
-	bne %cr7, beq_else.9387
+	bne	%cr7, beq_else.9387
 	blr
 beq_else.9387:
 	srw	%r5, %r8, %r7 # swap
 	cmp	%cr7, %r6, %r8
-	bgt %cr7, ble_else.9388
+	bgt	%cr7, ble_else.9388
 	addi	%r8, %r0, 1	# li
 	slw	%r8, %r8, %r7 # swap
 	add	%r2, %r8, %r2
@@ -331,14 +331,14 @@ ble_else.9388:
 	b	div_sub.7041
 div.2955:
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9389
+	blt	%cr7, bge_else.9389
 	or	%r2, %r6, %r2	# mr %r6, %r2
 	b	bge_cont.9390
 bge_else.9389:
 	neg	%r6, %r2
 bge_cont.9390:
 	cmpwi	%cr7, %r5, 0
-	blt %cr7, bge_else.9391
+	blt	%cr7, bge_else.9391
 	or	%r5, %r7, %r5	# mr %r7, %r5
 	b	bge_cont.9392
 bge_else.9391:
@@ -370,14 +370,14 @@ bge_cont.9392:
 	srw	%r6, %r6, %r1 # swap
 	xor	%r5, %r5, %r6
 	cmpwi	%cr7, %r5, 0
-	bne %cr7, beq_else.9393
+	bne	%cr7, beq_else.9393
 	blr
 beq_else.9393:
 	neg	%r2, %r2
 	blr
 print_int_sub.7021:
 	cmpwi	%cr7, %r2, 10
-	blt %cr7, bge_else.9394
+	blt	%cr7, bge_else.9394
 	addi	%r5, %r0, 10	# li
 	stw	%r2, 0(%r3)
 	mfspr	%r31, 8	# mflr
@@ -422,7 +422,7 @@ bge_else.9394:
 	blr
 print_int.2960:
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9397
+	blt	%cr7, bge_else.9397
 	b	print_int_sub.7021
 bge_else.9397:
 	addi	%r5, %r0, 45	# li
@@ -481,17 +481,17 @@ sin.2968:
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9399
+	bgt	%cr7, ble_else.9399
 	addis	%r31, %r0, (l.7115)@h	# lis
 	ori	%r31, %r31, (l.7115)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
-	bgt %cr7, ble_else.9400
+	bgt	%cr7, ble_else.9400
 	addis	%r31, %r0, (l.7116)@h	# lis
 	ori	%r31, %r31, (l.7116)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9401
+	bgt	%cr7, ble_else.9401
 	addis	%r31, %r0, (l.7116)@h	# lis
 	ori	%r31, %r31, (l.7116)@l
 	lfs	%f1, 0(%r31)	# float
@@ -500,12 +500,12 @@ sin.2968:
 	ori	%r31, %r31, (l.7117)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9402
+	bgt	%cr7, ble_else.9402
 	addis	%r31, %r0, (l.7119)@h	# lis
 	ori	%r31, %r31, (l.7119)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9403
+	bgt	%cr7, ble_else.9403
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
@@ -548,7 +548,7 @@ ble_else.9402:
 	ori	%r31, %r31, (l.7118)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9404
+	bgt	%cr7, ble_else.9404
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
@@ -587,12 +587,12 @@ ble_else.9401:
 	ori	%r31, %r31, (l.7117)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9405
+	bgt	%cr7, ble_else.9405
 	addis	%r31, %r0, (l.7119)@h	# lis
 	ori	%r31, %r31, (l.7119)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9406
+	bgt	%cr7, ble_else.9406
 	addis	%r31, %r0, (l.7116)@h	# lis
 	ori	%r31, %r31, (l.7116)@l
 	lfs	%f1, 0(%r31)	# float
@@ -609,7 +609,7 @@ ble_else.9405:
 	ori	%r31, %r31, (l.7118)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9407
+	bgt	%cr7, ble_else.9407
 	addis	%r31, %r0, (l.7117)@h	# lis
 	ori	%r31, %r31, (l.7117)@l
 	lfs	%f1, 0(%r31)	# float
@@ -647,17 +647,17 @@ cos.2970:
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9408
+	bgt	%cr7, ble_else.9408
 	addis	%r31, %r0, (l.7115)@h	# lis
 	ori	%r31, %r31, (l.7115)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
-	bgt %cr7, ble_else.9409
+	bgt	%cr7, ble_else.9409
 	addis	%r31, %r0, (l.7116)@h	# lis
 	ori	%r31, %r31, (l.7116)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9410
+	bgt	%cr7, ble_else.9410
 	addis	%r31, %r0, (l.7116)@h	# lis
 	ori	%r31, %r31, (l.7116)@l
 	lfs	%f1, 0(%r31)	# float
@@ -666,12 +666,12 @@ cos.2970:
 	ori	%r31, %r31, (l.7117)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9411
+	bgt	%cr7, ble_else.9411
 	addis	%r31, %r0, (l.7119)@h	# lis
 	ori	%r31, %r31, (l.7119)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9412
+	bgt	%cr7, ble_else.9412
 	addis	%r31, %r0, (l.7116)@h	# lis
 	ori	%r31, %r31, (l.7116)@l
 	lfs	%f1, 0(%r31)	# float
@@ -688,7 +688,7 @@ ble_else.9411:
 	ori	%r31, %r31, (l.7118)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9413
+	bgt	%cr7, ble_else.9413
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
@@ -727,12 +727,12 @@ ble_else.9410:
 	ori	%r31, %r31, (l.7117)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9414
+	bgt	%cr7, ble_else.9414
 	addis	%r31, %r0, (l.7119)@h	# lis
 	ori	%r31, %r31, (l.7119)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9415
+	bgt	%cr7, ble_else.9415
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
@@ -775,7 +775,7 @@ ble_else.9414:
 	ori	%r31, %r31, (l.7118)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9416
+	bgt	%cr7, ble_else.9416
 	addis	%r31, %r0, (l.7117)@h	# lis
 	ori	%r31, %r31, (l.7117)@l
 	lfs	%f1, 0(%r31)	# float
@@ -839,7 +839,7 @@ atan.2974:
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
-	bgt %cr7, ble_else.9417
+	bgt	%cr7, ble_else.9417
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
@@ -848,12 +848,12 @@ atan.2974:
 	ori	%r31, %r31, (l.7126)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9418
+	bgt	%cr7, ble_else.9418
 	addis	%r31, %r0, (l.7127)@h	# lis
 	ori	%r31, %r31, (l.7127)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9419
+	bgt	%cr7, ble_else.9419
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
@@ -928,12 +928,12 @@ ble_else.9417:
 	ori	%r31, %r31, (l.7126)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9420
+	bgt	%cr7, ble_else.9420
 	addis	%r31, %r0, (l.7127)@h	# lis
 	ori	%r31, %r31, (l.7127)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9421
+	bgt	%cr7, ble_else.9421
 	addis	%r31, %r0, (l.7129)@h	# lis
 	ori	%r31, %r31, (l.7129)@l
 	lfs	%f1, 0(%r31)	# float
@@ -983,7 +983,7 @@ fiszero.2976:
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
-	bne %cr7, beq_else.9422
+	bne	%cr7, beq_else.9422
 	addi	%r2, %r0, 1	# li
 	blr
 beq_else.9422:
@@ -994,7 +994,7 @@ fispos.2978:
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
-	bgt %cr7, ble_else.9423
+	bgt	%cr7, ble_else.9423
 	addi	%r2, %r0, 0	# li
 	blr
 ble_else.9423:
@@ -1009,7 +1009,7 @@ fisneg.2980:
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9424
+	bne	%cr7, beq_else.9424
 	addi	%r2, %r0, 1	# li
 	blr
 beq_else.9424:
@@ -1031,7 +1031,7 @@ fabs.2986:
 	b	abs_float.2984
 fless.2988:
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9425
+	bgt	%cr7, ble_else.9425
 	addi	%r2, %r0, 0	# li
 	blr
 ble_else.9425:
@@ -1051,7 +1051,7 @@ int_of_float.2995:
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
-	bne %cr7, beq_else.9426
+	bne	%cr7, beq_else.9426
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9426:
@@ -1070,7 +1070,7 @@ beq_else.9426:
 	addi	%r6, %r0, 23	# li
 	subf	%r5, %r5, %r6	# sub	%r5, %r6, %r5
 	cmpwi	%cr7, %r5, 0
-	blt %cr7, bge_else.9427
+	blt	%cr7, bge_else.9427
 	srw	%r2, %r2, %r5 # swap
 	b	bge_cont.9428
 bge_else.9427:
@@ -1084,7 +1084,7 @@ bge_cont.9428:
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9429
+	bgt	%cr7, ble_else.9429
 	blr
 ble_else.9429:
 	neg	%r2, %r2
@@ -1092,9 +1092,9 @@ ble_else.9429:
 msb_sub.6816:
 	srw	%r2, %r6, %r5 # swap
 	cmpwi	%cr7, %r6, 0
-	bne %cr7, beq_else.9430
+	bne	%cr7, beq_else.9430
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9431
+	bne	%cr7, beq_else.9431
 	or	%r5, %r2, %r5	# mr %r2, %r5
 	blr
 beq_else.9431:
@@ -1105,7 +1105,7 @@ beq_else.9430:
 	blr
 float_of_int.2997:
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9432
+	bne	%cr7, beq_else.9432
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f0, 0(%r31)	# float
@@ -1141,7 +1141,7 @@ floor.2999:
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9433
+	bgt	%cr7, ble_else.9433
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
 	addi	%r3, %r3, 8
@@ -1261,7 +1261,7 @@ newton.6798:
 	mtspr	8, %r31	# mtlr
 	lfs	%f1, 8(%r3)	# float
 	fcmpu	%cr7, %f1, %f0
-	bgt %cr7, ble_else.9437
+	bgt	%cr7, ble_else.9437
 	lfs	%f0, 24(%r3)	# float
 	lwz	%r29, 0(%r3)
 	lwz	%r28, 0(%r29)
@@ -1306,11 +1306,11 @@ sqrt.3013:
 f.6774:
 	in	%r5, 0
 	cmpwi	%cr7, %r5, 47
-	bgt %cr7, ble_else.9438
+	bgt	%cr7, ble_else.9438
 	blr
 ble_else.9438:
 	cmpwi	%cr7, %r5, 58
-	blt %cr7, bge_else.9439
+	blt	%cr7, bge_else.9439
 	blr
 bge_else.9439:
 	addi	%r6, %r0, 10	# li
@@ -1330,7 +1330,7 @@ bge_else.9439:
 read_int.3015:
 	in	%r2, 0
 	cmpwi	%cr7, %r2, 45
-	bne %cr7, beq_else.9440
+	bne	%cr7, beq_else.9440
 	addi	%r2, %r0, 0	# li
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 4(%r3)
@@ -1343,11 +1343,11 @@ read_int.3015:
 	blr
 beq_else.9440:
 	cmpwi	%cr7, %r2, 47
-	bgt %cr7, ble_else.9441
+	bgt	%cr7, ble_else.9441
 	b	read_int.3015
 ble_else.9441:
 	cmpwi	%cr7, %r2, 58
-	blt %cr7, bge_else.9442
+	blt	%cr7, bge_else.9442
 	b	read_int.3015
 bge_else.9442:
 	addi	%r2, %r2, -48	# subi %r2, %r2, 48
@@ -1355,12 +1355,12 @@ bge_else.9442:
 g.6735:
 	in	%r2, 0
 	cmpwi	%cr7, %r2, 47
-	bgt %cr7, ble_else.9443
+	bgt	%cr7, ble_else.9443
 	fmr	%f0, %f1
 	blr
 ble_else.9443:
 	cmpwi	%cr7, %r2, 58
-	blt %cr7, bge_else.9444
+	blt	%cr7, bge_else.9444
 	fmr	%f0, %f1
 	blr
 bge_else.9444:
@@ -1388,9 +1388,9 @@ bge_else.9444:
 f.6738:
 	in	%r2, 0
 	cmpwi	%cr7, %r2, 47
-	bgt %cr7, ble_else.9445
+	bgt	%cr7, ble_else.9445
 	cmpwi	%cr7, %r2, 46
-	bne %cr7, beq_else.9446
+	bne	%cr7, beq_else.9446
 	addis	%r31, %r0, (l.7139)@h	# lis
 	ori	%r31, %r31, (l.7139)@l
 	lfs	%f1, 0(%r31)	# float
@@ -1402,7 +1402,7 @@ beq_else.9446:
 	blr
 ble_else.9445:
 	cmpwi	%cr7, %r2, 58
-	blt %cr7, bge_else.9447
+	blt	%cr7, bge_else.9447
 	blr
 bge_else.9447:
 	addis	%r31, %r0, (l.7140)@h	# lis
@@ -1424,7 +1424,7 @@ bge_else.9447:
 read_float.3017:
 	in	%r2, 0
 	cmpwi	%cr7, %r2, 45
-	bne %cr7, beq_else.9448
+	bne	%cr7, beq_else.9448
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f0, 0(%r31)	# float
@@ -1445,11 +1445,11 @@ read_float.3017:
 	blr
 beq_else.9448:
 	cmpwi	%cr7, %r2, 47
-	bgt %cr7, ble_else.9449
+	bgt	%cr7, ble_else.9449
 	b	read_float.3017
 ble_else.9449:
 	cmpwi	%cr7, %r2, 58
-	blt %cr7, bge_else.9450
+	blt	%cr7, bge_else.9450
 	b	read_float.3017
 bge_else.9450:
 	addi	%r2, %r2, -48	# subi %r2, %r2, 48
@@ -1471,7 +1471,7 @@ sgn.3023:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9451
+	bne	%cr7, beq_else.9451
 	lfs	%f0, 0(%r3)	# float
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 12(%r3)
@@ -1481,7 +1481,7 @@ sgn.3023:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9452
+	bne	%cr7, beq_else.9452
 	addis	%r31, %r0, (l.7141)@h	# lis
 	ori	%r31, %r31, (l.7141)@l
 	lfs	%f0, 0(%r31)	# float
@@ -1498,14 +1498,14 @@ beq_else.9451:
 	blr
 fneg_cond.3025:
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9453
+	bne	%cr7, beq_else.9453
 	b	fneg.2982
 beq_else.9453:
 	blr
 add_mod5.3028:
 	add	%r2, %r2, %r5
 	cmpwi	%cr7, %r2, 5
-	blt %cr7, bge_else.9454
+	blt	%cr7, bge_else.9454
 	addi	%r2, %r2, -5	# subi %r2, %r2, 5
 	blr
 bge_else.9454:
@@ -1591,10 +1591,10 @@ vecunit_sgn.3049:
 	lwz	%r31, 44(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9459
+	bne	%cr7, beq_else.9459
 	lwz	%r2, 0(%r3)
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9461
+	bne	%cr7, beq_else.9461
 	addis	%r31, %r0, (l.7110)@h	# lis
 	ori	%r31, %r31, (l.7110)@l
 	lfs	%f0, 0(%r31)	# float
@@ -2471,7 +2471,7 @@ read_nth_object.3157:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, -1
-	bne %cr7, beq_else.9474
+	bne	%cr7, beq_else.9474
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9474:
@@ -2680,7 +2680,7 @@ beq_else.9474:
 	mtspr	8, %r31	# mtlr
 	lwz	%r5, 20(%r3)
 	cmpwi	%cr7, %r5, 0
-	bne %cr7, beq_else.9475
+	bne	%cr7, beq_else.9475
 	b	beq_cont.9476
 beq_else.9475:
 	stw	%r2, 44(%r3)
@@ -2735,7 +2735,7 @@ beq_else.9475:
 beq_cont.9476:
 	lwz	%r5, 12(%r3)
 	cmpwi	%cr7, %r5, 2
-	bne %cr7, beq_else.9477
+	bne	%cr7, beq_else.9477
 	addi	%r6, %r0, 1	# li
 	b	beq_cont.9478
 beq_else.9477:
@@ -2785,7 +2785,7 @@ beq_cont.9478:
 	slw	%r10, %r10, %r1 # swap
 	stwx	%r5, %r9, %r10
 	cmpwi	%cr7, %r8, 3
-	bne %cr7, beq_else.9479
+	bne	%cr7, beq_else.9479
 	lfs	%f0, 0(%r6)	# float
 	stfs	%f0, 56(%r3)	# float
 	mfspr	%r31, 8	# mflr
@@ -2796,7 +2796,7 @@ beq_cont.9478:
 	lwz	%r31, 68(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9482
+	bne	%cr7, beq_else.9482
 	lfs	%f0, 56(%r3)	# float
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 68(%r3)
@@ -2835,7 +2835,7 @@ beq_cont.9483:
 	lwz	%r31, 84(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9484
+	bne	%cr7, beq_else.9484
 	lfs	%f0, 72(%r3)	# float
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 84(%r3)
@@ -2874,7 +2874,7 @@ beq_cont.9485:
 	lwz	%r31, 100(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9486
+	bne	%cr7, beq_else.9486
 	lfs	%f0, 88(%r3)	# float
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 100(%r3)
@@ -2906,10 +2906,10 @@ beq_cont.9487:
 	b	beq_cont.9480
 beq_else.9479:
 	cmpwi	%cr7, %r8, 2
-	bne %cr7, beq_else.9488
+	bne	%cr7, beq_else.9488
 	lwz	%r5, 32(%r3)
 	cmpwi	%cr7, %r5, 0
-	bne %cr7, beq_else.9490
+	bne	%cr7, beq_else.9490
 	addi	%r5, %r0, 1	# li
 	b	beq_cont.9491
 beq_else.9490:
@@ -2932,7 +2932,7 @@ beq_cont.9489:
 beq_cont.9480:
 	lwz	%r2, 20(%r3)
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9492
+	bne	%cr7, beq_else.9492
 	b	beq_cont.9493
 beq_else.9492:
 	lwz	%r2, 24(%r3)
@@ -2950,7 +2950,7 @@ beq_cont.9493:
 read_object.3159:
 	lwz	%r5, 4(%r29)
 	cmpwi	%cr7, %r2, 60
-	blt %cr7, bge_else.9494
+	blt	%cr7, bge_else.9494
 	blr
 bge_else.9494:
 	stw	%r29, 0(%r3)
@@ -2966,7 +2966,7 @@ bge_else.9494:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9496
+	bne	%cr7, beq_else.9496
 	addis	%r2, %r0, (min_caml_n_objects)@h	# lis
 	ori	%r2, %r2, (min_caml_n_objects)@l
 	lwz	%r5, 4(%r3)
@@ -2995,7 +2995,7 @@ read_net_item.3163:
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, -1
-	bne %cr7, beq_else.9498
+	bne	%cr7, beq_else.9498
 	lwz	%r2, 0(%r3)
 	addi	%r2, %r2, 1
 	addi	%r5, %r0, -1	# li
@@ -3032,7 +3032,7 @@ read_or_network.3165:
 	mtspr	8, %r31	# mtlr
 	lwz	%r2, 0(%r5)
 	cmpwi	%cr7, %r2, -1
-	bne %cr7, beq_else.9499
+	bne	%cr7, beq_else.9499
 	lwz	%r2, 0(%r3)
 	addi	%r2, %r2, 1
 	b	min_caml_create_array
@@ -3067,7 +3067,7 @@ read_and_network.3167:
 	mtspr	8, %r31	# mtlr
 	lwz	%r5, 0(%r2)
 	cmpwi	%cr7, %r5, -1
-	bne %cr7, beq_else.9500
+	bne	%cr7, beq_else.9500
 	blr
 beq_else.9500:
 	addis	%r5, %r0, (min_caml_and_net)@h	# lis
@@ -3149,7 +3149,7 @@ solver_rect_surface.3171:
 	lwz	%r31, 52(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9505
+	bne	%cr7, beq_else.9505
 	lwz	%r2, 48(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 52(%r3)
@@ -3232,7 +3232,7 @@ solver_rect_surface.3171:
 	lwz	%r31, 76(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9507
+	bne	%cr7, beq_else.9507
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9507:
@@ -3265,7 +3265,7 @@ beq_else.9507:
 	lwz	%r31, 76(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9508
+	bne	%cr7, beq_else.9508
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9508:
@@ -3295,7 +3295,7 @@ solver_rect.3180:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9509
+	bne	%cr7, beq_else.9509
 	addi	%r6, %r0, 1	# li
 	addi	%r7, %r0, 2	# li
 	addi	%r8, %r0, 0	# li
@@ -3312,7 +3312,7 @@ solver_rect.3180:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9510
+	bne	%cr7, beq_else.9510
 	addi	%r6, %r0, 2	# li
 	addi	%r7, %r0, 0	# li
 	addi	%r8, %r0, 1	# li
@@ -3329,7 +3329,7 @@ solver_rect.3180:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9511
+	bne	%cr7, beq_else.9511
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9511:
@@ -3372,7 +3372,7 @@ solver_surface.3186:
 	lwz	%r31, 44(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9512
+	bne	%cr7, beq_else.9512
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9512:
@@ -3483,7 +3483,7 @@ quadratic.3192:
 	lwz	%r31, 84(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9514
+	bne	%cr7, beq_else.9514
 	lfs	%f0, 72(%r3)	# float
 	blr
 beq_else.9514:
@@ -3601,7 +3601,7 @@ bilinear.3197:
 	lwz	%r31, 108(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9516
+	bne	%cr7, beq_else.9516
 	lfs	%f0, 96(%r3)	# float
 	blr
 beq_else.9516:
@@ -3705,7 +3705,7 @@ solver_second.3205:
 	lwz	%r31, 52(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9518
+	bne	%cr7, beq_else.9518
 	lwz	%r2, 36(%r3)
 	lfs	%f0, 0(%r2)	# float
 	lfs	%f1, 8(%r2)	# float
@@ -3746,7 +3746,7 @@ solver_second.3205:
 	lwz	%r31, 68(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 3
-	bne %cr7, beq_else.9519
+	bne	%cr7, beq_else.9519
 	addis	%r31, %r0, (l.7110)@h	# lis
 	ori	%r31, %r31, (l.7110)@l
 	lfs	%f0, 0(%r31)	# float
@@ -3779,7 +3779,7 @@ beq_cont.9520:
 	lwz	%r31, 84(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9521
+	bne	%cr7, beq_else.9521
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9521:
@@ -3804,7 +3804,7 @@ beq_else.9521:
 	lwz	%r31, 92(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9522
+	bne	%cr7, beq_else.9522
 	lfs	%f0, 80(%r3)	# float
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 92(%r3)
@@ -3890,7 +3890,7 @@ solver.3211:
 	lwz	%r31, 68(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 1
-	bne %cr7, beq_else.9524
+	bne	%cr7, beq_else.9524
 	lfs	%f0, 24(%r3)	# float
 	lfs	%f1, 40(%r3)	# float
 	lfs	%f2, 56(%r3)	# float
@@ -3899,7 +3899,7 @@ solver.3211:
 	b	solver_rect.3180
 beq_else.9524:
 	cmpwi	%cr7, %r2, 2
-	bne %cr7, beq_else.9525
+	bne	%cr7, beq_else.9525
 	lfs	%f0, 24(%r3)	# float
 	lfs	%f1, 40(%r3)	# float
 	lfs	%f2, 56(%r3)	# float
@@ -3958,7 +3958,7 @@ solver_rect_fast.3215:
 	lwz	%r31, 60(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9527
+	bne	%cr7, beq_else.9527
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9528
 beq_else.9527:
@@ -3994,7 +3994,7 @@ beq_else.9527:
 	lwz	%r31, 68(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9529
+	bne	%cr7, beq_else.9529
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9530
 beq_else.9529:
@@ -4008,7 +4008,7 @@ beq_else.9529:
 	lwz	%r31, 68(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9531
+	bne	%cr7, beq_else.9531
 	addi	%r2, %r0, 1	# li
 	b	beq_cont.9532
 beq_else.9531:
@@ -4017,7 +4017,7 @@ beq_cont.9532:
 beq_cont.9530:
 beq_cont.9528:
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9533
+	bne	%cr7, beq_else.9533
 	lwz	%r2, 16(%r3)
 	lfs	%f0, 16(%r2)	# float
 	lfs	%f1, 8(%r3)	# float
@@ -4057,7 +4057,7 @@ beq_cont.9528:
 	lwz	%r31, 84(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9534
+	bne	%cr7, beq_else.9534
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9535
 beq_else.9534:
@@ -4093,7 +4093,7 @@ beq_else.9534:
 	lwz	%r31, 92(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9536
+	bne	%cr7, beq_else.9536
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9537
 beq_else.9536:
@@ -4107,7 +4107,7 @@ beq_else.9536:
 	lwz	%r31, 92(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9538
+	bne	%cr7, beq_else.9538
 	addi	%r2, %r0, 1	# li
 	b	beq_cont.9539
 beq_else.9538:
@@ -4116,7 +4116,7 @@ beq_cont.9539:
 beq_cont.9537:
 beq_cont.9535:
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9540
+	bne	%cr7, beq_else.9540
 	lwz	%r2, 16(%r3)
 	lfs	%f0, 32(%r2)	# float
 	lfs	%f1, 24(%r3)	# float
@@ -4156,7 +4156,7 @@ beq_cont.9535:
 	lwz	%r31, 108(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9541
+	bne	%cr7, beq_else.9541
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9542
 beq_else.9541:
@@ -4192,7 +4192,7 @@ beq_else.9541:
 	lwz	%r31, 116(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9543
+	bne	%cr7, beq_else.9543
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9544
 beq_else.9543:
@@ -4206,7 +4206,7 @@ beq_else.9543:
 	lwz	%r31, 116(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9545
+	bne	%cr7, beq_else.9545
 	addi	%r2, %r0, 1	# li
 	b	beq_cont.9546
 beq_else.9545:
@@ -4215,7 +4215,7 @@ beq_cont.9546:
 beq_cont.9544:
 beq_cont.9542:
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9547
+	bne	%cr7, beq_else.9547
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9547:
@@ -4254,7 +4254,7 @@ solver_surface_fast.3222:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9548
+	bne	%cr7, beq_else.9548
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9548:
@@ -4294,7 +4294,7 @@ solver_second_fast.3228:
 	lwz	%r31, 52(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9551
+	bne	%cr7, beq_else.9551
 	lwz	%r2, 48(%r3)
 	lfs	%f0, 8(%r2)	# float
 	lfs	%f1, 40(%r3)	# float
@@ -4330,7 +4330,7 @@ solver_second_fast.3228:
 	lwz	%r31, 76(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 3
-	bne %cr7, beq_else.9553
+	bne	%cr7, beq_else.9553
 	addis	%r31, %r0, (l.7110)@h	# lis
 	ori	%r31, %r31, (l.7110)@l
 	lfs	%f0, 0(%r31)	# float
@@ -4363,7 +4363,7 @@ beq_cont.9554:
 	lwz	%r31, 92(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9555
+	bne	%cr7, beq_else.9555
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9555:
@@ -4376,7 +4376,7 @@ beq_else.9555:
 	lwz	%r31, 92(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9556
+	bne	%cr7, beq_else.9556
 	addis	%r2, %r0, (min_caml_solver_dist)@h	# lis
 	ori	%r2, %r2, (min_caml_solver_dist)@l
 	lfs	%f0, 80(%r3)	# float
@@ -4504,7 +4504,7 @@ solver_fast.3234:
 	lwz	%r31, 76(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 1
-	bne %cr7, beq_else.9559
+	bne	%cr7, beq_else.9559
 	lwz	%r2, 8(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 76(%r3)
@@ -4522,7 +4522,7 @@ solver_fast.3234:
 	b	solver_rect_fast.3215
 beq_else.9559:
 	cmpwi	%cr7, %r2, 2
-	bne %cr7, beq_else.9560
+	bne	%cr7, beq_else.9560
 	lfs	%f0, 32(%r3)	# float
 	lfs	%f1, 48(%r3)	# float
 	lfs	%f2, 64(%r3)	# float
@@ -4551,7 +4551,7 @@ solver_surface_fast2.3238:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9561
+	bne	%cr7, beq_else.9561
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9561:
@@ -4585,7 +4585,7 @@ solver_second_fast2.3245:
 	lwz	%r31, 52(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9563
+	bne	%cr7, beq_else.9563
 	lwz	%r2, 48(%r3)
 	lfs	%f0, 8(%r2)	# float
 	lfs	%f1, 40(%r3)	# float
@@ -4622,7 +4622,7 @@ solver_second_fast2.3245:
 	lwz	%r31, 84(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9565
+	bne	%cr7, beq_else.9565
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9565:
@@ -4635,7 +4635,7 @@ beq_else.9565:
 	lwz	%r31, 84(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9566
+	bne	%cr7, beq_else.9566
 	addis	%r2, %r0, (min_caml_solver_dist)@h	# lis
 	ori	%r2, %r2, (min_caml_solver_dist)@l
 	lfs	%f0, 72(%r3)	# float
@@ -4736,7 +4736,7 @@ solver_fast2.3252:
 	lwz	%r31, 52(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 1
-	bne %cr7, beq_else.9569
+	bne	%cr7, beq_else.9569
 	lwz	%r2, 12(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 52(%r3)
@@ -4754,7 +4754,7 @@ solver_fast2.3252:
 	b	solver_rect_fast.3215
 beq_else.9569:
 	cmpwi	%cr7, %r2, 2
-	bne %cr7, beq_else.9570
+	bne	%cr7, beq_else.9570
 	lfs	%f0, 40(%r3)	# float
 	lfs	%f1, 32(%r3)	# float
 	lfs	%f2, 24(%r3)	# float
@@ -4799,7 +4799,7 @@ setup_rect_table.3255:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9571
+	bne	%cr7, beq_else.9571
 	lwz	%r2, 0(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 12(%r3)
@@ -4865,7 +4865,7 @@ beq_cont.9572:
 	lwz	%r31, 20(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9573
+	bne	%cr7, beq_else.9573
 	lwz	%r2, 0(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 20(%r3)
@@ -4931,7 +4931,7 @@ beq_cont.9574:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9575
+	bne	%cr7, beq_else.9575
 	lwz	%r2, 0(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 28(%r3)
@@ -5060,7 +5060,7 @@ setup_surface_table.3258:
 	lwz	%r31, 68(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9578
+	bne	%cr7, beq_else.9578
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f0, 0(%r31)	# float
@@ -5246,7 +5246,7 @@ setup_second_table.3261:
 	lwz	%r31, 76(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9581
+	bne	%cr7, beq_else.9581
 	lwz	%r2, 8(%r3)
 	lfs	%f0, 32(%r3)	# float
 	stfs	%f0, 8(%r2)	# float
@@ -5391,7 +5391,7 @@ beq_cont.9582:
 	lwz	%r31, 148(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9583
+	bne	%cr7, beq_else.9583
 	addis	%r31, %r0, (l.7110)@h	# lis
 	ori	%r31, %r31, (l.7110)@l
 	lfs	%f0, 0(%r31)	# float
@@ -5406,7 +5406,7 @@ beq_cont.9584:
 	blr
 iter_setup_dirvec_constants.3264:
 	cmpwi	%cr7, %r5, 0
-	blt %cr7, bge_else.9585
+	blt	%cr7, bge_else.9585
 	addis	%r6, %r0, (min_caml_objects)@h	# lis
 	ori	%r6, %r6, (min_caml_objects)@l
 	addi	%r1, %r0, 2	# li
@@ -5443,7 +5443,7 @@ iter_setup_dirvec_constants.3264:
 	lwz	%r31, 20(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 1
-	bne %cr7, beq_else.9586
+	bne	%cr7, beq_else.9586
 	lwz	%r2, 16(%r3)
 	lwz	%r5, 4(%r3)
 	mfspr	%r31, 8	# mflr
@@ -5461,7 +5461,7 @@ iter_setup_dirvec_constants.3264:
 	b	beq_cont.9587
 beq_else.9586:
 	cmpwi	%cr7, %r2, 2
-	bne %cr7, beq_else.9588
+	bne	%cr7, beq_else.9588
 	lwz	%r2, 16(%r3)
 	lwz	%r5, 4(%r3)
 	mfspr	%r31, 8	# mflr
@@ -5507,7 +5507,7 @@ setup_dirvec_constants.3267:
 	b	iter_setup_dirvec_constants.3264
 setup_startp_constants.3269:
 	cmpwi	%cr7, %r5, 0
-	blt %cr7, bge_else.9591
+	blt	%cr7, bge_else.9591
 	addis	%r6, %r0, (min_caml_objects)@h	# lis
 	ori	%r6, %r6, (min_caml_objects)@l
 	addi	%r1, %r0, 2	# li
@@ -5585,7 +5585,7 @@ setup_startp_constants.3269:
 	stfs	%f0, 16(%r2)	# float
 	lwz	%r5, 16(%r3)
 	cmpwi	%cr7, %r5, 2
-	bne %cr7, beq_else.9593
+	bne	%cr7, beq_else.9593
 	lwz	%r5, 8(%r3)
 	mfspr	%r31, 8	# mflr
 	or	%r5, %r2, %r5	# mr %r2, %r5
@@ -5611,7 +5611,7 @@ setup_startp_constants.3269:
 	b	beq_cont.9594
 beq_else.9593:
 	cmpwi	%cr7, %r5, 2	
-	bgt %cr7, ble_else.9595
+	bgt	%cr7, ble_else.9595
 	b	ble_cont.9596
 ble_else.9595:
 	lfs	%f0, 0(%r2)	# float
@@ -5628,7 +5628,7 @@ ble_else.9595:
 	mtspr	8, %r31	# mtlr
 	lwz	%r2, 16(%r3)
 	cmpwi	%cr7, %r2, 3
-	bne %cr7, beq_else.9597
+	bne	%cr7, beq_else.9597
 	addis	%r31, %r0, (l.7110)@h	# lis
 	ori	%r31, %r31, (l.7110)@l
 	lfs	%f1, 0(%r31)	# float
@@ -5696,7 +5696,7 @@ is_rect_outside.3274:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9601
+	bne	%cr7, beq_else.9601
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9602
 beq_else.9601:
@@ -5727,7 +5727,7 @@ beq_else.9601:
 	lwz	%r31, 44(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9603
+	bne	%cr7, beq_else.9603
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9604
 beq_else.9603:
@@ -5760,7 +5760,7 @@ beq_else.9603:
 beq_cont.9604:
 beq_cont.9602:
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9605
+	bne	%cr7, beq_else.9605
 	lwz	%r2, 16(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 52(%r3)
@@ -5770,7 +5770,7 @@ beq_cont.9602:
 	lwz	%r31, 52(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9606
+	bne	%cr7, beq_else.9606
 	addi	%r2, %r0, 1	# li
 	blr
 beq_else.9606:
@@ -5822,7 +5822,7 @@ is_plane_outside.3279:
 	lwz	%r5, 40(%r3)
 	xor	%r5, %r2, %r2
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9608
+	bne	%cr7, beq_else.9608
 	addi	%r2, %r0, 1	# li
 	blr
 beq_else.9608:
@@ -5847,7 +5847,7 @@ is_second_outside.3284:
 	lwz	%r31, 20(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 3
-	bne %cr7, beq_else.9610
+	bne	%cr7, beq_else.9610
 	addis	%r31, %r0, (l.7110)@h	# lis
 	ori	%r31, %r31, (l.7110)@l
 	lfs	%f0, 0(%r31)	# float
@@ -5878,7 +5878,7 @@ beq_cont.9611:
 	lwz	%r5, 24(%r3)
 	xor	%r5, %r2, %r2
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9612
+	bne	%cr7, beq_else.9612
 	addi	%r2, %r0, 1	# li
 	blr
 beq_else.9612:
@@ -5930,7 +5930,7 @@ is_outside.3289:
 	lwz	%r31, 60(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 1
-	bne %cr7, beq_else.9614
+	bne	%cr7, beq_else.9614
 	lfs	%f0, 32(%r3)	# float
 	lfs	%f1, 40(%r3)	# float
 	lfs	%f2, 48(%r3)	# float
@@ -5938,7 +5938,7 @@ is_outside.3289:
 	b	is_rect_outside.3274
 beq_else.9614:
 	cmpwi	%cr7, %r2, 2
-	bne %cr7, beq_else.9615
+	bne	%cr7, beq_else.9615
 	lfs	%f0, 32(%r3)	# float
 	lfs	%f1, 40(%r3)	# float
 	lfs	%f2, 48(%r3)	# float
@@ -5955,7 +5955,7 @@ check_all_inside.3294:
 	slw	%r2, %r6, %r1 # swap
 	lwzx	%r6, %r5, %r6
 	cmpwi	%cr7, %r6, -1
-	bne %cr7, beq_else.9616
+	bne	%cr7, beq_else.9616
 	addi	%r2, %r0, 1	# li
 	blr
 beq_else.9616:
@@ -5978,7 +5978,7 @@ beq_else.9616:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9617
+	bne	%cr7, beq_else.9617
 	lwz	%r2, 28(%r3)
 	addi	%r2, %r2, 1
 	lfs	%f0, 16(%r3)	# float
@@ -5995,7 +5995,7 @@ shadow_check_and_group.3300:
 	slw	%r2, %r7, %r1 # swap
 	lwzx	%r7, %r5, %r7
 	cmpwi	%cr7, %r7, -1
-	bne %cr7, beq_else.9618
+	bne	%cr7, beq_else.9618
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9618:
@@ -6028,7 +6028,7 @@ beq_else.9618:
 	lfs	%f0, 0(%r5)	# float
 	stfs	%f0, 16(%r3)	# float
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9619
+	bne	%cr7, beq_else.9619
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9620
 beq_else.9619:
@@ -6044,7 +6044,7 @@ beq_else.9619:
 	mtspr	8, %r31	# mtlr
 beq_cont.9620:
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9621
+	bne	%cr7, beq_else.9621
 	addis	%r2, %r0, (min_caml_objects)@h	# lis
 	ori	%r2, %r2, (min_caml_objects)@l
 	lwz	%r5, 12(%r3)
@@ -6059,7 +6059,7 @@ beq_cont.9620:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9622
+	bne	%cr7, beq_else.9622
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9622:
@@ -6114,7 +6114,7 @@ beq_else.9621:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9623
+	bne	%cr7, beq_else.9623
 	lwz	%r2, 8(%r3)
 	addi	%r2, %r2, 1
 	lwz	%r5, 0(%r3)
@@ -6131,7 +6131,7 @@ shadow_check_one_or_group.3303:
 	slw	%r2, %r7, %r1 # swap
 	lwzx	%r7, %r5, %r7
 	cmpwi	%cr7, %r7, -1
-	bne %cr7, beq_else.9624
+	bne	%cr7, beq_else.9624
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9624:
@@ -6157,7 +6157,7 @@ beq_else.9624:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9625
+	bne	%cr7, beq_else.9625
 	lwz	%r2, 8(%r3)
 	addi	%r2, %r2, 1
 	lwz	%r5, 0(%r3)
@@ -6176,7 +6176,7 @@ shadow_check_one_or_matrix.3306:
 	lwzx	%r8, %r5, %r8
 	lwz	%r9, 0(%r8)
 	cmpwi	%cr7, %r9, -1
-	bne %cr7, beq_else.9626
+	bne	%cr7, beq_else.9626
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9626:
@@ -6186,7 +6186,7 @@ beq_else.9626:
 	stw	%r29, 12(%r3)
 	stw	%r2, 16(%r3)
 	cmpwi	%cr7, %r9, 99
-	bne %cr7, beq_else.9627
+	bne	%cr7, beq_else.9627
 	addi	%r2, %r0, 1	# li
 	b	beq_cont.9628
 beq_else.9627:
@@ -6208,7 +6208,7 @@ beq_else.9627:
 	lwz	%r31, 20(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9629
+	bne	%cr7, beq_else.9629
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9630
 beq_else.9629:
@@ -6226,7 +6226,7 @@ beq_else.9629:
 	lwz	%r31, 20(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9631
+	bne	%cr7, beq_else.9631
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9632
 beq_else.9631:
@@ -6243,7 +6243,7 @@ beq_else.9631:
 	lwz	%r31, 20(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9633
+	bne	%cr7, beq_else.9633
 	addi	%r2, %r0, 0	# li
 	b	beq_cont.9634
 beq_else.9633:
@@ -6253,7 +6253,7 @@ beq_cont.9632:
 beq_cont.9630:
 beq_cont.9628:
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9635
+	bne	%cr7, beq_else.9635
 	lwz	%r2, 16(%r3)
 	addi	%r2, %r2, 1
 	lwz	%r5, 8(%r3)
@@ -6275,7 +6275,7 @@ beq_else.9635:
 	lwz	%r31, 20(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9636
+	bne	%cr7, beq_else.9636
 	lwz	%r2, 16(%r3)
 	addi	%r2, %r2, 1
 	lwz	%r5, 8(%r3)
@@ -6292,7 +6292,7 @@ solve_each_element.3309:
 	slw	%r2, %r8, %r1 # swap
 	lwzx	%r8, %r5, %r8
 	cmpwi	%cr7, %r8, -1
-	bne %cr7, beq_else.9637
+	bne	%cr7, beq_else.9637
 	blr
 beq_else.9637:
 	addis	%r9, %r0, (min_caml_startp)@h	# lis
@@ -6316,7 +6316,7 @@ beq_else.9637:
 	lwz	%r31, 20(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9639
+	bne	%cr7, beq_else.9639
 	addis	%r2, %r0, (min_caml_objects)@h	# lis
 	ori	%r2, %r2, (min_caml_objects)@l
 	lwz	%r5, 16(%r3)
@@ -6331,7 +6331,7 @@ beq_else.9637:
 	lwz	%r31, 20(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9640
+	bne	%cr7, beq_else.9640
 	blr
 beq_else.9640:
 	lwz	%r2, 12(%r3)
@@ -6359,7 +6359,7 @@ beq_else.9639:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9642
+	bne	%cr7, beq_else.9642
 	b	beq_cont.9643
 beq_else.9642:
 	addis	%r2, %r0, (min_caml_tmin)@h	# lis
@@ -6374,7 +6374,7 @@ beq_else.9642:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9644
+	bne	%cr7, beq_else.9644
 	b	beq_cont.9645
 beq_else.9644:
 	addis	%r31, %r0, (l.7455)@h	# lis
@@ -6420,7 +6420,7 @@ beq_else.9644:
 	lwz	%r31, 68(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9646
+	bne	%cr7, beq_else.9646
 	b	beq_cont.9647
 beq_else.9646:
 	addis	%r2, %r0, (min_caml_tmin)@h	# lis
@@ -6464,7 +6464,7 @@ solve_one_or_network.3313:
 	slw	%r2, %r8, %r1 # swap
 	lwzx	%r8, %r5, %r8
 	cmpwi	%cr7, %r8, -1
-	bne %cr7, beq_else.9648
+	bne	%cr7, beq_else.9648
 	blr
 beq_else.9648:
 	addis	%r9, %r0, (min_caml_and_net)@h	# lis
@@ -6505,7 +6505,7 @@ trace_or_matrix.3317:
 	lwzx	%r9, %r5, %r9
 	lwz	%r10, 0(%r9)
 	cmpwi	%cr7, %r10, -1
-	bne %cr7, beq_else.9650
+	bne	%cr7, beq_else.9650
 	blr
 beq_else.9650:
 	stw	%r6, 0(%r3)
@@ -6513,7 +6513,7 @@ beq_else.9650:
 	stw	%r29, 8(%r3)
 	stw	%r2, 12(%r3)
 	cmpwi	%cr7, %r10, 99
-	bne %cr7, beq_else.9652
+	bne	%cr7, beq_else.9652
 	addi	%r7, %r0, 1	# li
 	mfspr	%r31, 8	# mflr
 	or	%r9, %r5, %r9	# mr %r5, %r9
@@ -6547,7 +6547,7 @@ beq_else.9652:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9654
+	bne	%cr7, beq_else.9654
 	b	beq_cont.9655
 beq_else.9654:
 	addis	%r2, %r0, (min_caml_solver_dist)@h	# lis
@@ -6564,7 +6564,7 @@ beq_else.9654:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9656
+	bne	%cr7, beq_else.9656
 	b	beq_cont.9657
 beq_else.9656:
 	addi	%r2, %r0, 1	# li
@@ -6631,7 +6631,7 @@ judge_intersection.3321:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9658
+	bne	%cr7, beq_else.9658
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9658:
@@ -6661,7 +6661,7 @@ solve_each_element_fast.3323:
 	lwz	%r7, 12(%r3)
 	lwzx	%r6, %r7, %r6
 	cmpwi	%cr7, %r6, -1
-	bne %cr7, beq_else.9659
+	bne	%cr7, beq_else.9659
 	blr
 beq_else.9659:
 	lwz	%r8, 4(%r3)
@@ -6680,7 +6680,7 @@ beq_else.9659:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9661
+	bne	%cr7, beq_else.9661
 	addis	%r2, %r0, (min_caml_objects)@h	# lis
 	ori	%r2, %r2, (min_caml_objects)@l
 	lwz	%r5, 24(%r3)
@@ -6695,7 +6695,7 @@ beq_else.9659:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9662
+	bne	%cr7, beq_else.9662
 	blr
 beq_else.9662:
 	lwz	%r2, 16(%r3)
@@ -6723,7 +6723,7 @@ beq_else.9661:
 	lwz	%r31, 44(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9664
+	bne	%cr7, beq_else.9664
 	b	beq_cont.9665
 beq_else.9664:
 	addis	%r2, %r0, (min_caml_tmin)@h	# lis
@@ -6738,7 +6738,7 @@ beq_else.9664:
 	lwz	%r31, 44(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9666
+	bne	%cr7, beq_else.9666
 	b	beq_cont.9667
 beq_else.9666:
 	addis	%r31, %r0, (l.7455)@h	# lis
@@ -6782,7 +6782,7 @@ beq_else.9666:
 	lwz	%r31, 76(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9668
+	bne	%cr7, beq_else.9668
 	b	beq_cont.9669
 beq_else.9668:
 	addis	%r2, %r0, (min_caml_tmin)@h	# lis
@@ -6826,7 +6826,7 @@ solve_one_or_network_fast.3327:
 	slw	%r2, %r8, %r1 # swap
 	lwzx	%r8, %r5, %r8
 	cmpwi	%cr7, %r8, -1
-	bne %cr7, beq_else.9670
+	bne	%cr7, beq_else.9670
 	blr
 beq_else.9670:
 	addis	%r9, %r0, (min_caml_and_net)@h	# lis
@@ -6867,7 +6867,7 @@ trace_or_matrix_fast.3331:
 	lwzx	%r9, %r5, %r9
 	lwz	%r10, 0(%r9)
 	cmpwi	%cr7, %r10, -1
-	bne %cr7, beq_else.9672
+	bne	%cr7, beq_else.9672
 	blr
 beq_else.9672:
 	stw	%r6, 0(%r3)
@@ -6875,7 +6875,7 @@ beq_else.9672:
 	stw	%r29, 8(%r3)
 	stw	%r2, 12(%r3)
 	cmpwi	%cr7, %r10, 99
-	bne %cr7, beq_else.9674
+	bne	%cr7, beq_else.9674
 	addi	%r7, %r0, 1	# li
 	mfspr	%r31, 8	# mflr
 	or	%r9, %r5, %r9	# mr %r5, %r9
@@ -6906,7 +6906,7 @@ beq_else.9674:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9676
+	bne	%cr7, beq_else.9676
 	b	beq_cont.9677
 beq_else.9676:
 	addis	%r2, %r0, (min_caml_solver_dist)@h	# lis
@@ -6923,7 +6923,7 @@ beq_else.9676:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9678
+	bne	%cr7, beq_else.9678
 	b	beq_cont.9679
 beq_else.9678:
 	addi	%r2, %r0, 1	# li
@@ -6990,7 +6990,7 @@ judge_intersection_fast.3335:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9680
+	bne	%cr7, beq_else.9680
 	addi	%r2, %r0, 0	# li
 	blr
 beq_else.9680:
@@ -7200,7 +7200,7 @@ get_nvector_second.3341:
 	lwz	%r31, 84(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9683
+	bne	%cr7, beq_else.9683
 	addis	%r2, %r0, (min_caml_nvector)@h	# lis
 	ori	%r2, %r2, (min_caml_nvector)@l
 	lfs	%f0, 56(%r3)	# float
@@ -7361,12 +7361,12 @@ get_nvector.3343:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 1
-	bne %cr7, beq_else.9688
+	bne	%cr7, beq_else.9688
 	lwz	%r2, 8(%r3)
 	b	get_nvector_rect.3337
 beq_else.9688:
 	cmpwi	%cr7, %r2, 2
-	bne %cr7, beq_else.9689
+	bne	%cr7, beq_else.9689
 	lwz	%r2, 4(%r3)
 	b	get_nvector_plane.3339
 beq_else.9689:
@@ -7432,7 +7432,7 @@ utexture.3346:
 	stfs	%f0, 16(%r2)	# float
 	lwz	%r2, 12(%r3)
 	cmpwi	%cr7, %r2, 1
-	bne %cr7, beq_else.9690
+	bne	%cr7, beq_else.9690
 	lwz	%r2, 4(%r3)
 	lfs	%f0, 0(%r2)	# float
 	lwz	%r5, 8(%r3)
@@ -7524,9 +7524,9 @@ utexture.3346:
 	ori	%r5, %r5, (min_caml_texture_color)@l
 	lwz	%r6, 48(%r3)
 	cmpwi	%cr7, %r6, 0
-	bne %cr7, beq_else.9693
+	bne	%cr7, beq_else.9693
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9695
+	bne	%cr7, beq_else.9695
 	addis	%r31, %r0, (l.7541)@h	# lis
 	ori	%r31, %r31, (l.7541)@l
 	lfs	%f0, 0(%r31)	# float
@@ -7539,7 +7539,7 @@ beq_cont.9696:
 	b	beq_cont.9694
 beq_else.9693:
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9697
+	bne	%cr7, beq_else.9697
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f0, 0(%r31)	# float
@@ -7554,7 +7554,7 @@ beq_cont.9694:
 	blr
 beq_else.9690:
 	cmpwi	%cr7, %r2, 2
-	bne %cr7, beq_else.9700
+	bne	%cr7, beq_else.9700
 	lwz	%r2, 4(%r3)
 	lfs	%f0, 8(%r2)	# float
 	addis	%r31, %r0, (l.7549)@h	# lis
@@ -7596,7 +7596,7 @@ beq_else.9690:
 	blr
 beq_else.9700:
 	cmpwi	%cr7, %r2, 3
-	bne %cr7, beq_else.9702
+	bne	%cr7, beq_else.9702
 	lwz	%r2, 4(%r3)
 	lfs	%f0, 0(%r2)	# float
 	lwz	%r5, 8(%r3)
@@ -7710,7 +7710,7 @@ beq_else.9700:
 	blr
 beq_else.9702:
 	cmpwi	%cr7, %r2, 4
-	bne %cr7, beq_else.9704
+	bne	%cr7, beq_else.9704
 	lwz	%r2, 4(%r3)
 	lfs	%f0, 0(%r2)	# float
 	lwz	%r5, 8(%r3)
@@ -7825,7 +7825,7 @@ beq_else.9702:
 	lwz	%r31, 188(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9705
+	bne	%cr7, beq_else.9705
 	lfs	%f0, 136(%r3)	# float
 	lfs	%f1, 160(%r3)	# float
 	fdiv	%f0, %f1, %f0
@@ -7923,7 +7923,7 @@ beq_cont.9706:
 	lwz	%r31, 228(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9707
+	bne	%cr7, beq_else.9707
 	lfs	%f0, 176(%r3)	# float
 	lfs	%f1, 216(%r3)	# float
 	fdiv	%f0, %f1, %f0
@@ -8010,7 +8010,7 @@ beq_cont.9708:
 	lwz	%r31, 268(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9709
+	bne	%cr7, beq_else.9709
 	lfs	%f0, 256(%r3)	# float
 	b	beq_cont.9710
 beq_else.9709:
@@ -8044,7 +8044,7 @@ add_light.3349:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9713
+	bne	%cr7, beq_else.9713
 	b	beq_cont.9714
 beq_else.9713:
 	addis	%r2, %r0, (min_caml_rgb)@h	# lis
@@ -8069,7 +8069,7 @@ beq_cont.9714:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9715
+	bne	%cr7, beq_else.9715
 	blr
 beq_else.9715:
 	lfs	%f0, 8(%r3)	# float
@@ -8115,7 +8115,7 @@ trace_reflections.3353:
 	lwz	%r6, 8(%r29)
 	lwz	%r7, 4(%r29)
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9718
+	blt	%cr7, bge_else.9718
 	addis	%r8, %r0, (min_caml_reflections)@h	# lis
 	ori	%r8, %r8, (min_caml_reflections)@l
 	addi	%r1, %r0, 2	# li
@@ -8149,7 +8149,7 @@ trace_reflections.3353:
 	lwz	%r31, 52(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9720
+	bne	%cr7, beq_else.9720
 	b	beq_cont.9721
 beq_else.9720:
 	addis	%r2, %r0, (min_caml_intersected_object_id)@h	# lis
@@ -8173,7 +8173,7 @@ beq_else.9720:
 	mtspr	8, %r31	# mtlr
 	lwz	%r5, 48(%r3)
 	cmp	%cr7, %r5, %r2
-	bne %cr7, beq_else.9722
+	bne	%cr7, beq_else.9722
 	addi	%r2, %r0, 0	# li
 	addis	%r5, %r0, (min_caml_or_net)@h	# lis
 	ori	%r5, %r5, (min_caml_or_net)@l
@@ -8189,7 +8189,7 @@ beq_else.9720:
 	lwz	%r31, 52(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9724
+	bne	%cr7, beq_else.9724
 	addis	%r2, %r0, (min_caml_nvector)@h	# lis
 	ori	%r2, %r2, (min_caml_nvector)@l
 	lwz	%r5, 44(%r3)
@@ -8279,7 +8279,7 @@ trace_ray.3358:
 	lwz	%r10, 8(%r29)
 	lwz	%r11, 4(%r29)
 	cmpwi	%cr7, %r2, 4
-	bgt %cr7, ble_else.9727
+	bgt	%cr7, ble_else.9727
 	stw	%r29, 0(%r3)
 	stfs	%f1, 8(%r3)	# float
 	stw	%r8, 16(%r3)
@@ -8313,7 +8313,7 @@ trace_ray.3358:
 	lwz	%r31, 68(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9730
+	bne	%cr7, beq_else.9730
 	addi	%r2, %r0, -1	# li
 	lwz	%r5, 48(%r3)
 	addi	%r1, %r0, 2	# li
@@ -8321,7 +8321,7 @@ trace_ray.3358:
 	lwz	%r7, 60(%r3)
 	stwx	%r2, %r7, %r6
 	cmpwi	%cr7, %r5, 0
-	bne %cr7, beq_else.9731
+	bne	%cr7, beq_else.9731
 	blr
 beq_else.9731:
 	addis	%r5, %r0, (min_caml_light)@h	# lis
@@ -8350,7 +8350,7 @@ beq_else.9731:
 	lwz	%r31, 76(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9733
+	bne	%cr7, beq_else.9733
 	blr
 beq_else.9733:
 	lfs	%f0, 64(%r3)	# float
@@ -8522,7 +8522,7 @@ beq_else.9730:
 	lwz	%r31, 100(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9737
+	bne	%cr7, beq_else.9737
 	addi	%r2, %r0, 1	# li
 	lwz	%r5, 48(%r3)
 	addi	%r1, %r0, 2	# li
@@ -8654,7 +8654,7 @@ beq_cont.9738:
 	lwz	%r31, 124(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9739
+	bne	%cr7, beq_else.9739
 	addis	%r2, %r0, (min_caml_nvector)@h	# lis
 	ori	%r2, %r2, (min_caml_nvector)@l
 	addis	%r5, %r0, (min_caml_light)@h	# lis
@@ -8744,12 +8744,12 @@ beq_cont.9740:
 	lwz	%r31, 132(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9741
+	bne	%cr7, beq_else.9741
 	blr
 beq_else.9741:
 	lwz	%r2, 48(%r3)
 	cmpwi	%cr7, %r2, 4
-	blt %cr7, bge_else.9743
+	blt	%cr7, bge_else.9743
 	b	bge_cont.9744
 bge_else.9743:
 	addi	%r5, %r2, 1
@@ -8761,7 +8761,7 @@ bge_else.9743:
 bge_cont.9744:
 	lwz	%r5, 80(%r3)
 	cmpwi	%cr7, %r5, 2
-	bne %cr7, beq_else.9745
+	bne	%cr7, beq_else.9745
 	addis	%r31, %r0, (l.7110)@h	# lis
 	ori	%r31, %r31, (l.7110)@l
 	lfs	%f0, 0(%r31)	# float
@@ -8817,7 +8817,7 @@ trace_diffuse_ray.3364:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9748
+	bne	%cr7, beq_else.9748
 	blr
 beq_else.9748:
 	addis	%r2, %r0, (min_caml_objects)@h	# lis
@@ -8878,7 +8878,7 @@ beq_else.9748:
 	lwz	%r31, 28(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9750
+	bne	%cr7, beq_else.9750
 	addis	%r2, %r0, (min_caml_nvector)@h	# lis
 	ori	%r2, %r2, (min_caml_nvector)@l
 	addis	%r5, %r0, (min_caml_light)@h	# lis
@@ -8906,7 +8906,7 @@ beq_else.9748:
 	lwz	%r31, 44(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9752
+	bne	%cr7, beq_else.9752
 	addis	%r31, %r0, (l.7114)@h	# lis
 	ori	%r31, %r31, (l.7114)@l
 	lfs	%f0, 0(%r31)	# float
@@ -8940,7 +8940,7 @@ beq_else.9750:
 iter_trace_diffuse_rays.3367:
 	lwz	%r8, 4(%r29)
 	cmpwi	%cr7, %r7, 0
-	blt %cr7, bge_else.9756
+	blt	%cr7, bge_else.9756
 	addi	%r1, %r0, 2	# li
 	slw	%r7, %r9, %r1 # swap
 	lwzx	%r9, %r2, %r9
@@ -8975,7 +8975,7 @@ iter_trace_diffuse_rays.3367:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9757
+	bne	%cr7, beq_else.9757
 	lwz	%r2, 16(%r3)
 	addi	%r1, %r0, 2	# li
 	slw	%r2, %r5, %r1 # swap
@@ -9062,7 +9062,7 @@ trace_diffuse_ray_80percent.3376:
 	stw	%r29, 8(%r3)
 	stw	%r2, 12(%r3)
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9760
+	bne	%cr7, beq_else.9760
 	b	beq_cont.9761
 beq_else.9760:
 	addis	%r7, %r0, (min_caml_dirvecs)@h	# lis
@@ -9081,7 +9081,7 @@ beq_else.9760:
 beq_cont.9761:
 	lwz	%r2, 12(%r3)
 	cmpwi	%cr7, %r2, 1
-	bne %cr7, beq_else.9762
+	bne	%cr7, beq_else.9762
 	b	beq_cont.9763
 beq_else.9762:
 	addis	%r5, %r0, (min_caml_dirvecs)@h	# lis
@@ -9105,7 +9105,7 @@ beq_else.9762:
 beq_cont.9763:
 	lwz	%r2, 12(%r3)
 	cmpwi	%cr7, %r2, 2
-	bne %cr7, beq_else.9764
+	bne	%cr7, beq_else.9764
 	b	beq_cont.9765
 beq_else.9764:
 	addis	%r5, %r0, (min_caml_dirvecs)@h	# lis
@@ -9129,7 +9129,7 @@ beq_else.9764:
 beq_cont.9765:
 	lwz	%r2, 12(%r3)
 	cmpwi	%cr7, %r2, 3
-	bne %cr7, beq_else.9766
+	bne	%cr7, beq_else.9766
 	b	beq_cont.9767
 beq_else.9766:
 	addis	%r5, %r0, (min_caml_dirvecs)@h	# lis
@@ -9153,7 +9153,7 @@ beq_else.9766:
 beq_cont.9767:
 	lwz	%r2, 12(%r3)
 	cmpwi	%cr7, %r2, 4
-	bne %cr7, beq_else.9768
+	bne	%cr7, beq_else.9768
 	blr
 beq_else.9768:
 	addis	%r2, %r0, (min_caml_dirvecs)@h	# lis
@@ -9441,7 +9441,7 @@ calc_diffuse_using_5points.3383:
 do_without_neighbors.3389:
 	lwz	%r6, 4(%r29)
 	cmpwi	%cr7, %r5, 4
-	bgt %cr7, ble_else.9770
+	bgt	%cr7, ble_else.9770
 	stw	%r29, 0(%r3)
 	stw	%r6, 4(%r3)
 	stw	%r2, 8(%r3)
@@ -9458,7 +9458,7 @@ do_without_neighbors.3389:
 	slw	%r5, %r6, %r1 # swap
 	lwzx	%r2, %r2, %r6
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9771
+	blt	%cr7, bge_else.9771
 	lwz	%r2, 8(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 20(%r3)
@@ -9472,7 +9472,7 @@ do_without_neighbors.3389:
 	slw	%r5, %r6, %r1 # swap
 	lwzx	%r2, %r2, %r6
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9772
+	bne	%cr7, beq_else.9772
 	b	beq_cont.9773
 beq_else.9772:
 	lwz	%r2, 8(%r3)
@@ -9504,12 +9504,12 @@ neighbors_exist.3392:
 	lwz	%r6, 4(%r6)
 	addi	%r7, %r5, 1
 	cmp	%cr7, %r6, %r7
-	bgt %cr7, ble_else.9776
+	bgt	%cr7, ble_else.9776
 	addi	%r2, %r0, 0	# li
 	blr
 ble_else.9776:
 	cmpwi	%cr7, %r5, 0
-	bgt %cr7, ble_else.9777
+	bgt	%cr7, ble_else.9777
 	addi	%r2, %r0, 0	# li
 	blr
 ble_else.9777:
@@ -9518,12 +9518,12 @@ ble_else.9777:
 	lwz	%r5, 0(%r5)
 	addi	%r6, %r2, 1
 	cmp	%cr7, %r5, %r6
-	bgt %cr7, ble_else.9778
+	bgt	%cr7, ble_else.9778
 	addi	%r2, %r0, 0	# li
 	blr
 ble_else.9778:
 	cmpwi	%cr7, %r2, 0
-	bgt %cr7, ble_else.9779
+	bgt	%cr7, ble_else.9779
 	addi	%r2, %r0, 0	# li
 	blr
 ble_else.9779:
@@ -9579,7 +9579,7 @@ neighbors_are_available.3399:
 	mtspr	8, %r31	# mtlr
 	lwz	%r5, 20(%r3)
 	cmp	%cr7, %r2, %r5
-	bne %cr7, beq_else.9780
+	bne	%cr7, beq_else.9780
 	lwz	%r2, 16(%r3)
 	addi	%r1, %r0, 2	# li
 	slw	%r2, %r6, %r1 # swap
@@ -9597,7 +9597,7 @@ neighbors_are_available.3399:
 	mtspr	8, %r31	# mtlr
 	lwz	%r5, 20(%r3)
 	cmp	%cr7, %r2, %r5
-	bne %cr7, beq_else.9781
+	bne	%cr7, beq_else.9781
 	lwz	%r2, 16(%r3)
 	addi	%r6, %r2, -1	# subi %r6, %r2, 1
 	addi	%r1, %r0, 2	# li
@@ -9616,7 +9616,7 @@ neighbors_are_available.3399:
 	mtspr	8, %r31	# mtlr
 	lwz	%r5, 20(%r3)
 	cmp	%cr7, %r2, %r5
-	bne %cr7, beq_else.9782
+	bne	%cr7, beq_else.9782
 	lwz	%r2, 16(%r3)
 	addi	%r2, %r2, 1
 	addi	%r1, %r0, 2	# li
@@ -9634,7 +9634,7 @@ neighbors_are_available.3399:
 	mtspr	8, %r31	# mtlr
 	lwz	%r5, 20(%r3)
 	cmp	%cr7, %r2, %r5
-	bne %cr7, beq_else.9783
+	bne	%cr7, beq_else.9783
 	addi	%r2, %r0, 1	# li
 	blr
 beq_else.9783:
@@ -9655,7 +9655,7 @@ try_exploit_neighbors.3405:
 	slw	%r2, %r11, %r1 # swap
 	lwzx	%r11, %r7, %r11
 	cmpwi	%cr7, %r9, 4
-	bgt %cr7, ble_else.9784
+	bgt	%cr7, ble_else.9784
 	stw	%r5, 0(%r3)
 	stw	%r29, 4(%r3)
 	stw	%r11, 8(%r3)
@@ -9675,7 +9675,7 @@ try_exploit_neighbors.3405:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9785
+	blt	%cr7, bge_else.9785
 	lwz	%r2, 32(%r3)
 	lwz	%r5, 28(%r3)
 	lwz	%r6, 24(%r3)
@@ -9689,7 +9689,7 @@ try_exploit_neighbors.3405:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9786
+	bne	%cr7, beq_else.9786
 	lwz	%r2, 32(%r3)
 	addi	%r1, %r0, 2	# li
 	slw	%r2, %r2, %r1 # swap
@@ -9714,7 +9714,7 @@ beq_else.9786:
 	slw	%r8, %r5, %r1 # swap
 	lwzx	%r2, %r2, %r5
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9787
+	bne	%cr7, beq_else.9787
 	b	beq_cont.9788
 beq_else.9787:
 	lwz	%r2, 32(%r3)
@@ -9824,9 +9824,9 @@ write_rgb_element.3414:
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 255	
-	bgt %cr7, ble_else.9791
+	bgt	%cr7, ble_else.9791
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9793
+	blt	%cr7, bge_else.9793
 	b	bge_cont.9794
 bge_else.9793:
 	addi	%r2, %r0, 0	# li
@@ -9888,7 +9888,7 @@ write_rgb.3416:
 pretrace_diffuse_rays.3418:
 	lwz	%r6, 4(%r29)
 	cmpwi	%cr7, %r5, 4
-	bgt %cr7, ble_else.9795
+	bgt	%cr7, ble_else.9795
 	stw	%r29, 0(%r3)
 	stw	%r6, 4(%r3)
 	stw	%r5, 8(%r3)
@@ -9901,7 +9901,7 @@ pretrace_diffuse_rays.3418:
 	lwz	%r31, 20(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9796
+	blt	%cr7, bge_else.9796
 	lwz	%r2, 12(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 20(%r3)
@@ -9915,7 +9915,7 @@ pretrace_diffuse_rays.3418:
 	slw	%r5, %r6, %r1 # swap
 	lwzx	%r2, %r2, %r6
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9797
+	bne	%cr7, beq_else.9797
 	b	beq_cont.9798
 beq_else.9797:
 	lwz	%r2, 12(%r3)
@@ -10021,7 +10021,7 @@ pretrace_pixels.3421:
 	lwz	%r8, 8(%r29)
 	lwz	%r9, 4(%r29)
 	cmpwi	%cr7, %r5, 0
-	blt %cr7, bge_else.9801
+	blt	%cr7, bge_else.9801
 	addis	%r10, %r0, (min_caml_scan_pitch)@h	# lis
 	ori	%r10, %r10, (min_caml_scan_pitch)@l
 	lfs	%f3, 0(%r10)	# float
@@ -10283,7 +10283,7 @@ scan_pixel.3432:
 	ori	%r11, %r11, (min_caml_image_size)@l
 	lwz	%r11, 0(%r11)
 	cmp	%cr7, %r11, %r2
-	bgt %cr7, ble_else.9805
+	bgt	%cr7, ble_else.9805
 	blr
 ble_else.9805:
 	addis	%r11, %r0, (min_caml_rgb)@h	# lis
@@ -10328,7 +10328,7 @@ ble_else.9805:
 	lwz	%r31, 36(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9807
+	bne	%cr7, beq_else.9807
 	lwz	%r2, 28(%r3)
 	addi	%r1, %r0, 2	# li
 	slw	%r2, %r5, %r1 # swap
@@ -10390,7 +10390,7 @@ scan_line.3438:
 	ori	%r11, %r11, (min_caml_image_size)@l
 	lwz	%r11, 4(%r11)
 	cmp	%cr7, %r11, %r2
-	bgt %cr7, ble_else.9809
+	bgt	%cr7, ble_else.9809
 	blr
 ble_else.9809:
 	addis	%r11, %r0, (min_caml_image_size)@h	# lis
@@ -10405,7 +10405,7 @@ ble_else.9809:
 	stw	%r2, 20(%r3)
 	stw	%r9, 24(%r3)
 	cmp	%cr7, %r11, %r2
-	bgt %cr7, ble_else.9811
+	bgt	%cr7, ble_else.9811
 	b	ble_cont.9812
 ble_else.9811:
 	addi	%r11, %r2, 1
@@ -10638,7 +10638,7 @@ create_pixel.3446:
 	blr
 init_line_elements.3448:
 	cmpwi	%cr7, %r5, 0
-	blt %cr7, bge_else.9813
+	blt	%cr7, bge_else.9813
 	stw	%r2, 0(%r3)
 	stw	%r5, 4(%r3)
 	mfspr	%r31, 8	# mflr
@@ -10752,7 +10752,7 @@ calc_dirvec.3458:
 	lwz	%r7, 8(%r29)
 	lwz	%r8, 4(%r29)
 	cmpwi	%cr7, %r2, 5
-	blt %cr7, bge_else.9814
+	blt	%cr7, bge_else.9814
 	stw	%r6, 0(%r3)
 	stw	%r5, 4(%r3)
 	stfs	%f0, 8(%r3)	# float
@@ -11082,7 +11082,7 @@ bge_else.9814:
 calc_dirvecs.3466:
 	lwz	%r7, 4(%r29)
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9821
+	blt	%cr7, bge_else.9821
 	stw	%r29, 0(%r3)
 	stw	%r2, 4(%r3)
 	stfs	%f0, 8(%r3)	# float
@@ -11188,7 +11188,7 @@ bge_else.9821:
 calc_dirvec_rows.3471:
 	lwz	%r7, 4(%r29)
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9823
+	blt	%cr7, bge_else.9823
 	stw	%r29, 0(%r3)
 	stw	%r2, 4(%r3)
 	stw	%r6, 8(%r3)
@@ -11278,7 +11278,7 @@ create_dirvec.3475:
 	blr
 create_dirvec_elements.3477:
 	cmpwi	%cr7, %r5, 0
-	blt %cr7, bge_else.9825
+	blt	%cr7, bge_else.9825
 	stw	%r2, 0(%r3)
 	stw	%r5, 4(%r3)
 	mfspr	%r31, 8	# mflr
@@ -11300,7 +11300,7 @@ bge_else.9825:
 	blr
 create_dirvecs.3480:
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9827
+	blt	%cr7, bge_else.9827
 	addis	%r5, %r0, (min_caml_dirvecs)@h	# lis
 	ori	%r5, %r5, (min_caml_dirvecs)@l
 	addi	%r6, %r0, 120	# li
@@ -11349,7 +11349,7 @@ bge_else.9827:
 	blr
 init_dirvec_constants.3482:
 	cmpwi	%cr7, %r5, 0
-	blt %cr7, bge_else.9829
+	blt	%cr7, bge_else.9829
 	addi	%r1, %r0, 2	# li
 	slw	%r5, %r6, %r1 # swap
 	lwzx	%r6, %r2, %r6
@@ -11371,7 +11371,7 @@ bge_else.9829:
 	blr
 init_vecset_constants.3485:
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9831
+	blt	%cr7, bge_else.9831
 	addis	%r5, %r0, (min_caml_dirvecs)@h	# lis
 	ori	%r5, %r5, (min_caml_dirvecs)@l
 	addi	%r1, %r0, 2	# li
@@ -11724,7 +11724,7 @@ setup_surface_reflection.3499:
 	blr
 setup_reflections.3502:
 	cmpwi	%cr7, %r2, 0
-	blt %cr7, bge_else.9838
+	blt	%cr7, bge_else.9838
 	addis	%r5, %r0, (min_caml_objects)@h	# lis
 	ori	%r5, %r5, (min_caml_objects)@l
 	addi	%r1, %r0, 2	# li
@@ -11741,7 +11741,7 @@ setup_reflections.3502:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 2
-	bne %cr7, beq_else.9839
+	bne	%cr7, beq_else.9839
 	lwz	%r2, 4(%r3)
 	mfspr	%r31, 8	# mflr
 	stw	%r31, 12(%r3)
@@ -11761,7 +11761,7 @@ setup_reflections.3502:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 0
-	bne %cr7, beq_else.9840
+	bne	%cr7, beq_else.9840
 	blr
 beq_else.9840:
 	lwz	%r2, 4(%r3)
@@ -11773,13 +11773,13 @@ beq_else.9840:
 	lwz	%r31, 12(%r3)
 	mtspr	8, %r31	# mtlr
 	cmpwi	%cr7, %r2, 1
-	bne %cr7, beq_else.9842
+	bne	%cr7, beq_else.9842
 	lwz	%r2, 0(%r3)
 	lwz	%r5, 4(%r3)
 	b	setup_rect_reflection.3496
 beq_else.9842:
 	cmpwi	%cr7, %r2, 2
-	bne %cr7, beq_else.9843
+	bne	%cr7, beq_else.9843
 	lwz	%r2, 0(%r3)
 	lwz	%r5, 4(%r3)
 	b	setup_surface_reflection.3499
