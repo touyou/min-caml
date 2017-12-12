@@ -2,10 +2,10 @@
 	.text
 _start:
 # 0x000000 | code & data seg |
-# 0x010000 | stack       seg |
-# 0x180000 | heap        seg |
-	lis	%r3, 0x0001	# sp
-	lis	%r4, 0x0018	# hp
+# 0x2_0000 | stack       seg |
+# 0x8_0000 | heap        seg |
+	lis	%r3, 0x0002	# sp
+	lis	%r4, 0x0008	# hp
 	b	_min_caml_start
 	.data
 	.align 	8
@@ -203,7 +203,7 @@ bge_cont.933:
 	or	%r4, %r29, %r4	# mr %r29, %r4
 	addi	%r4, %r4, 16
 	addis	%r8, %r0, (mul_sub.807)@h	# lis
-	addi	%r8, %r8, (mul_sub.807)@l
+	ori	%r8, %r8, (mul_sub.807)@l
 	stw	%r8, 0(%r29)
 	stw	%r7, 8(%r29)
 	stw	%r6, 4(%r29)
@@ -226,9 +226,11 @@ bge_cont.933:
 	ori	%r5, %r5, 65535
 	and	%r2, %r2, %r5
 	lwz	%r5, 4(%r3)
-	srawi	%r5, %r5, 31 # swap srwi
+	addi	%r1, %r0, 31	# lis
+	srw	%r5, %r5, %r1 # swap
 	lwz	%r6, 0(%r3)
-	srawi	%r6, %r6, 31 # swap srwi
+	addi	%r1, %r0, 31	# lis
+	srw	%r6, %r6, %r1 # swap
 	xor	%r5, %r5, %r6
 	cmpwi	%cr7, %r5, 0
 	bne %cr7, beq_else.934
@@ -290,9 +292,11 @@ bge_cont.940:
 	ori	%r5, %r5, 65535
 	and	%r2, %r2, %r5
 	lwz	%r5, 4(%r3)
-	srawi	%r5, %r5, 31 # swap srwi
+	addi	%r1, %r0, 31	# lis
+	srw	%r5, %r5, %r1 # swap
 	lwz	%r6, 0(%r3)
-	srawi	%r6, %r6, 31 # swap srwi
+	addi	%r1, %r0, 31	# lis
+	srw	%r6, %r6, %r1 # swap
 	xor	%r5, %r5, %r6
 	cmpwi	%cr7, %r5, 0
 	bne %cr7, beq_else.941
@@ -367,17 +371,17 @@ kernel_sin.373:
 	fmul	%f3, %f2, %f1
 	fmul	%f1, %f3, %f1
 	addis	%r31, %r0, (l.839)@h	# lis
-	addi	%r31, %r31, (l.839)@l
+	ori	%r31, %r31, (l.839)@l
 	lfs	%f4, 0(%r31)	# float
 	fmul	%f2, %f4, %f2
 	fsub	%f0, %f0, %f2
 	addis	%r31, %r0, (l.840)@h	# lis
-	addi	%r31, %r31, (l.840)@l
+	ori	%r31, %r31, (l.840)@l
 	lfs	%f2, 0(%r31)	# float
 	fmul	%f2, %f2, %f3
 	fadd	%f0, %f0, %f2
 	addis	%r31, %r0, (l.841)@h	# lis
-	addi	%r31, %r31, (l.841)@l
+	ori	%r31, %r31, (l.841)@l
 	lfs	%f2, 0(%r31)	# float
 	fmul	%f1, %f2, %f1
 	fsub	%f0, %f0, %f1
@@ -387,59 +391,59 @@ kernel_cos.375:
 	fmul	%f1, %f0, %f0
 	fmul	%f2, %f0, %f1
 	addis	%r31, %r0, (l.842)@h	# lis
-	addi	%r31, %r31, (l.842)@l
+	ori	%r31, %r31, (l.842)@l
 	lfs	%f3, 0(%r31)	# float
 	addis	%r31, %r0, (l.843)@h	# lis
-	addi	%r31, %r31, (l.843)@l
+	ori	%r31, %r31, (l.843)@l
 	lfs	%f4, 0(%r31)	# float
 	fmul	%f0, %f4, %f0
 	fsub	%f0, %f3, %f0
 	addis	%r31, %r0, (l.844)@h	# lis
-	addi	%r31, %r31, (l.844)@l
+	ori	%r31, %r31, (l.844)@l
 	lfs	%f3, 0(%r31)	# float
 	fmul	%f1, %f3, %f1
 	fadd	%f0, %f0, %f1
 	addis	%r31, %r0, (l.845)@h	# lis
-	addi	%r31, %r31, (l.845)@l
+	ori	%r31, %r31, (l.845)@l
 	lfs	%f1, 0(%r31)	# float
 	fmul	%f1, %f1, %f2
 	fsub	%f0, %f0, %f1
 	blr
 sin.377:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.948
 	addis	%r31, %r0, (l.847)@h	# lis
-	addi	%r31, %r31, (l.847)@l
+	ori	%r31, %r31, (l.847)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
 	bgt %cr7, ble_else.949
 	addis	%r31, %r0, (l.848)@h	# lis
-	addi	%r31, %r31, (l.848)@l
+	ori	%r31, %r31, (l.848)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.950
 	addis	%r31, %r0, (l.848)@h	# lis
-	addi	%r31, %r31, (l.848)@l
+	ori	%r31, %r31, (l.848)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f0, %f1
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.951
 	addis	%r31, %r0, (l.851)@h	# lis
-	addi	%r31, %r31, (l.851)@l
+	ori	%r31, %r31, (l.851)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.952
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.848)@h	# lis
-	addi	%r31, %r31, (l.848)@l
+	ori	%r31, %r31, (l.848)@l
 	lfs	%f2, 0(%r31)	# float
 	fsub	%f0, %f2, %f0
 	stfs	%f1, 0(%r3)	# float
@@ -455,10 +459,10 @@ sin.377:
 	blr
 ble_else.952:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f2, 0(%r31)	# float
 	fsub	%f0, %f0, %f2
 	stfs	%f1, 8(%r3)	# float
@@ -474,15 +478,15 @@ ble_else.952:
 	blr
 ble_else.951:
 	addis	%r31, %r0, (l.850)@h	# lis
-	addi	%r31, %r31, (l.850)@l
+	ori	%r31, %r31, (l.850)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.953
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f2, 0(%r31)	# float
 	fsub	%f0, %f2, %f0
 	stfs	%f1, 16(%r3)	# float
@@ -498,7 +502,7 @@ ble_else.951:
 	blr
 ble_else.953:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	stfs	%f1, 24(%r3)	# float
 	mfspr	%r31, 8	# mflr
@@ -513,34 +517,34 @@ ble_else.953:
 	blr
 ble_else.950:
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.954
 	addis	%r31, %r0, (l.851)@h	# lis
-	addi	%r31, %r31, (l.851)@l
+	ori	%r31, %r31, (l.851)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.955
 	addis	%r31, %r0, (l.848)@h	# lis
-	addi	%r31, %r31, (l.848)@l
+	ori	%r31, %r31, (l.848)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f1, %f0
 	b	kernel_sin.373
 ble_else.955:
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f0, %f1
 	b	kernel_cos.375
 ble_else.954:
 	addis	%r31, %r0, (l.850)@h	# lis
-	addi	%r31, %r31, (l.850)@l
+	ori	%r31, %r31, (l.850)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.956
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f1, %f0
 	b	kernel_cos.375
@@ -548,16 +552,16 @@ ble_else.956:
 	b	kernel_sin.373
 ble_else.949:
 	addis	%r31, %r0, (l.847)@h	# lis
-	addi	%r31, %r31, (l.847)@l
+	ori	%r31, %r31, (l.847)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f0, %f1
 	b	sin.377
 ble_else.948:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f2, 0(%r31)	# float
 	fsub	%f0, %f2, %f0
 	stfs	%f1, 32(%r3)	# float
@@ -573,56 +577,56 @@ ble_else.948:
 	blr
 cos.379:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.957
 	addis	%r31, %r0, (l.847)@h	# lis
-	addi	%r31, %r31, (l.847)@l
+	ori	%r31, %r31, (l.847)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
 	bgt %cr7, ble_else.958
 	addis	%r31, %r0, (l.848)@h	# lis
-	addi	%r31, %r31, (l.848)@l
+	ori	%r31, %r31, (l.848)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.959
 	addis	%r31, %r0, (l.848)@h	# lis
-	addi	%r31, %r31, (l.848)@l
+	ori	%r31, %r31, (l.848)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f0, %f1
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.960
 	addis	%r31, %r0, (l.851)@h	# lis
-	addi	%r31, %r31, (l.851)@l
+	ori	%r31, %r31, (l.851)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.961
 	addis	%r31, %r0, (l.848)@h	# lis
-	addi	%r31, %r31, (l.848)@l
+	ori	%r31, %r31, (l.848)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f1, %f0
 	b	kernel_sin.373
 ble_else.961:
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f0, %f1
 	b	kernel_cos.375
 ble_else.960:
 	addis	%r31, %r0, (l.850)@h	# lis
-	addi	%r31, %r31, (l.850)@l
+	ori	%r31, %r31, (l.850)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.962
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f2, 0(%r31)	# float
 	fsub	%f0, %f2, %f0
 	stfs	%f1, 0(%r3)	# float
@@ -638,7 +642,7 @@ ble_else.960:
 	blr
 ble_else.962:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	stfs	%f1, 8(%r3)	# float
 	mfspr	%r31, 8	# mflr
@@ -653,20 +657,20 @@ ble_else.962:
 	blr
 ble_else.959:
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.963
 	addis	%r31, %r0, (l.851)@h	# lis
-	addi	%r31, %r31, (l.851)@l
+	ori	%r31, %r31, (l.851)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.964
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.848)@h	# lis
-	addi	%r31, %r31, (l.848)@l
+	ori	%r31, %r31, (l.848)@l
 	lfs	%f2, 0(%r31)	# float
 	fsub	%f0, %f2, %f0
 	stfs	%f1, 16(%r3)	# float
@@ -682,10 +686,10 @@ ble_else.959:
 	blr
 ble_else.964:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f2, 0(%r31)	# float
 	fsub	%f0, %f0, %f2
 	stfs	%f1, 24(%r3)	# float
@@ -701,12 +705,12 @@ ble_else.964:
 	blr
 ble_else.963:
 	addis	%r31, %r0, (l.850)@h	# lis
-	addi	%r31, %r31, (l.850)@l
+	ori	%r31, %r31, (l.850)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.965
 	addis	%r31, %r0, (l.849)@h	# lis
-	addi	%r31, %r31, (l.849)@l
+	ori	%r31, %r31, (l.849)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f1, %f0
 	b	kernel_sin.373
@@ -714,13 +718,13 @@ ble_else.965:
 	b	kernel_cos.375
 ble_else.958:
 	addis	%r31, %r0, (l.847)@h	# lis
-	addi	%r31, %r31, (l.847)@l
+	ori	%r31, %r31, (l.847)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f0, %f1
 	b	sin.377
 ble_else.957:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f1, %f0
 	b	cos.379
@@ -733,64 +737,64 @@ kernel_atan.381:
 	fmul	%f6, %f5, %f1
 	fmul	%f1, %f6, %f1
 	addis	%r31, %r0, (l.852)@h	# lis
-	addi	%r31, %r31, (l.852)@l
+	ori	%r31, %r31, (l.852)@l
 	lfs	%f7, 0(%r31)	# float
 	fmul	%f2, %f7, %f2
 	fsub	%f0, %f0, %f2
 	addis	%r31, %r0, (l.853)@h	# lis
-	addi	%r31, %r31, (l.853)@l
+	ori	%r31, %r31, (l.853)@l
 	lfs	%f2, 0(%r31)	# float
 	fmul	%f2, %f2, %f3
 	fadd	%f0, %f0, %f2
 	addis	%r31, %r0, (l.854)@h	# lis
-	addi	%r31, %r31, (l.854)@l
+	ori	%r31, %r31, (l.854)@l
 	lfs	%f2, 0(%r31)	# float
 	fmul	%f2, %f2, %f4
 	fsub	%f0, %f0, %f2
 	addis	%r31, %r0, (l.855)@h	# lis
-	addi	%r31, %r31, (l.855)@l
+	ori	%r31, %r31, (l.855)@l
 	lfs	%f2, 0(%r31)	# float
 	fmul	%f2, %f2, %f5
 	fadd	%f0, %f0, %f2
 	addis	%r31, %r0, (l.856)@h	# lis
-	addi	%r31, %r31, (l.856)@l
+	ori	%r31, %r31, (l.856)@l
 	lfs	%f2, 0(%r31)	# float
 	fmul	%f2, %f2, %f6
 	fsub	%f0, %f0, %f2
 	addis	%r31, %r0, (l.857)@h	# lis
-	addi	%r31, %r31, (l.857)@l
+	ori	%r31, %r31, (l.857)@l
 	lfs	%f2, 0(%r31)	# float
 	fmul	%f1, %f2, %f1
 	fadd	%f0, %f0, %f1
 	blr
 atan.383:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
 	bgt %cr7, ble_else.966
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f1, %f0
 	addis	%r31, %r0, (l.858)@h	# lis
-	addi	%r31, %r31, (l.858)@l
+	ori	%r31, %r31, (l.858)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.967
 	addis	%r31, %r0, (l.859)@h	# lis
-	addi	%r31, %r31, (l.859)@l
+	ori	%r31, %r31, (l.859)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.968
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.861)@h	# lis
-	addi	%r31, %r31, (l.861)@l
+	ori	%r31, %r31, (l.861)@l
 	lfs	%f2, 0(%r31)	# float
 	addis	%r31, %r0, (l.842)@h	# lis
-	addi	%r31, %r31, (l.842)@l
+	ori	%r31, %r31, (l.842)@l
 	lfs	%f3, 0(%r31)	# float
 	fdiv	%f0, %f3, %f0
 	stfs	%f1, 0(%r3)	# float
@@ -809,17 +813,17 @@ atan.383:
 	blr
 ble_else.968:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.860)@h	# lis
-	addi	%r31, %r31, (l.860)@l
+	ori	%r31, %r31, (l.860)@l
 	lfs	%f2, 0(%r31)	# float
 	addis	%r31, %r0, (l.842)@h	# lis
-	addi	%r31, %r31, (l.842)@l
+	ori	%r31, %r31, (l.842)@l
 	lfs	%f3, 0(%r31)	# float
 	fsub	%f3, %f0, %f3
 	addis	%r31, %r0, (l.842)@h	# lis
-	addi	%r31, %r31, (l.842)@l
+	ori	%r31, %r31, (l.842)@l
 	lfs	%f4, 0(%r31)	# float
 	fadd	%f0, %f0, %f4
 	fdiv	%f0, %f3, %f0
@@ -839,7 +843,7 @@ ble_else.968:
 	blr
 ble_else.967:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	stfs	%f1, 32(%r3)	# float
 	mfspr	%r31, 8	# mflr
@@ -854,20 +858,20 @@ ble_else.967:
 	blr
 ble_else.966:
 	addis	%r31, %r0, (l.858)@h	# lis
-	addi	%r31, %r31, (l.858)@l
+	ori	%r31, %r31, (l.858)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.969
 	addis	%r31, %r0, (l.859)@h	# lis
-	addi	%r31, %r31, (l.859)@l
+	ori	%r31, %r31, (l.859)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.970
 	addis	%r31, %r0, (l.861)@h	# lis
-	addi	%r31, %r31, (l.861)@l
+	ori	%r31, %r31, (l.861)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.842)@h	# lis
-	addi	%r31, %r31, (l.842)@l
+	ori	%r31, %r31, (l.842)@l
 	lfs	%f2, 0(%r31)	# float
 	fdiv	%f0, %f2, %f0
 	stfs	%f1, 40(%r3)	# float
@@ -883,14 +887,14 @@ ble_else.966:
 	blr
 ble_else.970:
 	addis	%r31, %r0, (l.860)@h	# lis
-	addi	%r31, %r31, (l.860)@l
+	ori	%r31, %r31, (l.860)@l
 	lfs	%f1, 0(%r31)	# float
 	addis	%r31, %r0, (l.842)@h	# lis
-	addi	%r31, %r31, (l.842)@l
+	ori	%r31, %r31, (l.842)@l
 	lfs	%f2, 0(%r31)	# float
 	fsub	%f2, %f0, %f2
 	addis	%r31, %r0, (l.842)@h	# lis
-	addi	%r31, %r31, (l.842)@l
+	ori	%r31, %r31, (l.842)@l
 	lfs	%f3, 0(%r31)	# float
 	fadd	%f0, %f0, %f3
 	fdiv	%f0, %f2, %f0
@@ -909,7 +913,7 @@ ble_else.969:
 	b	kernel_atan.381
 fiszero.385:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
 	bne %cr7, beq_else.971
@@ -920,7 +924,7 @@ beq_else.971:
 	blr
 fispos.387:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
 	bgt %cr7, ble_else.972
@@ -968,7 +972,7 @@ ble_else.974:
 	blr
 fhalf.400:
 	addis	%r31, %r0, (l.862)@h	# lis
-	addi	%r31, %r31, (l.862)@l
+	ori	%r31, %r31, (l.862)@l
 	lfs	%f1, 0(%r31)	# float
 	fdiv	%f0, %f0, %f1
 	blr
@@ -977,7 +981,7 @@ fsqr.402:
 	blr
 int_of_float.404:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f0, %f1
 	bne %cr7, beq_else.975
@@ -986,7 +990,8 @@ int_of_float.404:
 beq_else.975:
 	stfs	%f0, 4(%r3)	# float
 	lwz	%r2, 4(%r3)
-	srawi	%r2, %r5, 23 # swap srwi
+	addi	%r1, %r0, 23	# lis
+	srw	%r2, %r5, %r1 # swap
 	andi.	%r5, %r5, 255
 	addi	%r5, %r5, -127	# subi %r5, %r5, 127
 	addis	%r6, %r0, 128	# lis
@@ -1009,7 +1014,7 @@ bge_cont.977:
 	ori	%r5, %r5, 65535
 	and	%r2, %r2, %r5
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.978
@@ -1035,7 +1040,7 @@ float_of_int.406:
 	cmpwi	%cr7, %r2, 0
 	bne %cr7, beq_else.981
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f0, 0(%r31)	# float
 	blr
 beq_else.981:
@@ -1058,14 +1063,15 @@ beq_else.981:
 	addis	%r6, %r0, 65535	# lis
 	ori	%r6, %r6, 65535
 	and	%r2, %r2, %r6
-	srawi	%r2, %r2, 9 # swap srwi
+	addi	%r1, %r0, 9	# lis
+	srw	%r2, %r2, %r1 # swap
 	or	%r2, %r2, %r5
 	stw	%r2, 4(%r3)
 	lfs	%f0, 4(%r3)	# float
 	blr
 floor.408:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.982
@@ -1079,7 +1085,7 @@ floor.408:
 	b	float_of_int.406
 ble_else.982:
 	addis	%r31, %r0, (l.842)@h	# lis
-	addi	%r31, %r31, (l.842)@l
+	ori	%r31, %r31, (l.842)@l
 	lfs	%f1, 0(%r31)	# float
 	fsub	%f0, %f0, %f1
 	mfspr	%r31, 8	# mflr
@@ -1203,7 +1209,7 @@ newton_sub.419:
 	or	%r4, %r29, %r4	# mr %r29, %r4
 	addi	%r4, %r4, 16
 	addis	%r6, %r0, (newton.530)@h	# lis
-	addi	%r6, %r6, (newton.530)@l
+	ori	%r6, %r6, (newton.530)@l
 	stw	%r6, 0(%r29)
 	stw	%r5, 12(%r29)
 	stfs	%f1, 8(%r29)	# float
@@ -1221,11 +1227,11 @@ sqrt.422:
 	or	%r4, %r2, %r4	# mr %r2, %r4
 	addi	%r4, %r4, 16
 	addis	%r5, %r0, (f.526)@h	# lis
-	addi	%r5, %r5, (f.526)@l
+	ori	%r5, %r5, (f.526)@l
 	stw	%r5, 0(%r2)
 	stfs	%f0, 8(%r2)	# float
 	addis	%r31, %r0, (l.862)@h	# lis
-	addi	%r31, %r31, (l.862)@l
+	ori	%r31, %r31, (l.862)@l
 	lfs	%f0, 0(%r31)	# float
 	lwz	%r28, 0(%r29)
 	mtspr	9, %r28	# mtctr
@@ -1292,7 +1298,7 @@ ble_else.992:
 	blr
 bge_else.993:
 	addis	%r31, %r0, (l.871)@h	# lis
-	addi	%r31, %r31, (l.871)@l
+	ori	%r31, %r31, (l.871)@l
 	lfs	%f2, 0(%r31)	# float
 	fmul	%f2, %f0, %f2
 	addi	%r2, %r2, -48	# subi %r2, %r2, 48
@@ -1319,7 +1325,7 @@ f.470:
 	cmpwi	%cr7, %r2, 46
 	bne %cr7, beq_else.995
 	addis	%r31, %r0, (l.871)@h	# lis
-	addi	%r31, %r31, (l.871)@l
+	ori	%r31, %r31, (l.871)@l
 	lfs	%f1, 0(%r31)	# float
 	fmr	%f31, %f1
 	fmr	%f1, %f0
@@ -1333,7 +1339,7 @@ ble_else.994:
 	blr
 bge_else.996:
 	addis	%r31, %r0, (l.872)@h	# lis
-	addi	%r31, %r31, (l.872)@l
+	ori	%r31, %r31, (l.872)@l
 	lfs	%f1, 0(%r31)	# float
 	fmul	%f0, %f0, %f1
 	addi	%r2, %r2, -48	# subi %r2, %r2, 48
@@ -1353,10 +1359,10 @@ read_float.426:
 	cmpwi	%cr7, %r5, 45
 	bne %cr7, beq_else.997
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f0, 0(%r31)	# float
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	stfs	%f0, 0(%r3)	# float
 	mfspr	%r31, 8	# mflr
@@ -1407,7 +1413,7 @@ print_float_sub.440:
 	blr
 beq_else.1002:
 	addis	%r31, %r0, (l.872)@h	# lis
-	addi	%r31, %r31, (l.872)@l
+	ori	%r31, %r31, (l.872)@l
 	lfs	%f1, 0(%r31)	# float
 	fmul	%f0, %f0, %f1
 	stw	%r2, 0(%r3)
@@ -1435,7 +1441,7 @@ beq_else.1002:
 	b	print_float_sub.440
 print_float.430:
 	addis	%r31, %r0, (l.846)@h	# lis
-	addi	%r31, %r31, (l.846)@l
+	ori	%r31, %r31, (l.846)@l
 	lfs	%f1, 0(%r31)	# float
 	fcmpu	%cr7, %f1, %f0
 	bgt %cr7, ble_else.1005
@@ -1487,10 +1493,10 @@ beq_else.1007:
 _min_caml_start: # main entry point
 #	main program starts
 	addis	%r31, %r0, (l.873)@h	# lis
-	addi	%r31, %r31, (l.873)@l
+	ori	%r31, %r31, (l.873)@l
 	lfs	%f0, 0(%r31)	# float
 	addis	%r31, %r0, (l.874)@h	# lis
-	addi	%r31, %r31, (l.874)@l
+	ori	%r31, %r31, (l.874)@l
 	lfs	%f0, 0(%r31)	# float
 	addi	%r2, %r0, 1	# li
 	mfspr	%r31, 8	# mflr
@@ -1501,3 +1507,4 @@ _min_caml_start: # main entry point
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
 #	main program ends
+	sc

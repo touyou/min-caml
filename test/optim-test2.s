@@ -2,10 +2,10 @@
 	.text
 _start:
 # 0x000000 | code & data seg |
-# 0x010000 | stack       seg |
-# 0x180000 | heap        seg |
-	lis	%r3, 0x0001	# sp
-	lis	%r4, 0x0018	# hp
+# 0x2_0000 | stack       seg |
+# 0x8_0000 | heap        seg |
+	lis	%r3, 0x0002	# sp
+	lis	%r4, 0x0008	# hp
 	b	_min_caml_start
 	.data
 	.align 	8
@@ -92,3 +92,4 @@ _min_caml_start: # main entry point
 	lwz	%r31, 4(%r3)
 	mtspr	8, %r31	# mtlr
 #	main program ends
+	sc
