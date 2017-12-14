@@ -40,8 +40,6 @@ min_caml_create_array:
 create_array_loop:
 	cmpwi	%cr7, %r6, 0
 	bne	%cr7, create_array_cont
-	b	create_array_exit
-create_array_exit:
 	blr
 create_array_cont:
 	stw	%r5, 0(%r4)
