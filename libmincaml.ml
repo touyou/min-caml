@@ -218,13 +218,16 @@
 (let dx = 1.0e-10);
 
 (* threshold *)
-(let threshold = 1.0e-15);
+(let threshold = 1.0e-10);
+
 
 (* derivative *)
-(let rec deriv f x dx = (f (x +. dx) -. f x) /. dx);
+(* let rec deriv f x dx = (f (x +. dx) -. f x) /. dx;;
+*)
+(let rec deriv x dx = ((2.0 *. x *. dx) +. (dx*.dx)) /. dx);
 
 (* X n+1 *)
-(let rec xn_plus_one f x = x -. (f x) /. (deriv f x dx));
+(let rec xn_plus_one f x = x -. (f x) /. (deriv x dx));
 
 (* newton_sub *)
 (let rec newton_sub f i =
@@ -234,11 +237,23 @@
      else newton next_num
    in newton i);
 
-(let rec sqrt a =
-   (*	if (a < 0.0) then nan
-     else	*)
+
+(* 初期値をなるべく、解に近い値にしたい。 *)
+(let rec find_i x k =
+   if (k *. k >= x) then k
+   else find_i x (k *. 2.0));
+
+(*(let rec sqrt a =
+   let fi = find_i a 2.0 in (* 2.0は初期値探すための初期値 *)
+   if (a < 0.0) then nan
+        else
    let rec f x = x *. x -. a in
-   newton_sub f 2.0);
+   newton_sub f fi);*)
+(let rec sqrt a =
+   let rec l x a =
+     let n = (x +. a /. x) /. 2.0 in
+     if abs_float (n -. x) < threshold then n else l n a
+   in l 2.0 a);
 
 (* (let rec read_char i = input i); *)
 
