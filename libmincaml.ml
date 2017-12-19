@@ -1,17 +1,15 @@
-(let rec mul a b =
-   let abs_a = if a < 0 then -a else a in
-   let abs_b = if b < 0 then -b else b in
-   let rec mul_sub x i =
-     if i = -1 then
+(let rec mul_sub abs_a abs_b x i =
+   if i = -1 then
        x
      else
      if (abs_b land (1 lsl i)) = 0 then
-       mul_sub x (i - 1)
+       mul_sub abs_a abs_b x (i - 1)
      else
-       mul_sub (x + (abs_a lsl i)) (i - 1)
-   in
-   let abs = (mul_sub 0 30) land 2147483647
-   in
+       mul_sub abs_a abs_b (x + (abs_a lsl i)) (i - 1));
+(let rec mul a b =
+   let abs_a = if a < 0 then -a else a in
+   let abs_b = if b < 0 then -b else b in
+   let abs = (mul_sub abs_a abs_b 0 30) land 2147483647 in
    if ((a lsr 31) lxor (b lsr 31)) = 0 then
      abs
    else
@@ -194,20 +192,22 @@
        -v);
 
 (let rec float_of_int i =
-   if i = 0 then 0.0 else
-     let rec msb_sub i j =
-       if (i lsr j) = 0 then
-         if i <> 0 then
-           msb_sub i (j - 1)
+   let sgn = if i > 0 then 0 else 1 in
+   let ii = if i > 0 then i else -i in
+   if ii = 0 then 0.0 else
+     let rec msb_sub ii j =
+       if (ii lsr j) = 0 then
+         if ii <> 0 then
+           msb_sub ii (j - 1)
          else
            j
        else
          j
      in
-     let msb = msb_sub i 31 in
+     let msb = msb_sub ii 31 in
      let exp = (127 + msb) lsl 23 in
-     let mantissa = ((i lsl (32 - msb)) land 4294967295) lsr 9 in
-     let v = mantissa lor exp in
+     let mantissa = ((ii lsl (32 - msb)) land 4294967295) lsr 9 in
+     let v = mantissa lor exp lor (sgn lsl 31) in
      i2f(v));
 
 (let rec floor i =
@@ -249,11 +249,10 @@
         else
    let rec f x = x *. x -. a in
    newton_sub f fi);*)
-(let rec sqrt a =
-   let rec l x a =
-     let n = (x +. a /. x) /. 2.0 in
-     if abs_float (n -. x) < threshold then n else l n a
-   in l 2.0 a);
+(let rec sqrt_sub x a =
+   let n = (x +. a /. x) /. 2.0 in
+   if abs_float (n -. x) < threshold then n else sqrt_sub n a);
+(let rec sqrt a = sqrt_sub 2.0 a);
 
 (* (let rec read_char i = input i); *)
 
