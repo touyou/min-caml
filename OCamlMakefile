@@ -1279,7 +1279,7 @@ rawuninstall:
 
 .PHONY:	clean
 clean::
-	rm -f $(TARGETS) $(TRASH)
+	rm -f $(TARGETS) $(TRASH) *.cmt *.cmti
 	rm -rf $(BCDIDIR) $(NCDIDIR) $(MLDEPDIR)
 
 .PHONY:	cleanup

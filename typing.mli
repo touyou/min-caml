@@ -1,3 +1,4 @@
 exception Error of Syntax.t * Type.t * Type.t
-val extenv : Type.t M.t ref
-val f : Syntax.t -> Syntax.t
+val ext_env : Type.t MiniMap.t ref
+val gen_env : Type.t MiniMap.t ref
+val main : Syntax.t -> Syntax.t
