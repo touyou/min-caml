@@ -111,7 +111,12 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tsrw\t%s, %s, %%r1 # swap\n" y x
   (* 論理演算周り *)
   | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" y x z
-  | NonTail(x), Xor(y, Const(z)) -> Printf.fprintf oc "\txori\t%s, %s, %d\n" y x z
+  | NonTail(x), Xor(y, Const(z)) -> (* Printf.fprintf oc "\txori\t%s, %s, %d\n" y x z *)
+    let n = z lsr 16 in
+    let m = z lxor (n lsl 16) in
+    Printf.fprintf oc "\taddis\t%%r1, %%r0, %d\t# lis\n" n;
+    Printf.fprintf oc "\tori\t%%r1, %%r1, %d\n" m;
+    Printf.fprintf oc "\txor\t%%r1, %s, %s\n" x y
   | NonTail(x), Or(y, Var(z)) -> Printf.fprintf oc "\tor\t%s, %s, %s\n" y x z
   | NonTail(x), Or(y, Const(z)) -> Printf.fprintf oc "\tori\t%s, %s, %d\n" y x z
   | NonTail(x), And(y, Var(z)) -> Printf.fprintf oc "\tand\t%s, %s, %s\n" y x z
@@ -132,11 +137,15 @@ and assemble_inst oc = function
     Printf.fprintf oc "\taddi\t%%r1, %%r0, %d\t# li\n" z;
     Printf.fprintf oc "\tslw\t%s, %s, %%r1 # swap\n" y x
   (* lwzx %r1, %r2, %r3 *)
-  | NonTail(x), Lwz(y, Var(z)) -> Printf.fprintf oc "\tlwzx\t%s, %s, %s\n" x y z
+  | NonTail(x), Lwz(y, Var(z)) -> (* Printf.fprintf oc "\tlwzx\t%s, %s, %s\n" x y z *)
+    Printf.fprintf oc "\tadd %%r1, %s, %s\n" y z;
+    Printf.fprintf oc "\tlwz %s, 0(%%r1)\n" x
   (* lwz %r1, num(%r2) *)
   | NonTail(x), Lwz(y, Const(z)) -> Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" x z y
   (* stwx %r1, %r2, %r3 *)
-  | NonTail(_), Stw(x, y, Var(z)) -> Printf.fprintf oc "\tstwx\t%s, %s, %s\n" x y z
+  | NonTail(_), Stw(x, y, Var(z)) -> (* Printf.fprintf oc "\tstwx\t%s, %s, %s\n" x y z *)
+    Printf.fprintf oc "\tadd %%r1, %s, %s\n" y z;
+    Printf.fprintf oc "\tstw %s, 0(%%r1)\n" x
   (* stw %r1, num(%r2) *)
   | NonTail(_), Stw(x, y, Const(z)) -> Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x z y
   | NonTail(x), FMr(y) when x = y -> ()
@@ -152,19 +161,22 @@ and assemble_inst oc = function
   | NonTail(x), FMul(y, z) -> Printf.fprintf oc "\tfmul\t%s, %s, %s\n" x y z
   (* fdiv %r1, %r2, %r3 *)
   | NonTail(x), FDiv(y, z) -> Printf.fprintf oc "\tfdiv\t%s, %s, %s\n" x y z
-  (* lfdx %r1, %r2, %r3 TODO: lfsx?*)
-  | NonTail(x), Lfd(y, Var(z)) -> Printf.fprintf oc "\tlfdx\t%s, %s, %s\n" x y z
+  (* lfdx %r1, %r2, %r3 *)
+  | NonTail(x), Lfd(y, Var(z)) -> (* Printf.fprintf oc "\tlfdx\t%s, %s, %s\n" x y z *)
+    Printf.fprintf oc "\tadd %%r1, %s, %s\n" y z;
+    Printf.fprintf oc "\tlfs %s, 0(%%r1)\n" x
   (* lfd %r1, num(%r2) *)
   | NonTail(x), Lfd(y, Const(z)) -> Printf.fprintf oc "\tlfs\t%s, %d(%s)\t# float\n" x z y
   (* stfdx %r1, %r2, %r3 *)
-  | NonTail(_), Stfd(x, y, Var(z)) -> Printf.fprintf oc "\tstfdx\t%s, %s, %s\n" x y z
+  | NonTail(_), Stfd(x, y, Var(z)) -> (* Printf.fprintf oc "\tstfdx\t%s, %s, %s\n" x y z *)
+    Printf.fprintf oc "\tadd %%r1, %s, %s\n" y z;
+    Printf.fprintf oc "\tstfs %s, 0(%%r1)\n" x
   (* stfd %r1, num(%r2) *)
   | NonTail(_), Stfd(x, y, Const(z)) -> Printf.fprintf oc "\tstfs\t%s, %d(%s)\t# float\n" x z y
   (* comment *)
   | NonTail(_), Comment(s) -> Printf.fprintf oc "#\t%s\n" s
   (* TO-DO: 入出力 *)
-  | NonTail(x), In -> Printf.fprintf oc "\tin\t%s, %d\n" x 0
-                        (*
+  | NonTail(x), In -> (* Printf.fprintf oc "\tin\t%s, %d\n" x 0 *)
     let inlabel = Id.gen_id ("in") in
     (
       let i = 0xF0001014 in
@@ -187,9 +199,7 @@ and assemble_inst oc = function
       Printf.fprintf oc "\taddi\t%%r1, %%r0, 24\t# lis\n";
       Printf.fprintf oc "\tsrw\t%s, %s, %%r1 # swap\n" x x;
     )
-                           *)
-  | NonTail(x), Out(y) -> Printf.fprintf oc "\tout\t%s, %d\n" y 0
-                            (*
+  | NonTail(x), Out(y) -> (* Printf.fprintf oc "\tout\t%s, %d\n" y 0 *)
     let outlabel = Id.gen_id ("out") in
     (
       let i = 0xF0001014 in
@@ -214,7 +224,6 @@ and assemble_inst oc = function
       Printf.fprintf oc "\taddi\t%%r1, %%r0, 24\t# lis\n";
       Printf.fprintf oc "\tsrw\t%s, %s, %%r1 # swap\n" y y;
     )
-      *)
   (* 待避の実装 *)
   | NonTail(_), Save(x, y) when List.mem x all_regs && not (MiniSet.mem y !stack_set) ->
     save y;
