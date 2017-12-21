@@ -1,5 +1,4 @@
 	.data
-	.align 	8
   .comm min_caml_n_objects, 4
 #  .comm min_caml_objects, 240
   .comm min_caml_screen, 24
@@ -58,5 +57,5 @@ create_float_array_loop:
 create_float_array_cont:
 	stfs	%f0, 0(%r4)
 	addi	%r5, %r5, -1  # subi	%r5, %r5, 1
-	addi	%r4, %r4, 8
+	addi	%r4, %r4, 4
 	b	create_float_array_loop

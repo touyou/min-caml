@@ -29,7 +29,7 @@ let locate x =
 
 let offset x = 4 * List.hd (locate x)
 
-let stack_size () = align ((List.length !stack_map + 1) * 4)
+let stack_size () = ((List.length !stack_map + 1) * 4)
 
 let load_label r label =
   Printf.sprintf

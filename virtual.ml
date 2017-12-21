@@ -25,8 +25,6 @@ let expand xts ini addf addi =
     xts
     ini
     (fun (offset, acc) x ->
-       let offset = align offset in
-       (* (offset + 8, addf x offset acc)) *)
        (offset + 4, addf x offset acc))
     (fun (offset, acc) x t ->
        (offset + 4, addi x t offset acc))
@@ -93,7 +91,7 @@ let rec virtualize_form env = function
         (fun y offset store_fv -> seq(Stfd(y, x, Const(offset)), store_fv))
         (fun y _ offset store_fv -> seq(Stw(y, x, Const(offset)), store_fv)) in
     Let((x, t), Mr(reg_heap_p),
-        Let((reg_heap_p, Type.Int), Add(reg_heap_p, Const(align offset)),
+        Let((reg_heap_p, Type.Int), Add(reg_heap_p, Const(offset)),
             let z = Id.gen_id "l" in
             Let((z, Type.Int), SetL(l),
                 seq(Stw(z, x, Const(0)),
@@ -113,7 +111,7 @@ let rec virtualize_form env = function
         (fun x offset store -> seq(Stfd(x, y, Const(offset)), store))
         (fun x _ offset store -> seq(Stw(x, y, Const(offset)), store)) in
     Let((y, Type.Tuple(List.map (fun x -> MiniMap.find x env) xs)), Mr(reg_heap_p),
-        Let((reg_heap_p, Type.Int), Add(reg_heap_p, Const(align offset)),
+        Let((reg_heap_p, Type.Int), Add(reg_heap_p, Const(offset)),
             store))
   | Closure.LetTuple(xts, y, e2) ->
     let s = Closure.free_var e2 in
@@ -133,7 +131,7 @@ let rec virtualize_form env = function
     (match MiniMap.find x env with
      | Type.Array(Type.Unit) -> Ans(Nop)
      | Type.Array(Type.Float) ->
-       Let((offset, Type.Int), Slw(y, Const(3)),
+       Let((offset, Type.Int), Slw(y, Const(2)),
            Ans(Lfd(x, Var(offset))))
      | Type.Array(_) ->
        Let((offset, Type.Int), Slw(y, Const(2)),
@@ -144,7 +142,7 @@ let rec virtualize_form env = function
     (match MiniMap.find x env with
      | Type.Array(Type.Unit) -> Ans(Nop)
      | Type.Array(Type.Float) ->
-       Let((offset, Type.Int), Slw(y, Const(3)),
+       Let((offset, Type.Int), Slw(y, Const(2)),
            Ans(Stfd(z, x, Var(offset))))
      | Type.Array(_) ->
        Let ((offset, Type.Int), Slw(y, Const(2)),
