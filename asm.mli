@@ -63,5 +63,3 @@ val is_reg : Id.t -> bool
 
 val free_var : t -> Id.t list
 val concat : t -> Id.t * Type.t -> t -> t
-
-val align : int -> int
