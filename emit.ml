@@ -434,7 +434,7 @@ let main oc array_str (Prog(data, fundefs, e)) =
     (Printf.fprintf oc "\t.data\n\t#.literal8\n";
      List.iter
        (fun (Id.Label(x), d) ->
-          Printf.fprintf oc "\t.align 3\n";
+          Printf.fprintf oc "\t.align 2\n";
           Printf.fprintf oc "%s:\t # %f\n" x d;
           Printf.fprintf oc "\t.long\t%d\n" (Type.conv_float d))
           (* Printf.fprintf oc "\t.long\t%ld\n" (gethi d);
