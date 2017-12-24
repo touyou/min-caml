@@ -349,14 +349,14 @@ and assemble_inst oc = function
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
     Printf.fprintf oc "\tlfs\t%s, %d(%s)\t# float\n" a (ss - 4) reg_stack_p;
-    if List.mem a all_fregs && a <> fregs.(0) then
-      Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0)
+    (*if List.mem a all_fregs && a <> fregs.(0) then
+      Printf.fprintf oc "\tfmr\t%s, %s\n" fregs.(0) a*)
   | NonTail(a), F2I(x) -> (* stfdしてからlwz *)
     let ss = stack_size () in
     Printf.fprintf oc "\tstfs\t%s, %d(%s)\t# float\n" x (ss - 4) reg_stack_p;
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" a (ss - 4) reg_stack_p;
-    if List.mem a all_regs && a <> regs.(0) then
-      Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" regs.(0) a regs.(0) a regs.(0)
+    (*if List.mem a all_regs && a <> regs.(0) then
+      Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" a regs.(0) a regs.(0) a*)
   | Tail, I2F(x) ->
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
