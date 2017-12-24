@@ -164,7 +164,7 @@
 (let rec fneg f = -.f);
 
 (let rec abs_float i =
-   if i > 0.0 then i else -.i);
+   if i >= 0.0 then i else -.i);
 (let rec fabs f =
    abs_float f);
 (let rec fless a b =
