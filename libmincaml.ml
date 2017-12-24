@@ -36,14 +36,13 @@
 
 (let rec print_newline a = output 10);
 
+(let rec print_int_sub a =
+   if a < 10 then
+     output (a + 48)
+   else
+     (print_int_sub (div a 10);
+      output (a - (mul (div a 10) 10) + 48)));
 (let rec print_int a =
-   let rec print_int_sub a =
-     if a < 10 then
-       output (a + 48)
-     else
-       (print_int_sub (div a 10);
-        output (a - (mul (div a 10) 10) + 48))
-   in
    (if a < 0 then
       (output 45;
        print_int_sub (-a))
@@ -165,12 +164,12 @@
 (let rec fneg f = -.f);
 
 (let rec abs_float i =
-   i2f(f2i(i) land 2147483647));
+   if i > 0.0 then i else -.i);
 (let rec fabs f =
    abs_float f);
 (let rec fless a b =
    if a < b then true else false);
-(let rec fhalf f = f /. 2.0);
+(let rec fhalf f = f *. 0.5);
 (let rec fsqr f = f *. f);
 
 (* f2i, i2f->constFold.ml? *)
@@ -214,47 +213,13 @@
    if i>= 0.0 then float_of_int(int_of_float i)
    else float_of_int(int_of_float (i -. 1.0)));
 
-(* small number *)
-(let dx = 1.0e-10);
-
 (* threshold *)
 (let threshold = 1.0e-10);
 
-
-(* derivative *)
-(* let rec deriv f x dx = (f (x +. dx) -. f x) /. dx;;
-*)
-(let rec deriv x dx = ((2.0 *. x *. dx) +. (dx*.dx)) /. dx);
-
-(* X n+1 *)
-(let rec xn_plus_one f x = x -. (f x) /. (deriv x dx));
-
-(* newton_sub *)
-(let rec newton_sub f i =
-   let rec newton x =
-     let next_num = xn_plus_one f x in
-     if abs_float (next_num -. x) < threshold then next_num
-     else newton next_num
-   in newton i);
-
-
-(* 初期値をなるべく、解に近い値にしたい。 *)
-(let rec find_i x k =
-   if (k *. k >= x) then k
-   else find_i x (k *. 2.0));
-
-(*(let rec sqrt a =
-   let fi = find_i a 2.0 in (* 2.0は初期値探すための初期値 *)
-   if (a < 0.0) then nan
-        else
-   let rec f x = x *. x -. a in
-   newton_sub f fi);*)
 (let rec sqrt_sub x a =
    let n = (x +. a /. x) /. 2.0 in
    if abs_float (n -. x) < threshold then n else sqrt_sub n a);
-(let rec sqrt a = sqrt_sub 2.0 a);
-
-(* (let rec read_char i = input i); *)
+(let rec sqrt a = sqrt_sub 0.2 a);
 
 (* 数字が入力されるまで *)
 (let rec read_int x =
