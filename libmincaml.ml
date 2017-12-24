@@ -180,12 +180,12 @@
      let exp = ((i lsr 23) land 255) - 127 in
      let mantissa = ((i lor 8388608) land 16777215) in
      let lsrv = 23 - exp in
-     let v = if lsrv >= 0 then
-         mantissa lsr lsrv
-       else
-         mantissa lsl (-lsrv)
+     let v = if lsrv >= 32 then 0 else
+         if lsrv >= 0 then
+           mantissa lsr lsrv
+         else
+           mantissa lsl (-lsrv)
      in
-     let v = v land 4294967295 in
      if f >= 0.0 then
        v
      else
