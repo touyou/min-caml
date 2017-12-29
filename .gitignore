@@ -54,3 +54,4 @@ min_caml_origin/test/*
 !/test/*.ml
 
 report/*
+*.txt
