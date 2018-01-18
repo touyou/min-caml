@@ -310,19 +310,19 @@ and assemble_inst oc = function
   | Tail, CallCls(x, ys, zs) ->
     assemble_args oc [(x, reg_closure_addr)] ys zs;
     Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_swap reg_closure_addr;
-    Printf.fprintf oc "\tmtspr\t9, %s\t# mtctr\n\tbctr\n" reg_swap
+    Printf.fprintf oc "\tmtctr\t%s\t\n\tbctr\n" reg_swap
   | Tail, CallDir(Id.Label(x), ys, zs) ->
     assemble_args oc [] ys zs;
     Printf.fprintf oc "\tb\t%s\n" x
   (* 末尾でない場合一旦待避するみたいな感じになる *)
   | NonTail(a), CallCls(x, ys, zs) ->
-    Printf.fprintf oc "\tmfspr\t%s, 8\t# mflr\n" reg_tmp;
+    Printf.fprintf oc "\tmflr\t%s\t\n" reg_tmp;
     assemble_args oc [(x, reg_closure_addr)] ys zs;
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
     Printf.fprintf oc "\taddi\t%s, %s, %d\n" reg_stack_p reg_stack_p ss;
     Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_tmp reg_closure_addr;
-    Printf.fprintf oc "\tmtspr\t9, %s\t#mtctr\n" reg_tmp;
+    Printf.fprintf oc "\tmtctr\t%s\t\n" reg_tmp;
     Printf.fprintf oc "\tbctrl\n";
     Printf.fprintf oc "\taddi\t%s, %s, %d\t# subi\n" reg_stack_p reg_stack_p (-ss);
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
@@ -330,9 +330,9 @@ and assemble_inst oc = function
       Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" regs.(0) a regs.(0) a regs.(0)
     else if List.mem a all_fregs && a <> fregs.(0) then
       Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0);
-    Printf.fprintf oc "\tmtspr\t8, %s\t# mtlr\n" reg_tmp
+    Printf.fprintf oc "\tmtlr\t%s\t\n" reg_tmp
   | NonTail(a), CallDir(Id.Label(x), ys, zs) ->
-    Printf.fprintf oc "\tmfspr\t%s, 8\t# mflr\n" reg_tmp;
+    Printf.fprintf oc "\tmflr\t%s\t\n" reg_tmp;
     assemble_args oc [] ys zs;
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" reg_tmp (ss - 4) reg_stack_p;
@@ -344,7 +344,7 @@ and assemble_inst oc = function
       Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" regs.(0) a regs.(0) a regs.(0)
     else if List.mem a all_fregs && a <> fregs.(0) then
       Printf.fprintf oc "\tfmr\t%s, %s\n" a fregs.(0);
-    Printf.fprintf oc "\tmtspr\t8, %s\t# mtlr\n" reg_tmp
+    Printf.fprintf oc "\tmtlr\t%s\t\n" reg_tmp
   | NonTail(a), I2F(x) -> (* stwしてからlfd *)
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
@@ -445,7 +445,7 @@ let main oc array_str (Prog(data, fundefs, e)) =
   Printf.fprintf oc "\t.align 2\n";
   List.iter (fun fundef -> assemble_fun oc fundef) fundefs;
   Printf.fprintf oc "_min_caml_start: # main entry point\n";
-  (* Printf.fprintf oc "\tmfspr\t%%r0, 8\t# mflr\n";
+  (* Printf.fprintf oc "\tmflr\t%r0\t\n";
   Printf.fprintf oc "\tstmw\t%%r30, -8(%%r1)\n";
   Printf.fprintf oc "\tstw\t%%r0, 8(%%r1)\n";
   Printf.fprintf oc "\tstwu\t%%r1, -96(%%r1)\n"; *)
@@ -457,6 +457,6 @@ let main oc array_str (Prog(data, fundefs, e)) =
   Printf.fprintf oc "\tsc\n"
   (* Printf.fprintf oc "\tlwz\t%%r1, 0(%%r1)\n";
   Printf.fprintf oc "\tlwz\t%%r0, 8(%%r1)\n";
-  Printf.fprintf oc "\tmtspr\t8, %%r0\t# mtlr\n";
+  Printf.fprintf oc "\tmtlr\t%%r0\t\n";
   Printf.fprintf oc "\tlmw\t%%r30, -8(%%r1)\n";
   Printf.fprintf oc "\tbclr\t20, %%cr0\t# blr\n" *)
