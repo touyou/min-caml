@@ -3,8 +3,8 @@
 	.align	2
 	.globl	min_caml_create_array
 min_caml_create_array:
-	or	%r2, %r6, %r2  # mr	%r6, %r2
-	or	%r4, %r2, %r4  # mr	%r2, %r4
+	or	%r6, %r2, %r2  # mr	%r6, %r2
+	or	%r2, %r4, %r4  # mr	%r2, %r4
 create_array_loop:
 	cmpwi	%cr7, %r6, 0
 	bne	%cr7, create_array_cont
@@ -17,8 +17,8 @@ create_array_cont:
 #	create_float_array
 	.globl	min_caml_create_float_array
 min_caml_create_float_array:
-	or	%r2, %r5, %r2  # mr	%r5, %r2
-	or	%r4, %r2, %r4  # mr	%r2, %r4
+	or	%r5, %r2, %r2  # mr	%r5, %r2
+	or	%r2, %r4, %r4  # mr	%r2, %r4
 create_float_array_loop:
 	cmpwi	%cr7, %r5, 0
 	bne	%cr7, create_float_array_cont
