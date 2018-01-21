@@ -223,6 +223,19 @@
 
 (* 数字が入力されるまで *)
 (let rec read_int x =
+   let a = input () in
+   let b = input () in
+   let c = input () in
+   let d = input () in
+   a lor (b lsl 8) lor (c lsl 16) lor (d lsl 24));
+(let rec read_float x =
+   let a = input () in
+   let b = input () in
+   let c = input () in
+   let d = input () in
+   i2f(a lor (b lsl 8) lor (c lsl 16) lor (d lsl 24)));
+(*
+(let rec read_int x =
    let rec f acc =
      let n = input () in
      if n > 47 then
@@ -263,6 +276,7 @@
           f (float_of_int (c - 48))
         else (read_float x)
       else (read_float x)));
+   *)
 
 (let rec is_number b =
    if b >= 48 then
