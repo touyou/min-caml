@@ -178,6 +178,33 @@ and assemble_inst oc = function
   (* TO-DO: 入出力 *)
   | NonTail(x), In -> (* Printf.fprintf oc "\tin\t%s, %d\n" x 0 *)
     let inlabel = Id.gen_id ("in") in
+    let outlabel = Id.gen_id ("out") in
+    (
+      let i = 0xF0001014 in
+      let n = i lsr 16 in
+      let m = i lxor (n lsl 16) in
+      Printf.fprintf oc "%s:\n" outlabel;
+      Printf.fprintf oc "\tcmp\t%%cr7, %%r1, %%r0\n";
+      Printf.fprintf oc "\tbeq\t%%cr7, %s\n" inlabel;
+      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" reg_tmp n;
+      Printf.fprintf oc "\tori\t%s, %s, %d\n" reg_tmp reg_tmp m;
+      Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_tmp reg_tmp;
+      Printf.fprintf oc "\tandis.\t%s, %s, 0x4000\n" reg_tmp reg_tmp;
+      Printf.fprintf oc "\tbeq\t%%cr0, %s\n" outlabel
+    );
+    (
+      let i = 0xF0001000 in
+      let n = i lsr 16 in
+      let m = i lxor (n lsl 16) in
+      Printf.fprintf oc "\taddi\t%s, %%r0, 24\t# lis\n" reg_tmp;
+      Printf.fprintf oc "\tslw\t%%r1, %%r1, %s\n" reg_tmp;
+      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" reg_tmp n;
+      Printf.fprintf oc "\tori\t%s, %s, %d\n" reg_tmp reg_tmp m;
+      Printf.fprintf oc "\tstw\t%%r1, 0(%s)\n" reg_tmp;
+      Printf.fprintf oc "\taddi\t%s, %%r0, 24\t# lis\n" reg_tmp;
+      Printf.fprintf oc "\tsrw\t%%r1, %%r1, %s\n" reg_tmp;
+      Printf.fprintf oc "\taddi\t%%r1, %%r0, 0\t"
+    );
     (
       let i = 0xF0001014 in
       let n = i lsr 16 in
@@ -445,6 +472,7 @@ let main oc array_str (Prog(data, fundefs, e)) =
   Printf.fprintf oc "\t.align 2\n";
   List.iter (fun fundef -> assemble_fun oc fundef) fundefs;
   Printf.fprintf oc "_min_caml_start: # main entry point\n";
+  Printf.fprintf oc "\taddi\t%%r1, %r0, 170\n"
   (* Printf.fprintf oc "\tmflr\t%r0\t\n";
   Printf.fprintf oc "\tstmw\t%%r30, -8(%%r1)\n";
   Printf.fprintf oc "\tstw\t%%r0, 8(%%r1)\n";
