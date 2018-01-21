@@ -178,77 +178,14 @@ and assemble_inst oc = function
   (* TO-DO: 入出力 *)
   | NonTail(x), In -> (* Printf.fprintf oc "\tin\t%s, %d\n" x 0 *)
     let inlabel = Id.gen_id ("in") in
-    let outlabel = Id.gen_id ("out") in
-    (
-      let i = 0xF0001014 in
-      let n = i lsr 16 in
-      let m = i lxor (n lsl 16) in
-      Printf.fprintf oc "%s:\n" outlabel;
-      Printf.fprintf oc "\tcmp\t%%cr7, %%r1, %%r0\n";
-      Printf.fprintf oc "\tbeq\t%%cr7, %s\n" inlabel;
-      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" reg_tmp n;
-      Printf.fprintf oc "\tori\t%s, %s, %d\n" reg_tmp reg_tmp m;
-      Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_tmp reg_tmp;
-      Printf.fprintf oc "\tandis.\t%s, %s, 0x4000\n" reg_tmp reg_tmp;
-      Printf.fprintf oc "\tbeq\t%%cr0, %s\n" outlabel
-    );
-    (
-      let i = 0xF0001000 in
-      let n = i lsr 16 in
-      let m = i lxor (n lsl 16) in
-      Printf.fprintf oc "\taddi\t%s, %%r0, 24\t# lis\n" reg_tmp;
-      Printf.fprintf oc "\tslw\t%%r1, %%r1, %s\n" reg_tmp;
-      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" reg_tmp n;
-      Printf.fprintf oc "\tori\t%s, %s, %d\n" reg_tmp reg_tmp m;
-      Printf.fprintf oc "\tstw\t%%r1, 0(%s)\n" reg_tmp;
-      Printf.fprintf oc "\taddi\t%%r1, %%r0, 0\t\n"
-    );
-    (
-      let i = 0xF0001014 in
-      let n = i lsr 16 in
-      let m = i lxor (n lsl 16) in
-      Printf.fprintf oc "%s:\n" inlabel;
-      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" reg_tmp n;
-      Printf.fprintf oc "\tori\t%s, %s, %d\n" reg_tmp reg_tmp m;
-      Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_tmp reg_tmp;
-      Printf.fprintf oc "\tandis.\t%s, %s, 0x0100\n" reg_tmp reg_tmp;
-      Printf.fprintf oc "\tbeq\t%%cr0, %s\n" inlabel
-    );
-    (
-      let i = 0xF0001000 in
-      let n = i lsr 16 in
-      let m = i lxor (n lsl 16) in
-      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" reg_tmp n;
-      Printf.fprintf oc "\tori\t%s, %s, %d\n" reg_tmp reg_tmp m;
-      Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" x reg_tmp;
-      Printf.fprintf oc "\taddi\t%s, %%r0, 24\t# lis\n" reg_tmp;
-      Printf.fprintf oc "\tsrw\t%s, %s, %s\n" x x reg_tmp;
-    )
+    Printf.fprintf oc "\tcmp\t%%cr7, %%r1, %%r0\n";
+    Printf.fprintf oc "\tbeq\t%%cr7, %s\n" inlabel;
+    Printf.fprintf oc "\tsc_out\t%%r1\n" ;
+    Printf.fprintf oc "\taddi\t%%r1, %%r0, 0\t\n" ;
+    Printf.fprintf oc "%s:\n" inlabel;
+    Printf.fprintf oc "\tsc_in\t%s\n" x;
   | NonTail(x), Out(y) -> (* Printf.fprintf oc "\tout\t%s, %d\n" y 0 *)
-    let outlabel = Id.gen_id ("out") in
-    (
-      let i = 0xF0001014 in
-      let n = i lsr 16 in
-      let m = i lxor (n lsl 16) in
-      Printf.fprintf oc "%s:\n" outlabel;
-      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" reg_tmp n;
-      Printf.fprintf oc "\tori\t%s, %s, %d\n" reg_tmp reg_tmp m;
-      Printf.fprintf oc "\tlwz\t%s, 0(%s)\n" reg_tmp reg_tmp;
-      Printf.fprintf oc "\tandis.\t%s, %s, 0x4000\n" reg_tmp reg_tmp;
-      Printf.fprintf oc "\tbeq\t%%cr0, %s\n" outlabel
-    );
-    (
-      let i = 0xF0001000 in
-      let n = i lsr 16 in
-      let m = i lxor (n lsl 16) in
-      Printf.fprintf oc "\taddi\t%s, %%r0, 24\t# lis\n" reg_tmp;
-      Printf.fprintf oc "\tslw\t%s, %s, %s\n" y y reg_tmp;
-      Printf.fprintf oc "\taddis\t%s, %%r0, %d\t# lis\n" reg_tmp n;
-      Printf.fprintf oc "\tori\t%s, %s, %d\n" reg_tmp reg_tmp m;
-      Printf.fprintf oc "\tstw\t%s, 0(%s)\n" y reg_tmp;
-      Printf.fprintf oc "\taddi\t%s, %%r0, 24\t# lis\n" reg_tmp;
-      Printf.fprintf oc "\tsrw\t%s, %s, %s\n" y y reg_tmp;
-    )
+    Printf.fprintf oc "\tsc_out\t%s\n" y;
   (* 待避の実装 *)
   | NonTail(_), Save(x, y) when List.mem x all_regs && not (MiniSet.mem y !stack_set) ->
     save y;
@@ -478,7 +415,7 @@ let main oc array_str (Prog(data, fundefs, e)) =
   stack_map := [];
   assemble oc (NonTail("_R_0"), e);
   Printf.fprintf oc "#\tmain program ends\n";
-  Printf.fprintf oc "\tsc\n"
+  Printf.fprintf oc "\tsc_exit\n"
   (* Printf.fprintf oc "\tlwz\t%%r1, 0(%%r1)\n";
   Printf.fprintf oc "\tlwz\t%%r0, 8(%%r1)\n";
   Printf.fprintf oc "\tmtlr\t%%r0\t\n";
