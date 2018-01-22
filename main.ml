@@ -61,6 +61,7 @@ let lexbuf outchan l lib array_str =
   let closured = Closure.main opted in
   (if (!dmode lsr 3) land 1 = 1 then
      print_string ("Closured---\n" ^ (Debug.string_of_cl_prog closured) ^ "\n\n"));
+  ClosureTyping.main closured;
   let virtualized = Virtual.main closured in
   (if (!dmode lsr 2) land 1 = 1 then
      print_string ("Virtualized---\n" ^ (Debug.string_of_asm_prog virtualized) ^ "\n\n"));
