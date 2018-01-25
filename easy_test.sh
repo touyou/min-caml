@@ -1,7 +1,7 @@
 #!/bin/sh
 
-export FLAGS='-O'
-./min-caml $FLAGS test/ack #-as-library ../library_implement/libmincaml
+export FLAGS='-O -inline 60'
+./min-caml $FLAGS test/ack
 ./min-caml $FLAGS test/adder #-as-library ../library_implement/libmincaml
 ./min-caml $FLAGS test/cls-bug #-as-library ../library_implement/libmincaml
 ./min-caml $FLAGS test/cls-bug2 #-as-library ../library_implement/libmincaml
