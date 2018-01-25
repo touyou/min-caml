@@ -32,7 +32,6 @@ type t =
   | Out of Id.t
   | Get of Id.t * Id.t
   | Put of Id.t * Id.t * Id.t
-  | Ref of (Id.t * Type.t) * t
   | ExtVar of Id.t * Type.t
   | ExtArray of Id.t
   | ExtFunApp of Id.t * Id.t list
@@ -40,7 +39,7 @@ and fun_def = { name : Id.t * Type.t; args : (Id.t * Type.t) list; body : t }
 
 (* 自由変数の割当 *)
 let rec free_var = function
-  | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) | Ref(_, _) -> MiniSet.empty
+  | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) -> MiniSet.empty
   | Neg(x) | FNeg(x) | I2F(x) | F2I(x) | In(x) | Out(x) -> MiniSet.singleton x
   | Add(x, y) | Sub(x, y) | Mul(x, y) | Div(x, y)
   | Xor(x, y) | Or(x, y) | And(x, y) | Sll(x, y) | Srl(x, y)

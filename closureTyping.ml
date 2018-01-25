@@ -51,7 +51,6 @@ let rec infer_id env e =
     Type.Fun(Type.Int::Type.Float::[], (Type.gen_type ()))
   else
     failwith (Printf.sprintf "Not found id while closure typing: %s" e)
-(* TODO: Errorを投げる？ *)
 
 let rec infer_exp env e =
   try
@@ -78,7 +77,6 @@ let rec infer_exp env e =
       unify Type.Float (infer_id env e1);
       unify Type.Float (infer_id env e2);
       Type.Float
-    (* TODO: LEの方は大小関係が定義されていない型を除いたほうがいい？ *)
     | IfEq(v1, v2, e1, e2) | IfLE(v1, v2, e1, e2) ->
       unify (infer_id env v1) (infer_id env v2);
       let t1 = infer_exp env e1 in
@@ -97,26 +95,18 @@ let rec infer_exp env e =
       ext_env := MiniMap.add x t !ext_env;
       t
     | MakeCls((x, t), { entry = Label(l); actual_free_var = vs }, e) ->
-      (* let cls_env = MiniMap.add_list vs env in *)
-      let t1 = infer_exp (MiniMap.add l t env) e in
-      let Type.Fun(_, t2) = t in
-      label_env := MiniMap.add l t !label_env;
-      t
-    (* TODO: クロージャの型推論があってるか？ *)
+      (* 型はeの型になる。基本的にxとlは同じもののはず。 *)
+      let t' = infer_exp (MiniMap.add x t env) e in
+      t'
     | AppCls(e, es) ->
       let t = Type.gen_type () in
       unify (infer_id env e) (Type.Fun(List.map (infer_id env) es, t));
       t
     | AppDir(Label(l), es) ->
       let t = Type.gen_type () in
-      (* infer label?  *)
       unify (infer_id env l) (Type.Fun(List.map (infer_id env) es, t));
       t
     | Tuple(es) -> Type.Tuple(List.map (infer_id env) es)
-    | NTuple(es, t) ->
-      let t1 = Type.Tuple(List.map (infer_id env) es) in
-      unify t1 t;
-      t
     | LetTuple(xts, x, e) ->
       unify (Type.Tuple(List.map snd xts)) (infer_id env x);
       infer_exp (MiniMap.add_list xts env) e
@@ -143,12 +133,10 @@ let rec infer_exp env e =
     | ExtVar(Label(l), t) ->
       label_env := MiniMap.add l t !label_env;
       t
-    (* TODO: 外部変数は？ *)
     | ExtArray(Label(l)) ->
       let t = Type.gen_type () in
       label_env := MiniMap.add l (Type.Array(t)) !label_env;
       Type.Array(t)
-  (* TODO: 外部配列は？ *)
   with Unify(t1, t2) ->
     failwith (Printf.sprintf "unify error correct: %s, wrong: %s.\n%s." (Debug.string_of_type t1) (Debug.string_of_type t2) (Debug.string_of_closure e))
 
