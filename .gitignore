@@ -56,3 +56,5 @@ min_caml_origin/test/*
 report/*
 *.txt
 *.s
+!array.s
+!min_caml_origin/**/*.s
