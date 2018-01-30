@@ -112,6 +112,7 @@ let rec cse env = function
           let id' = find_exp e1 env in
           let e' = if id' != id then Var(id') else e1 in
           let env' = MiniMap.add id e' env in
+          Format.eprintf "common subexp eliminating in %s, %s@." id id';
           Let((id, typ), cse env e1, cse env' e2)
         with Not_found ->
           let env' = MiniMap.add id e1 env in

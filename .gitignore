@@ -55,4 +55,4 @@ min_caml_origin/test/*
 
 report/*
 *.txt
-min-rt.s
+*.s
