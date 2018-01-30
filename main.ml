@@ -1,7 +1,9 @@
 let limit = ref 1000
 let dmode = ref 0b0000
 let is_optimize = ref false
+let is_more_optimize = ref false
 let library = ref "libmincaml"
+let out_name = ref ""
 
 (* 最適化のリスト
    Beta β簡約
@@ -28,7 +30,7 @@ let rec iter n e =
     let constfolded = ConstFold.main inlined in
     (if (!dmode lsr 6) land 1 = 1 then
        print_string ("ConstFold---\n" ^ (Debug.string_of_knormal constfolded) ^ "\n\n"));
-    let csed = (*Cse.main*) constfolded in
+    let csed = (if !is_more_optimize then Cse.main constfolded else constfolded) in
     (if (!dmode lsr 5) land 1 = 1 then
        print_string ("Cse---\n" ^ (Debug.string_of_knormal csed) ^ "\n\n"));
     let e' = Elim.main csed in
@@ -86,7 +88,7 @@ let file f =
     read_all ()
   in
   (try read_all () with End_of_file -> close_in arraychan);
-  let outchan = open_out (f ^ ".s") in
+  let outchan = (if !out_name = "" then open_out (f ^ ".s") else open_out (!out_name ^ ".s")) in
   try
     lexbuf outchan (Lexing.from_channel inchan) (Lexing.from_channel libchan) !arraystr;
     close_in inchan;
@@ -118,6 +120,8 @@ let () =
       ("-dump-simm", Arg.Unit(fun () -> dmode := !dmode lor (1 lsl 1)), "dumped simm code");
       ("-dump-regalloc", Arg.Unit(fun () -> dmode := !dmode lor 1), "dumped regalloc code");
       ("-O", Arg.Unit(fun () -> is_optimize := true), "optimization");
+      ("-O2", Arg.Unit(fun () -> is_more_optimize := true; is_optimize := true), "more optimization: cse,...");
+      ("-o", Arg.String(fun s -> out_name := s), "output name");
       ("-as-library", Arg.String(fun s -> library := s), "compile as library code")
     ]
     (fun s -> files := !files @ [s])
