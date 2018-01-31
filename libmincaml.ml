@@ -1,11 +1,11 @@
 (let rec mul_sub abs_a abs_b x i =
    if i = -1 then
-       x
-     else
-     if (abs_b land (1 lsl i)) = 0 then
-       mul_sub abs_a abs_b x (i - 1)
-     else
-       mul_sub abs_a abs_b (x + (abs_a lsl i)) (i - 1));
+     x
+   else
+   if (abs_b land (1 lsl i)) = 0 then
+     mul_sub abs_a abs_b x (i - 1)
+   else
+     mul_sub abs_a abs_b (x + (abs_a lsl i)) (i - 1));
 (let rec mul a b =
    let abs_a = if a < 0 then -a else a in
    let abs_b = if b < 0 then -b else b in
@@ -40,8 +40,9 @@
    if a < 10 then
      output (a + 48)
    else
-     (print_int_sub (div a 10);
-      output (a - (mul (div a 10) 10) + 48)));
+     (if a = 10 then (output 49; output 48) else
+        (print_int_sub (div a 10);
+         output (a - (mul (div a 10) 10) + 48))));
 (let rec print_int a =
    (if a < 0 then
       (output 45;
@@ -180,10 +181,10 @@
      let mantissa = ((i lor 8388608) land 16777215) in
      let lsrv = 23 - exp in
      let v = if lsrv >= 32 then 0 else
-         if lsrv >= 0 then
-           mantissa lsr lsrv
-         else
-           mantissa lsl (-lsrv)
+       if lsrv >= 0 then
+         mantissa lsr lsrv
+       else
+         mantissa lsl (-lsrv)
      in
      if f >= 0.0 then
        v
