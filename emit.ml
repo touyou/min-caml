@@ -379,6 +379,9 @@ let assemble_fun oc { name = Id.Label(x); args = _; fargs = _; body = e; ret = _
 
 let main oc array_str (Prog(data, fundefs, e)) =
   Format.eprintf "generating assembly...@.";
+  for i = 1 to 0x100/4 do
+    Printf.fprintf oc "\tb _start\n"
+  done;
   Printf.fprintf oc "\t.globl _start\n";
   Printf.fprintf oc "\t.text\n";
   Printf.fprintf oc "_start:\n";
@@ -386,7 +389,7 @@ let main oc array_str (Prog(data, fundefs, e)) =
   Printf.fprintf oc "# 0x2_0000 | stack       seg |\n";
   Printf.fprintf oc "# 0x8_0000 | heap        seg |\n";
   Printf.fprintf oc "\tlis\t%%r3, 0x0002\t# sp\n";
-  Printf.fprintf oc "\tlis\t%%r4, 0x0008\t# hp\n";
+  Printf.fprintf oc "\tlis\t%%r4, 0x0003\t# hp\n";
   Printf.fprintf oc "\tb\t_min_caml_start\n";
   (* create_arrayを埋め込む *)
   Printf.fprintf oc "%s" array_str;
