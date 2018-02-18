@@ -44,6 +44,8 @@
 %token ARRAY_CREATE
 %token I2F
 %token F2I
+%token SQRT
+%token FABS
 %token DOT
 %token LESS_MINUS
 %token MINUS_GREATER
@@ -190,6 +192,12 @@ exp:
 | F2I simple_exp
     %prec prec_app
     { F2I($2) }
+| SQRT simple_exp
+    %prec prec_app
+    { SQRT($2) }
+| FABS simple_exp
+    %prec prec_app
+    { FABS($2) }
 | INPUT simple_exp
     %prec prec_app
     { In($2) }

@@ -49,6 +49,7 @@ let rec is_common_exp env1 e1 env2 e2 =
   | Xor(x1, y1), Xor(x2, y2) | Or(x1, y1), Or(x2, y2)
   | And(x1, y1), And(x2, y2) | Sll(x1, y1), Sll(x2, y2)
   | Srl(x1, y1), Srl(x2, y2) | FAdd(x1, y1), FAdd(x2, y2)
+  | FAddABS(x1, y1), FAddABS(x2, y2)
   | FSub(x1, y1), FSub(x2, y2) | FMul(x1, y1), FMul(x2, y2)
   | FDiv(x1, y1), FDiv(x2, y2) -> (is_same_id env1 x1 env2 x2) && (is_same_id env1 y1 env2 y2)
   | IfEq(x1, y1, e11, e12), IfEq(x2, y2, e21, e22)
@@ -73,7 +74,7 @@ let rec is_common_exp env1 e1 env2 e2 =
   | Tuple(xs1), Tuple(xs2) -> is_same_ids env1 xs1 env2 xs2
   | LetTuple(xs1, x1, e1), LetTuple(xs2, x2, e2) ->
     (is_same_ids env1 (List.map fst xs1) env2 (List.map fst xs2)) && (is_same_id env1 x1 env2 x2) && (is_common_exp env1 e1 env2 e2)
-  | I2F(x1), I2F(x2) | F2I(x1), F2I(x2) (*| Out(x1), Out(x2)*) -> is_same_id env1 x1 env2 x2
+  | I2F(x1), I2F(x2) | F2I(x1), F2I(x2) | SQRT(x1), SQRT(x2) | FABS(x1), FABS(x2) (*| Out(x1), Out(x2)*) -> is_same_id env1 x1 env2 x2
   | Get(x1, y1), Get(x2, y2) -> (is_same_id env1 x1 env2 x2) && (is_same_id env1 y1 env2 y2)
   | Put(x1, y1, z1), Put(x2, y2, z2) ->
     (is_same_id env1 x1 env2 x2) && (is_same_id env1 y1 env2 y2) && (is_same_id env1 z1 env2 z2)

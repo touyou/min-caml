@@ -35,9 +35,10 @@ let rec folding env = function
     Int(let y = findi y env in if y >= 32 then 0 else (findui x env lsr y))
   | FNeg(x) when memf x env -> Float(-.(findf x env))
   | FAdd(x, y) when memf x env && memf y env -> Float(findf x env +. findf y env)
+  | FAddABS(x, y) when memf x env && memf y env -> Float(abs_float(findf x env +. findf y env))
   | FSub(x, y) when memf x env && memf y env -> Float(findf x env -. findf y env)
   | FMul(x, y) when memf x env && memf y env -> Float(findf x env *. findf y env)
-  | FDiv(x, y) when memf x env && memf y env -> Float(findf x env /. findf y env)
+  | FDiv(x, y) when memf x env && memf y env -> Float(findf x env *. (1.0 /. (findf y env)))
   | IfEq(x, y, e1, e2) when memi x env && memi y env ->
     if findi x env = findi y env then folding env e1 else folding env e2
   | IfEq(x, y, e1, e2) when memf x env && memf y env ->
@@ -63,6 +64,8 @@ let rec folding env = function
   | LetTuple(xts, y, e) -> LetTuple(xts, y, folding env e)
   | I2F(x) when memi x env -> Float(Type.conv_int(findi x env))
   | F2I(x) when memf x env -> Int(Type.conv_float(findf x env))
+  | SQRT(x) when memf x env -> Float(sqrt(findf x env))
+  | FABS(x) when memf x env -> Float(abs_float(findf x env))
   | e -> e
 
 let main = folding MiniMap.empty

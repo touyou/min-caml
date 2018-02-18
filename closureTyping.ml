@@ -73,7 +73,7 @@ let rec infer_exp env e =
     | FNeg(e) ->
       unify Type.Float (infer_id env e);
       Type.Float
-    | FAdd(e1, e2) | FSub(e1, e2) | FMul(e1, e2) | FDiv(e1, e2) ->
+    | FAdd(e1, e2) | FSub(e1, e2) | FMul(e1, e2) | FDiv(e1, e2) | FAddABS(e1, e2) ->
       unify Type.Float (infer_id env e1);
       unify Type.Float (infer_id env e2);
       Type.Float
@@ -116,6 +116,12 @@ let rec infer_exp env e =
     | F2I(e) ->
       unify Type.Float (infer_id env e);
       Type.Int
+    | SQRT(e) ->
+      unify Type.Float (infer_id env e);
+      Type.Float
+    | FABS(e) ->
+      unify Type.Float (infer_id env e);
+      Type.Float
     | In -> Type.Int
     | Out(e) ->
       unify Type.Int (infer_id env e);

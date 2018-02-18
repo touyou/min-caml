@@ -28,6 +28,9 @@ type t =
   | LetTuple of (Id.t * Type.t) list * Id.t * t
   | I2F of Id.t
   | F2I of Id.t
+  | SQRT of Id.t
+  | FABS of Id.t
+  | FAddABS of Id.t * Id.t
   | In of Id.t
   | Out of Id.t
   | Get of Id.t * Id.t
@@ -40,10 +43,10 @@ and fun_def = { name : Id.t * Type.t; args : (Id.t * Type.t) list; body : t }
 (* 自由変数の割当 *)
 let rec free_var = function
   | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) -> MiniSet.empty
-  | Neg(x) | FNeg(x) | I2F(x) | F2I(x) | In(x) | Out(x) -> MiniSet.singleton x
+  | Neg(x) | FNeg(x) | I2F(x) | F2I(x) | SQRT(x) | FABS(x) | In(x) | Out(x) -> MiniSet.singleton x
   | Add(x, y) | Sub(x, y) | Mul(x, y) | Div(x, y)
   | Xor(x, y) | Or(x, y) | And(x, y) | Sll(x, y) | Srl(x, y)
-  | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | Get(x, y) ->
+  | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | Get(x, y) | FAddABS(x, y)->
     MiniSet.of_list [x; y]
   | IfEq(x, y, e1, e2) | IfLE(x, y, e1, e2) ->
     MiniSet.add x (MiniSet.add y (MiniSet.union (free_var e1) (free_var e2)))
@@ -224,6 +227,16 @@ let rec normalize env = function
   | Syntax.F2I(e1) ->
     insert_let (normalize env e1)
       (fun x -> F2I(x), Type.Int)
+  | Syntax.SQRT(e1) ->
+    insert_let (normalize env e1)
+      (fun x -> SQRT(x), Type.Float)
+  (*| Syntax.FABS(FAdd(e1, e2)) ->
+    insert_let (normalize env e1)
+      (fun x -> insert_let (normalize env e2)
+          (fun y -> FAddABS(x, y), Type.Float))*)
+  | Syntax.FABS(e1) ->
+    insert_let (normalize env e1)
+      (fun x -> FABS(x), Type.Float)
   | Syntax.In(e1) ->
     insert_let (normalize env e1)
       (fun x -> In(x), Type.Int)

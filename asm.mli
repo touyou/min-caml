@@ -32,6 +32,9 @@ and exp =
   | Comment of string
   | I2F of Id.t
   | F2I of Id.t
+  | SQRT of Id.t
+  | FABS of Id.t
+  | FAddABS of Id.t * Id.t
   | In
   | Out of Id.t
   | IfEq of Id.t * id_or_imm * t * t

@@ -85,16 +85,16 @@
        let b = a -. 3.1415927410 in
        if b < 1.5707963705 then
          if b < 0.785398185 then
-           0.0 -. kernel_sin b
+           -. kernel_sin b
          else
-           0.0 -. kernel_cos (1.5707963705 -. b)
+           -. kernel_cos (1.5707963705 -. b)
        else
        if b < 2.35619455 then
-         0.0 -. kernel_cos (b -. 1.5707963705)
+         -. kernel_cos (b -. 1.5707963705)
        else
-         0.0 -. kernel_sin (3.1415927410 -. b)
+         -. kernel_sin (3.1415927410 -. b)
    else
-     0.0 -. sin (0.0 -. a));
+     -. sin (-. a));
 
 (let rec cos a =
    if a >= 0.0 then
@@ -109,23 +109,23 @@
            kernel_sin (1.5707963705 -. a)
        else
        if a < 2.35619455 then
-         0.0 -. kernel_sin (a -. 1.5707963705)
+         -. kernel_sin (a -. 1.5707963705)
        else
-         0.0 -. kernel_cos (3.1415927410 -. a)
+         -. kernel_cos (3.1415927410 -. a)
      else
        let b = a -. 3.1415927410 in
        if b < 1.5707963705 then
          if b < 0.785398185 then
-           0.0 -. kernel_sin b
+           -. kernel_sin b
          else
-           0.0 -. kernel_cos (1.5707963705 -. b)
+           -. kernel_cos (1.5707963705 -. b)
        else
        if b < 2.35619455 then
          kernel_cos (b -. 1.5707963705)
        else
          kernel_sin (3.1415927410 -. b)
    else
-     cos (0.0 -. a));
+     cos (-. a));
 
 (let rec kernel_atan a =
    let a2 = a *. a in
@@ -147,14 +147,14 @@
      else
        1.57079637 -. kernel_atan (1.0 /. a)
    else
-     let b = 0.0 -. a in
+     let b = -. a in
      if b < 0.4375 then
-       0.0 -. (kernel_atan b)
+       -. (kernel_atan b)
      else
      if b < 2.4375 then
-       0.0 -. (0.78539818 +. kernel_atan ((b -. 1.0) /. (b +. 1.0)))
+       -. (0.78539818 +. kernel_atan ((b -. 1.0) /. (b +. 1.0)))
      else
-       0.0 -. (1.57079637 -. kernel_atan (1.0 /. b)));
+       -. (1.57079637 -. kernel_atan (1.0 /. b)));
 
 (let rec fiszero f =
    if f = 0.0 then true else false);
@@ -164,10 +164,12 @@
    not (fispos f));
 (let rec fneg f = -.f);
 
+(*
 (let rec abs_float i =
    if i >= 0.0 then i else -.i);
 (let rec fabs f =
    abs_float f);
+   *)
 (let rec fless a b =
    if a < b then true else false);
 (let rec fhalf f = f *. 0.5);
@@ -215,12 +217,16 @@
    else float_of_int(int_of_float (i -. 1.0)));
 
 (* threshold *)
+(*
 (let threshold = 1.0e-10);
+   *)
 
+(*
 (let rec sqrt_sub x a =
    let n = (x +. a /. x) /. 2.0 in
    if abs_float (n -. x) < threshold then n else sqrt_sub n a);
 (let rec sqrt a = sqrt_sub 0.2 a);
+   *)
 
 (* 数字が入力されるまで *)
 (let rec read_int x =
@@ -279,6 +285,7 @@
       else (read_float x)));
    *)
 
+(*
 (let rec is_number b =
    if b >= 48 then
      if b <= 57 then
@@ -287,7 +294,9 @@
        false
    else
      false);
+   *)
 
+(*
 (let rec print_float f =
    let rec print_float_sub f j =
      if j = 0 then
@@ -311,3 +320,4 @@
    let p = f -. (float_of_int i)
    in
    print_float_sub p 5);
+   *)
