@@ -34,6 +34,8 @@ type t =
   | Array of t * t
   | I2F of t
   | F2I of t
+  | SQRT of t
+  | FABS of t
   | In of t
   | Out of t
   | Get of t * t

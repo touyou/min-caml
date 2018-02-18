@@ -111,6 +111,12 @@ and assemble_inst oc = function
     Printf.fprintf oc "\tsrw\t%s, %s, %s\n" x y reg_tmp
   (* 論理演算周り *)
   | NonTail(x), Xor(y, Var(z)) -> Printf.fprintf oc "\txor\t%s, %s, %s\n" x y z
+  | NonTail(x), Xor(y, Const(z)) when z = 0 ->
+    assemble_inst oc (NonTail(x), Add(y, Const(z)))
+  | NonTail(x), Xor(y, Const(z)) when z lsr 16 = 0-> (* Printf.fprintf oc "\txori\t%s, %s, %d\n" y x z *)
+    let m = z in
+    Printf.fprintf oc "\tori\t%s, %s, %d\n" reg_tmp reg_tmp m;
+    Printf.fprintf oc "\txor\t%s, %s, %s\n" x reg_tmp y
   | NonTail(x), Xor(y, Const(z)) -> (* Printf.fprintf oc "\txori\t%s, %s, %d\n" y x z *)
     let n = z lsr 16 in
     let m = z lxor (n lsl 16) in
@@ -176,7 +182,7 @@ and assemble_inst oc = function
   (* comment *)
   | NonTail(_), Comment(s) -> Printf.fprintf oc "#\t%s\n" s
   (* TO-DO: 入出力 *)
-  | NonTail(x), In -> (* Printf.fprintf oc "\tin\t%s, %d\n" x 0 *)
+  | NonTail(x), In ->
     let inlabel = Id.gen_id ("in") in
     Printf.fprintf oc "\tcmp\t%%cr7, %%r1, %%r0\n";
     Printf.fprintf oc "\tbeq\t%%cr7, %s\n" inlabel;
@@ -184,7 +190,7 @@ and assemble_inst oc = function
     Printf.fprintf oc "\taddi\t%%r1, %%r0, 0\t\n" ;
     Printf.fprintf oc "%s:\n" inlabel;
     Printf.fprintf oc "\tsc_in\t%s\n" x;
-  | NonTail(x), Out(y) -> (* Printf.fprintf oc "\tout\t%s, %d\n" y 0 *)
+  | NonTail(x), Out(y) ->
     Printf.fprintf oc "\tsc_out\t%s\n" y;
   (* 待避の実装 *)
   | NonTail(_), Save(x, y) when List.mem x all_regs && not (MiniSet.mem y !stack_set) ->
@@ -209,7 +215,7 @@ and assemble_inst oc = function
           | Slw(_) | Lwz(_) as exp) ->
     assemble_inst oc (NonTail(regs.(0)), exp);
     Printf.fprintf oc "\tblr\n"
-  | Tail, (FLi(_) | FMr(_) | FNeg(_) | FAdd(_) | FSub(_) | FMul(_) | FDiv(_) | Lfd(_) as exp) ->
+  | Tail, (FLi(_) | FMr(_) | FNeg(_) | FAdd(_) | FSub(_) | FMul(_) | FDiv(_) | Lfd(_) | FAddABS(_) as exp) ->
     assemble_inst oc (NonTail(fregs.(0)), exp);
     Printf.fprintf oc "\tblr\n"
   | Tail, (Restore(x) as exp) ->
@@ -311,14 +317,15 @@ and assemble_inst oc = function
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
     Printf.fprintf oc "\tlfs\t%s, %d(%s)\t# float\n" a (ss - 4) reg_stack_p;
-    (*if List.mem a all_fregs && a <> fregs.(0) then
-      Printf.fprintf oc "\tfmr\t%s, %s\n" fregs.(0) a*)
   | NonTail(a), F2I(x) -> (* stfdしてからlwz *)
     let ss = stack_size () in
     Printf.fprintf oc "\tstfs\t%s, %d(%s)\t# float\n" x (ss - 4) reg_stack_p;
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" a (ss - 4) reg_stack_p;
-    (*if List.mem a all_regs && a <> regs.(0) then
-      Printf.fprintf oc "\tor\t%s, %s, %s\t# mr %s, %s\n" a regs.(0) a regs.(0) a*)
+  | NonTail(a), SQRT(x) ->
+    Printf.fprintf oc "\tfsqrt\t%s, %s\t\n" a x;
+  | NonTail(a), FABS(x) ->
+    Printf.fprintf oc "\tfabs\t%s, %s\t\n" a x;
+  | NonTail(x), FAddABS(y, z) -> Printf.fprintf oc "\tfadd.a\t%s, %s, %s\n" x y z
   | Tail, I2F(x) ->
     let ss = stack_size () in
     Printf.fprintf oc "\tstw\t%s, %d(%s)\n" x (ss - 4) reg_stack_p;
@@ -328,6 +335,12 @@ and assemble_inst oc = function
     let ss = stack_size () in
     Printf.fprintf oc "\tstfs\t%s, %d(%s)\t# float\n" x (ss - 4) reg_stack_p;
     Printf.fprintf oc "\tlwz\t%s, %d(%s)\n" regs.(0) (ss - 4) reg_stack_p;
+    Printf.fprintf oc "\tblr\n"
+  | Tail, SQRT(x) ->
+    Printf.fprintf oc "\tfsqrt\t%s, %s\t\n" fregs.(0) x;
+    Printf.fprintf oc "\tblr\n"
+  | Tail, FABS(x) ->
+    Printf.fprintf oc "\tfabs\t%s, %s\t\n" fregs.(0) x;
     Printf.fprintf oc "\tblr\n"
   | Tail, e ->
     (Format.eprintf "error tail: %s@." (Debug.string_of_asm_t (Ans(e))); assert false)
@@ -386,10 +399,11 @@ let main oc array_str (Prog(data, fundefs, e)) =
   Printf.fprintf oc "\t.text\n";
   Printf.fprintf oc "_start:\n";
   Printf.fprintf oc "# 0x000000 | code & data seg |\n";
-  Printf.fprintf oc "# 0x2_0000 | stack       seg |\n";
+  Printf.fprintf oc "# 0x7_8000 | stack       seg |\n";
   Printf.fprintf oc "# 0x8_0000 | heap        seg |\n";
-  Printf.fprintf oc "\tlis\t%%r3, 0x0002\t# sp\n";
-  Printf.fprintf oc "\tlis\t%%r4, 0x0003\t# hp\n";
+  Printf.fprintf oc "\tlis\t%%r3, 0x0007\t# sp\n";
+  Printf.fprintf oc "\tori\t%%r3, %%r3, 0x8000\t# sp\n";
+  Printf.fprintf oc "\tlis\t%%r4, 0x0008\t# hp\n";
   Printf.fprintf oc "\tb\t_min_caml_start\n";
   (* create_arrayを埋め込む *)
   Printf.fprintf oc "%s" array_str;
