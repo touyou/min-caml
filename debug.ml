@@ -147,6 +147,7 @@ let string_of_knormal elem =
         | KNormal.F2I(e1) -> "float_to_int " ^ (string_of_id e1)
         | KNormal.SQRT(e1) -> "fsqrt " ^ (string_of_id e1)
         | KNormal.FABS(e1) -> "fabs " ^ (string_of_id e1)
+        | KNormal.FAddABS(e1, e2) -> "faddabs (" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
         | KNormal.In(e1) -> "input " ^ (string_of_id e1)
         | KNormal.Out(e1) -> "output " ^ (string_of_id e1)
         | KNormal.Get(e1, e2) -> (string_of_id e1) ^ ".(" ^ (string_of_id e2) ^ ")"
@@ -198,6 +199,7 @@ let string_of_closure elem =
         | Closure.F2I(e1) -> "float_to_int " ^ (string_of_id e1)
         | Closure.SQRT(e1) -> "fsqrt " ^ (string_of_id e1)
         | Closure.FABS(e1) -> "fabs " ^ (string_of_id e1)
+        | Closure.FAddABS(e1, e2) -> "faddabs (" ^ (string_of_id e1) ^ ", " ^ (string_of_id e2) ^ ")"
         | Closure.In -> "input"
         | Closure.Out(e1) -> "output " ^ (string_of_id e1)
         | Closure.Get(e1, e2) -> (string_of_id e1) ^ ".(" ^ (string_of_id e2) ^ ")"
@@ -268,6 +270,7 @@ let rec string_of_asm_t elem =
     | Asm.F2I(e) -> "F2I " ^ (string_of_id e)
     | Asm.SQRT(e) -> "SQRT " ^ (string_of_id e)
     | Asm.FABS(e) -> "FABS " ^ (string_of_id e)
+    | Asm.FAddABS(e1, e2) -> "FAddABS " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
     | Asm.In -> "In"
     | Asm.Out(e) -> "Out " ^ (string_of_id e)
     | Asm.Lfd(e1, Asm.Var(e2)) -> "Lfd " ^ (string_of_id e1) ^ ", " ^ (string_of_id e2)
