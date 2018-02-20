@@ -20,36 +20,36 @@
 (**************** グローバル変数の宣言 ****************)
 
 (* オブジェクトの個数 *)
-(* (let n_objects = create_array 1 0);
-*)
+(let n_objects = create_array 1 0);
+
 (* オブジェクトのデータを入れるベクトル（最大60個）*)
 (let objects =
    let dummy = create_array 0 0.0 in
    create_array 60 (0, 0, 0, 0, dummy, dummy, false, dummy, dummy, dummy, dummy));
-(*
+
 (* Screen の中心座標 *)
 (let screen = create_array 3 0.0);
 (* 視点の座標 *)
 (let viewpoint = create_array 3 0.0);
 (* 光源方向ベクトル (単位ベクトル) *)
 (let light = create_array 3 0.0);
-*)
+
 (* 鏡面ハイライト強度 (標準=255) *)
 (let beam = create_array 1 255.0);
 (* AND ネットワークを保持 *)
 (let and_net = create_array 50 (create_array 1 (-1)));
 (* OR ネットワークを保持 *)
 (let or_net = create_array 1 (create_array 1 (and_net.(0))));
-(*
+
 (* 以下、交差判定ルーチンの返り値格納用 *)
 (* solver の交点 の t の値 *)
 (let solver_dist = create_array 1 0.0);
 (* 交点の直方体表面での方向 *)
 (let intsec_rectside = create_array 1 0);
-*)
+
 (* 発見した交点の最小の t *)
 (let tmin = create_array 1 (1000000000.0));
-(*(* 交点の座標 *)
+(* 交点の座標 *)
 (let intersection_point = create_array 3 0.0);
 (* 衝突したオブジェクト番号 *)
 (let intersected_object_id = create_array 1 0);
@@ -82,7 +82,7 @@
 
 (* 直接光追跡で使う光方向ベクトル *)
 (let ptrace_dirvec  = create_array 3 0.0);
-*)
+
 (* 間接光サンプリングに使う方向ベクトル *)
 (let dirvecs =
    let dummyf = create_array 0 0.0 in
@@ -103,10 +103,10 @@
    let dummyff3 = create_array 0 dummyf3 in
    let dummydv = (dummyf3, dummyff3) in
    create_array 180 (0, dummydv, 0.0));
-(*
+
 (* reflectionsの有効な要素数 *)
 
-(let n_reflections = create_array 1 0); *)
+(let n_reflections = create_array 1 0);
 
 (******************************************************************************
    ユーティリティー
@@ -2014,7 +2014,7 @@ in
 let rec write_ppm_header _ =
   (
     print_char 80; (* 'P' *)
-    print_char (48 + 3); (* +6 if binary *) (* 48 = '0' *)
+    print_char (48 + 6); (* +6 if binary *) (* 48 = '0' *)
     print_char 10;
     print_int image_size.(0);
     print_char 32;
@@ -2028,16 +2028,13 @@ in
 let rec write_rgb_element x =
   let ix = int_of_float x in
   let elem = if ix > 255 then 255 else if ix < 0 then 0 else ix in
-  print_int elem
+  output elem
 in
 
 let rec write_rgb _ =
   write_rgb_element rgb.(0); (* Red   *)
-  print_char 32;
   write_rgb_element rgb.(1); (* Green *)
-  print_char 32;
   write_rgb_element rgb.(2); (* Blue  *)
-  print_char 10
 in
 
 (******************************************************************************

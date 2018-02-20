@@ -32,6 +32,9 @@ and exp =
   | Comment of string
   | I2F of Id.t
   | F2I of Id.t
+  | SQRT of Id.t
+  | FABS of Id.t
+  | FAddABS of Id.t * Id.t
   | In
   | Out of Id.t
   | IfEq of Id.t * id_or_imm * t * t
@@ -75,13 +78,13 @@ let rec remove_and_uniq xs = function
 let fv_id_or_imm = function Var(x) -> [x] | _ -> []
 let rec fv_exp = function
   | Nop | In | Li(_) | FLi(_) | SetL(_) | Comment(_) | Restore(_) -> []
-  | Mr(x) | Neg(x) | FMr(x) | FNeg(x) | Save(x, _) | I2F(x) | F2I(x) | Out(x) -> [x]
+  | Mr(x) | Neg(x) | FMr(x) | FNeg(x) | Save(x, _) | I2F(x) | F2I(x) | SQRT(x) | FABS(x) | Out(x) -> [x]
   | Add(x, y') | Sub(x, y') | Mul(x, y') | Div(x, y')
   | Xor(x, y') | Or(x, y') | And(x, y')
   | Sll(x, y') | Srl(x, y')
   | Slw(x, y') | Lfd(x, y') | Lwz(x, y') -> x :: fv_id_or_imm y'
   | Stw(x, y, z') | Stfd(x, y, z') -> x :: y :: fv_id_or_imm z'
-  | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) -> [x; y]
+  | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | FAddABS(x, y) -> [x; y]
   | IfEq(x, y', e1, e2) | IfLE(x, y', e1, e2) | IfGE(x, y', e1, e2) -> x :: fv_id_or_imm y' @ remove_and_uniq MiniSet.empty (free_var e1 @ free_var e2)
   | IfFEq(x, y, e1, e2) | IfFLE(x, y, e1, e2) -> x :: y :: remove_and_uniq MiniSet.empty (free_var e1 @ free_var e2)
   | CallCls(x, ys, zs) -> x :: ys @ zs
@@ -98,4 +101,3 @@ let rec concat e1 xt e2 =
   | Ans(exp) -> Let(xt, exp, e2)
   | Let(yt, exp, e1') -> Let(yt, exp, concat e1' xt e2)
 
-let align i = (if i mod 8 = 0 then i else i + 4)

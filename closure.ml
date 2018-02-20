@@ -26,10 +26,12 @@ type t =
   | AppCls of Id.t * Id.t list
   | AppDir of Id.label * Id.t list
   | Tuple of Id.t list
-  | NTuple of Id.t list * Type.t
   | LetTuple of (Id.t * Type.t) list * Id.t * t
   | I2F of Id.t
   | F2I of Id.t
+  | SQRT of Id.t
+  | FABS of Id.t
+  | FAddABS of Id.t * Id.t
   | In
   | Out of Id.t
   | Get of Id.t * Id.t
@@ -44,16 +46,16 @@ type prog = Prog of fun_def list * t
 
 let rec free_var = function
   | Unit | Int(_) | Float(_) | ExtVar(_) | ExtArray(_) | In -> MiniSet.empty
-  | Neg(x) | FNeg(x) | I2F(x) | F2I(x) | Out(x) -> MiniSet.singleton x
+  | Neg(x) | FNeg(x) | I2F(x) | F2I(x) | SQRT(x) | FABS(x) | Out(x) -> MiniSet.singleton x
   | Add(x, y) | Sub(x, y) | Mul(x, y) | Div(x, y)
   | Xor(x, y) | Or(x, y) | And(x, y) | Sll(x, y) | Srl(x, y)
-  | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | Get(x, y) -> MiniSet.of_list [x; y]
+  | FAdd(x, y) | FSub(x, y) | FMul(x, y) | FDiv(x, y) | Get(x, y) | FAddABS(x, y) -> MiniSet.of_list [x; y]
   | IfEq(x, y, e1, e2) | IfLE(x, y, e1, e2) -> MiniSet.add x (MiniSet.add y (MiniSet.union (free_var e1) (free_var e2)))
   | Let((x, t), e1, e2) -> MiniSet.union (free_var e1) (MiniSet.remove x (free_var e2))
   | Var(x) -> MiniSet.singleton x
   | MakeCls((x, t), { entry = l; actual_free_var = ys }, e) -> MiniSet.remove x (MiniSet.union (MiniSet.of_list ys) (free_var e))
   | AppCls(x, ys) -> MiniSet.of_list (x :: ys)
-  | AppDir(_, xs) | Tuple(xs) | NTuple(xs, _) -> MiniSet.of_list xs
+  | AppDir(_, xs) | Tuple(xs) -> MiniSet.of_list xs
   | LetTuple(xts, y, e) -> MiniSet.add y (MiniSet.diff (free_var e) (MiniSet.of_list (List.map fst xts)))
   | Put(x, y, z) -> MiniSet.of_list [x; y; z]
 
@@ -75,6 +77,7 @@ let rec closure_conv env known = function
   | KNormal.Srl(x, y) -> Srl(x, y)
   | KNormal.FNeg(x) -> FNeg(x)
   | KNormal.FAdd(x, y) -> FAdd(x, y)
+  | KNormal.FAddABS(x, y) -> FAddABS(x, y)
   | KNormal.FSub(x, y) -> FSub(x, y)
   | KNormal.FMul(x, y) -> FMul(x, y)
   | KNormal.FDiv(x, y) -> FDiv(x, y)
@@ -120,6 +123,8 @@ let rec closure_conv env known = function
   | KNormal.LetTuple(xts, y, e) -> LetTuple(xts, y, closure_conv (MiniMap.add_list xts env) known e)
   | KNormal.I2F(x) -> I2F(x)
   | KNormal.F2I(x) -> F2I(x)
+  | KNormal.SQRT(x) -> SQRT(x)
+  | KNormal.FABS(x) -> FABS(x)
   | KNormal.In(x) -> In
   | KNormal.Out(x) -> Out(x)
   | KNormal.Get(x, y) -> Get(x, y)

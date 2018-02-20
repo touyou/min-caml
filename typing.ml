@@ -93,6 +93,8 @@ let string_of_syntax elem =
         | Syntax.Array(e1, e2) -> "Array.create " ^ (string_of_syntax' 0 e1) ^ " " ^ (string_of_syntax' 0 e2)
         | Syntax.I2F(e1) -> "int_to_float " ^ (string_of_syntax' 0 e1)
         | Syntax.F2I(e1) -> "float_to_int " ^ (string_of_syntax' 0 e1)
+        | Syntax.SQRT(e1) -> "fsqrt " ^ (string_of_syntax' 0 e1)
+        | Syntax.FABS(e1) -> "fabs " ^ (string_of_syntax' 0 e1)
         | Syntax.In(e1) -> "input " ^ (string_of_syntax' 0 e1)
         | Syntax.Out(e1) -> "output " ^ (string_of_syntax' 0 e1)
         | Syntax.Get(e1, e2) -> (string_of_syntax' 0 e1) ^ ".(" ^ (string_of_syntax' 0 e2) ^ ")"
@@ -158,6 +160,8 @@ let rec deref_term = function
   | Array(e1, e2) -> Array(deref_term e1, deref_term e2)
   | I2F(e1) -> I2F(deref_term e1)
   | F2I(e1) -> F2I(deref_term e1)
+  | SQRT(e1) -> SQRT(deref_term e1)
+  | FABS(e1) -> FABS(deref_term e1)
   | In(e1) -> In(deref_term e1)
   | Out(e1) -> Out(deref_term e1)
   | Get(e1, e2) -> Get(deref_term e1, deref_term e2)
@@ -287,6 +291,12 @@ let rec infer env e =
     | F2I(e1) ->
       unify Type.Float (infer env e1);
       Type.Int
+    | SQRT(e1) ->
+      unify Type.Float (infer env e1);
+      Type.Float
+    | FABS(e1) ->
+      unify Type.Float (infer env e1);
+      Type.Float
     | In(e1) ->
       unify Type.Unit (infer env e1);
       Type.Int

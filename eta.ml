@@ -70,6 +70,8 @@ let rec eta_conv env = function
   | Array(e1, e2) -> Array(eta_conv env e1, eta_conv env e2)
   | I2F(e) -> I2F(eta_conv env e)
   | F2I(e) -> F2I(eta_conv env e)
+  | SQRT(e) -> SQRT(eta_conv env e)
+  | FABS(e) -> FABS(eta_conv env e)
   | In(e) -> In(eta_conv env e)
   | Out(e) -> Out(eta_conv env e)
   | Get(e1, e2) -> Get(eta_conv env e1, eta_conv env e2)

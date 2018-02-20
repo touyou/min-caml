@@ -1,11 +1,11 @@
 (let rec mul_sub abs_a abs_b x i =
    if i = -1 then
-       x
-     else
-     if (abs_b land (1 lsl i)) = 0 then
-       mul_sub abs_a abs_b x (i - 1)
-     else
-       mul_sub abs_a abs_b (x + (abs_a lsl i)) (i - 1));
+     x
+   else
+   if (abs_b land (1 lsl i)) = 0 then
+     mul_sub abs_a abs_b x (i - 1)
+   else
+     mul_sub abs_a abs_b (x + (abs_a lsl i)) (i - 1));
 (let rec mul a b =
    let abs_a = if a < 0 then -a else a in
    let abs_b = if b < 0 then -b else b in
@@ -36,14 +36,14 @@
 
 (let rec print_newline a = output 10);
 
+(let rec print_int_sub a =
+   if a < 10 then
+     output (a + 48)
+   else
+     (if a = 10 then (output 49; output 48) else
+        (print_int_sub (div a 10);
+         output (a - (mul (div a 10) 10) + 48))));
 (let rec print_int a =
-   let rec print_int_sub a =
-     if a < 10 then
-       output (a + 48)
-     else
-       (print_int_sub (div a 10);
-        output (a - (mul (div a 10) 10) + 48))
-   in
    (if a < 0 then
       (output 45;
        print_int_sub (-a))
@@ -85,16 +85,16 @@
        let b = a -. 3.1415927410 in
        if b < 1.5707963705 then
          if b < 0.785398185 then
-           0.0 -. kernel_sin b
+           -. kernel_sin b
          else
-           0.0 -. kernel_cos (1.5707963705 -. b)
+           -. kernel_cos (1.5707963705 -. b)
        else
        if b < 2.35619455 then
-         0.0 -. kernel_cos (b -. 1.5707963705)
+         -. kernel_cos (b -. 1.5707963705)
        else
-         0.0 -. kernel_sin (3.1415927410 -. b)
+         -. kernel_sin (3.1415927410 -. b)
    else
-     0.0 -. sin (0.0 -. a));
+     -. sin (-. a));
 
 (let rec cos a =
    if a >= 0.0 then
@@ -109,23 +109,23 @@
            kernel_sin (1.5707963705 -. a)
        else
        if a < 2.35619455 then
-         0.0 -. kernel_sin (a -. 1.5707963705)
+         -. kernel_sin (a -. 1.5707963705)
        else
-         0.0 -. kernel_cos (3.1415927410 -. a)
+         -. kernel_cos (3.1415927410 -. a)
      else
        let b = a -. 3.1415927410 in
        if b < 1.5707963705 then
          if b < 0.785398185 then
-           0.0 -. kernel_sin b
+           -. kernel_sin b
          else
-           0.0 -. kernel_cos (1.5707963705 -. b)
+           -. kernel_cos (1.5707963705 -. b)
        else
        if b < 2.35619455 then
          kernel_cos (b -. 1.5707963705)
        else
          kernel_sin (3.1415927410 -. b)
    else
-     cos (0.0 -. a));
+     cos (-. a));
 
 (let rec kernel_atan a =
    let a2 = a *. a in
@@ -147,14 +147,14 @@
      else
        1.57079637 -. kernel_atan (1.0 /. a)
    else
-     let b = 0.0 -. a in
+     let b = -. a in
      if b < 0.4375 then
-       0.0 -. (kernel_atan b)
+       -. (kernel_atan b)
      else
      if b < 2.4375 then
-       0.0 -. (0.78539818 +. kernel_atan ((b -. 1.0) /. (b +. 1.0)))
+       -. (0.78539818 +. kernel_atan ((b -. 1.0) /. (b +. 1.0)))
      else
-       0.0 -. (1.57079637 -. kernel_atan (1.0 /. b)));
+       -. (1.57079637 -. kernel_atan (1.0 /. b)));
 
 (let rec fiszero f =
    if f = 0.0 then true else false);
@@ -164,13 +164,15 @@
    not (fispos f));
 (let rec fneg f = -.f);
 
+(*
 (let rec abs_float i =
-   i2f(f2i(i) land 2147483647));
+   if i >= 0.0 then i else -.i);
 (let rec fabs f =
    abs_float f);
+   *)
 (let rec fless a b =
    if a < b then true else false);
-(let rec fhalf f = f /. 2.0);
+(let rec fhalf f = f *. 0.5);
 (let rec fsqr f = f *. f);
 
 (* f2i, i2f->constFold.ml? *)
@@ -180,12 +182,12 @@
      let exp = ((i lsr 23) land 255) - 127 in
      let mantissa = ((i lor 8388608) land 16777215) in
      let lsrv = 23 - exp in
-     let v = if lsrv >= 0 then
+     let v = if lsrv >= 32 then 0 else
+       if lsrv >= 0 then
          mantissa lsr lsrv
        else
          mantissa lsl (-lsrv)
      in
-     let v = v land 4294967295 in
      if f >= 0.0 then
        v
      else
@@ -214,49 +216,32 @@
    if i>= 0.0 then float_of_int(int_of_float i)
    else float_of_int(int_of_float (i -. 1.0)));
 
-(* small number *)
-(let dx = 1.0e-10);
-
 (* threshold *)
+(*
 (let threshold = 1.0e-10);
+   *)
 
-
-(* derivative *)
-(* let rec deriv f x dx = (f (x +. dx) -. f x) /. dx;;
-*)
-(let rec deriv x dx = ((2.0 *. x *. dx) +. (dx*.dx)) /. dx);
-
-(* X n+1 *)
-(let rec xn_plus_one f x = x -. (f x) /. (deriv x dx));
-
-(* newton_sub *)
-(let rec newton_sub f i =
-   let rec newton x =
-     let next_num = xn_plus_one f x in
-     if abs_float (next_num -. x) < threshold then next_num
-     else newton next_num
-   in newton i);
-
-
-(* 初期値をなるべく、解に近い値にしたい。 *)
-(let rec find_i x k =
-   if (k *. k >= x) then k
-   else find_i x (k *. 2.0));
-
-(*(let rec sqrt a =
-   let fi = find_i a 2.0 in (* 2.0は初期値探すための初期値 *)
-   if (a < 0.0) then nan
-        else
-   let rec f x = x *. x -. a in
-   newton_sub f fi);*)
+(*
 (let rec sqrt_sub x a =
    let n = (x +. a /. x) /. 2.0 in
    if abs_float (n -. x) < threshold then n else sqrt_sub n a);
-(let rec sqrt a = sqrt_sub 2.0 a);
-
-(* (let rec read_char i = input i); *)
+(let rec sqrt a = sqrt_sub 0.2 a);
+   *)
 
 (* 数字が入力されるまで *)
+(let rec read_int x =
+   let a = input () in
+   let b = input () in
+   let c = input () in
+   let d = input () in
+   a lor (b lsl 8) lor (c lsl 16) lor (d lsl 24));
+(let rec read_float x =
+   let a = input () in
+   let b = input () in
+   let c = input () in
+   let d = input () in
+   i2f(a lor (b lsl 8) lor (c lsl 16) lor (d lsl 24)));
+(*
 (let rec read_int x =
    let rec f acc =
      let n = input () in
@@ -298,7 +283,9 @@
           f (float_of_int (c - 48))
         else (read_float x)
       else (read_float x)));
+   *)
 
+(*
 (let rec is_number b =
    if b >= 48 then
      if b <= 57 then
@@ -307,7 +294,9 @@
        false
    else
      false);
+   *)
 
+(*
 (let rec print_float f =
    let rec print_float_sub f j =
      if j = 0 then
@@ -331,3 +320,4 @@
    let p = f -. (float_of_int i)
    in
    print_float_sub p 5);
+   *)

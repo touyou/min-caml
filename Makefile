@@ -13,8 +13,8 @@ SOURCES = float.c type.ml id.ml miniMap.ml miniSet.ml \
 syntax.ml parser.mly lexer.mll eta.mli eta.ml typing.mli typing.ml kNormal.mli kNormal.ml \
 closure.mli closure.ml asm.mli asm.ml virtual.mli virtual.ml \
 debug.ml \
+closureTyping.ml \
 joinLibrary.ml \
-cseMap.ml \
 alpha.mli alpha.ml beta.mli beta.ml assoc.mli assoc.ml \
 inline.mli inline.ml constFold.mli constFold.ml cse.mli cse.ml elim.mli elim.ml \
 simm.mli simm.ml regAlloc.mli regAlloc.ml emit.mli emit.ml \

@@ -1,3 +1,5 @@
+open KNormal
+
 type t =
   | Unit
   | Int of int
@@ -24,21 +26,3 @@ type t =
   | LetRec of fun_def * t
   | App of Id.t * Id.t list
   | Tuple of Id.t list
-  | LetTuple of (Id.t * Type.t) list * Id.t * t
-  | I2F of Id.t
-  | F2I of Id.t
-  | SQRT of Id.t
-  | FABS of Id.t
-  | FAddABS of Id.t * Id.t
-  | In of Id.t
-  | Out of Id.t
-  | Get of Id.t * Id.t
-  | Put of Id.t * Id.t * Id.t
-  | ExtVar of Id.t * Type.t
-  | ExtArray of Id.t
-  | ExtFunApp of Id.t * Id.t list
-and fun_def = { name : Id.t * Type.t; args : (Id.t * Type.t) list; body : t }
-
-val free_var : t -> MiniSet.t
-val main : Syntax.t -> t
-

@@ -1,5 +1,11 @@
 open Asm
 
+(*let main2 (Prog(data, fundefs, e)) =
+  Format.eprintf "register allocation: may take some time (up to a few minutes, depending on the size of functions)@."
+  let fundefs' = List.map alloc_fun fundefs in
+  let e', regenv' = alloc_insts (Id.gen_tmp Type.Unit, Type.Unit) (Ans(Nop)) MiniMap.empty e in
+  Prog(data, fundefs', e')*)
+
 (* Callがあったらそこから先は逆効果なので追わない。
    そのために「Callの有無」を返り値の第１要素に含める。 *)
 let rec target' src (dest, t) = function
@@ -145,6 +151,9 @@ and alloc_inst dest cont regenv = function
   | FDiv(x, y) -> (Ans(FDiv(find x Type.Float regenv, find y Type.Float regenv)), regenv)
   | I2F(x) -> (Ans(I2F(find x Type.Int regenv)), regenv)
   | F2I(x) -> (Ans(F2I(find x Type.Float regenv)), regenv)
+  | SQRT(x) -> (Ans(SQRT(find x Type.Float regenv)), regenv)
+  | FABS(x) -> (Ans(FABS(find x Type.Float regenv)), regenv)
+  | FAddABS(x, y) -> (Ans(FAddABS(find x Type.Float regenv, find y Type.Float regenv)), regenv)
   | Out(x) -> (Ans(Out(find x Type.Int regenv)), regenv)
   | Lfd(x, y') -> (Ans(Lfd(find x Type.Int regenv, find' y' regenv)), regenv)
   | Stfd(x, y, z') -> (Ans(Stfd(find x Type.Float regenv, find y Type.Int regenv, find' z' regenv)), regenv)

@@ -97,6 +97,10 @@ rule token = parse
     { I2F }
 | "f2i"
     { F2I }
+| "sqrt"
+    { SQRT }
+| "fabs"
+    { FABS }
 | "input"
     { INPUT }
 | "output"
