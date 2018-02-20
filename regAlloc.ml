@@ -1,5 +1,11 @@
 open Asm
 
+(*let main2 (Prog(data, fundefs, e)) =
+  Format.eprintf "register allocation: may take some time (up to a few minutes, depending on the size of functions)@."
+  let fundefs' = List.map alloc_fun fundefs in
+  let e', regenv' = alloc_insts (Id.gen_tmp Type.Unit, Type.Unit) (Ans(Nop)) MiniMap.empty e in
+  Prog(data, fundefs', e')*)
+
 (* Callがあったらそこから先は逆効果なので追わない。
    そのために「Callの有無」を返り値の第１要素に含める。 *)
 let rec target' src (dest, t) = function

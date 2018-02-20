@@ -230,7 +230,7 @@ let rec normalize env = function
   | Syntax.SQRT(e1) ->
     insert_let (normalize env e1)
       (fun x -> SQRT(x), Type.Float)
-  | Syntax.FABS(FAdd(e1, e2)) ->
+  | Syntax.FABS(Syntax.FAdd(e1, e2)) ->
     insert_let (normalize env e1)
       (fun x -> insert_let (normalize env e2)
           (fun y -> FAddABS(x, y), Type.Float))
